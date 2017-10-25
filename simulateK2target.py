@@ -32,6 +32,7 @@ class Target(object):
         self.ID = ID
         self.ftpf = ftpf
         self.ncadences = ncadences
+        self.custom_ccd = custom_ccd
 
         # transit information
         self.transit = transit
@@ -100,7 +101,7 @@ class Target(object):
         self.M = lambda x: np.delete(x, self.naninds, axis = 0)
 
         # assign PSF model parameters to be passed into PixelFlux function
-        if not custom_ccd:
+        if not self.custom_ccd:
 
             # cx,cy: intra-pixel variation polynomial coefficients in x,y
             cx = [1.0,0.0,-0.3]
