@@ -85,7 +85,7 @@ class Target(object):
 
         # create inter-pixel sensitivity variation matrix
         # random normal distribution centered at 0.975
-        inter = np.zeros((self.apsize,self.apsize))
+        inter = np.zeros((self.apsize, self.apsize))
         for i in range(self.apsize):
             for j in range(self.apsize):
                 inter[i][j] = (0.975 + 0.01 * np.random.randn())
@@ -104,8 +104,8 @@ class Target(object):
         if not self.custom_ccd:
 
             # cx,cy: intra-pixel variation polynomial coefficients in x,y
-            cx = [1.0,0.0,-0.3]
-            cy = [1.0,0.0,-0.3]
+            cx = [1.0, 0.0, -0.3]
+            cy = [1.0, 0.0, -0.3]
 
             # x0,y0: center of PSF, half of aperture size plus random deviation
             x0 = (self.apsize / 2.0) + 0.2 * np.random.randn()
@@ -118,7 +118,7 @@ class Target(object):
             rho = [0.05 + 0.02 * np.random.randn()]
 
         else:
-            cx,cy,x0,y0,sx,sy,rho = ccd_args
+            cx, cy, x0, y0, sx, sy, rho = ccd_args
 
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         r = 10 ** (neighbor_magdiff / 2.5)
@@ -139,12 +139,12 @@ class Target(object):
                 for j in range(self.apsize):
 
                     # contribution to pixel from target
-                    target_pixval = self.trn[c] * PixelFlux(cx,cy,[self.A],[x0-i+self.xpos[c]],[y0-j+self.ypos[c]],sx,sy,rho)
+                    target_pixval = self.trn[c] * PixelFlux(cx, cy, [self.A], [x0-i+self.xpos[c]], [y0-j+self.ypos[c]], sx, sy, rho)
                     self.target[c][i][j] = target_pixval
 
                     # add neighbor contribution to pixel flux value
                     if neighbor:
-                        pixval = target_pixval+(1/r)*PixelFlux(cx,cy,[self.A],[neighborcoords[0]-i+self.xpos[c]],[neighborcoords[1]-j+self.ypos[c]],sx,sy,rho)
+                        pixval = target_pixval+(1/r)*PixelFlux(cx, cy, [self.A], [neighborcoords[0]-i+self.xpos[c]], [neighborcoords[1]-j+self.ypos[c]], sx, sy, rho)
                         self.fpix[c][i][j] = pixval
                     else:
                         self.fpix[c][i][j] = target_pixval
@@ -188,7 +188,7 @@ class Target(object):
         '''
 
         # simulation lasts 90 days, with n cadences
-        t = np.linspace(0,90,self.ncadences)
+        t = np.linspace(0, 90, self.ncadences)
 
         if self.depth == 0:
             trn = np.ones((self.ncadences))
