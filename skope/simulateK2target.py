@@ -20,6 +20,7 @@ import k2plr
 from k2plr.config import KPLR_ROOT
 from everest.config import KEPPRF_DIR
 import os
+from tqdm import tqdm
 
 class Target(object):
 
@@ -133,8 +134,8 @@ class Target(object):
         calculates flux in each pixel
         iterate through cadences (c), and x and y dimensions on the detector (i,j)
         '''
-
-        for c in range(self.ncadences):
+        
+        for c in tqdm(range(self.ncadences)):
             for i in range(self.apsize):
                 for j in range(self.apsize):
 
