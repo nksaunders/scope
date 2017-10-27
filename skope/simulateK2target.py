@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 import everest
 from everest.math import SavGol
-from intrapix import PixelFlux
+from .intrapix import PixelFlux
 from random import randint
 from astropy.io import fits
 import pyfits
