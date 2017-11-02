@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 import everest
 from everest.math import SavGol
-from .math import PixelFlux, PSF
+from .skopemath import PSF, PLD
 from random import randint
 from astropy.io import fits
 import pyfits
@@ -26,7 +26,7 @@ from tqdm import tqdm
 
 class Target(object):
 
-    def __init__(self, ID=205998445, custom_ccd=False, variability=False, ftpf=None):
+    def __init__(self, ID=205998445, custom_ccd=False, variability=False, transit=False, ftpf=None):
         '''
 
         '''
@@ -35,6 +35,7 @@ class Target(object):
         self.ID = ID
         self.ftpf = ftpf
         self.custom_ccd = custom_ccd
+        self.transit = transit
 
     def GenerateLightCurve(self, mag, roll=1., background_level=0., neighbor=False, ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
         '''
@@ -42,6 +43,7 @@ class Target(object):
         '''
 
         self.ncadences = ncadences
+        self.t = np.linspace(0, 90, self.ncadences) # simulation lasts 90 days, with n cadences
         self.apsize = apsize # number of pixels to a side for aperture
 
         # calculate PSF amplitude for given Kp Mag
@@ -126,11 +128,17 @@ class Target(object):
         # create flux light curve
         self.flux = np.sum(self.fpix.reshape((self.ncadences),-1),axis=1)
 
-        # define transit mask
-        self.M=lambda x: np.delete(x, self.trninds, axis = 0)
-
         return self.fpix, self.flux, self.ferr
 
+    def Detrend(self,fpix):
+        '''
+
+        '''
+
+        if not self.transit:
+            self.trninds = np.array([])
+
+        return PLD(fpix,self.trninds)
 
     def PSFAmplitude(self, mag):
         '''
@@ -148,9 +156,6 @@ class Target(object):
         Injects a transit into light curve
         '''
 
-        # simulation lasts 90 days, with n cadences
-        t = np.linspace(0, 90, self.ncadences)
-
         # transit information
         self.depth=depth
         self.per=per # period (days)
@@ -158,16 +163,21 @@ class Target(object):
         self.t0=t0 # initial transit time (days)
 
         # add transit to light curve
-        if self.depth==0:
-            self.trn=np.ones((self.ncadences))
+        if self.depth == 0:
+            self.trn = np.ones((self.ncadences))
         else:
-            self.trn=Transit(t, t0 = self.t0, per = self.per, dur = self.dur, depth = self.depth)
+            self.trn = Transit(self.t, t0 = self.t0, per = self.per, dur = self.dur, depth = self.depth)
+
+        # define transit mask
+        self.trninds = np.where(self.trn>1.0)
+        self.M=lambda x: np.delete(x, self.trninds, axis = 0)
 
         self.fpix_trn = np.zeros((self.ncadences, self.apsize, self.apsize))
         for i,c in enumerate(fpix):
             self.fpix_trn[i] = c * self.trn[i]
 
         self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences),-1),axis=1)
+        self.transit = True
 
         return self.fpix_trn, self.flux_trn
 
