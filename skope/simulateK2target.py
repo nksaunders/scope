@@ -80,19 +80,19 @@ class Target(object):
         self.xpos = self.xpos[0:self.ncadences] * roll
         self.ypos = self.ypos[0:self.ncadences] * roll
 
-        # create inter-pixel sensitivity variation matrix
+        # create self.inter-pixel sensitivity variation matrix
         # random normal distribution centered at 0.975
-        inter = np.zeros((self.apsize, self.apsize))
+        self.inter = np.zeros((self.apsize, self.apsize))
         for i in range(self.apsize):
             for j in range(self.apsize):
-                inter[i][j] = (0.975 + 0.01 * np.random.randn())
+                self.inter[i][j] = (0.975 + 0.01 * np.random.randn())
 
         # assign PSF model parameters to be passed into PixelFlux function
         if not self.custom_ccd:
 
             # cx,cy: intra-pixel variation polynomial coefficients in x,y
-            cx = [1.0, 0.0, -0.3]
-            cy = [1.0, 0.0, -0.3]
+            self.cx = [1.0, 0.0, -0.3]
+            self.cy = [1.0, 0.0, -0.3]
 
             # x0,y0: center of PSF, half of aperture size plus random deviation
             x0 = (self.apsize / 2.0) + 0.2 * np.random.randn()
@@ -104,12 +104,12 @@ class Target(object):
             sy = [0.5 + 0.05 * np.random.randn()]
             rho = [0.05 + 0.02 * np.random.randn()]
 
-            ccd_args = [cx,cy, [self.A], x0, y0, sx, sy, rho]
+            ccd_args = [self.cx, self.cy, [self.A], x0, y0, sx, sy, rho]
 
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         r = 10 ** (neighbor_magdiff / 2.5)
 
-        psfargs = [self.apsize, self.A, background_level, inter, photnoise_conversion]
+        psfargs = [self.apsize, self.A, background_level, self.inter, photnoise_conversion]
 
         # initialize pixel flux light curve, target light curve, and isolated noise in each pixel
         self.fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
@@ -166,21 +166,42 @@ class Target(object):
         if self.depth == 0:
             self.trn = np.ones((self.ncadences))
         else:
-            self.trn = Transit(self.t, t0 = self.t0, per = self.per, dur = self.dur, depth = self.depth)
+            self.trn = Transit(self.t, t0=self.t0, per=self.per, dur=self.dur, depth=self.depth)
 
         # define transit mask
         self.trninds = np.where(self.trn>1.0)
-        self.M=lambda x: np.delete(x, self.trninds, axis = 0)
+        self.M=lambda x: np.delete(x, self.trninds, axis=0)
 
         self.fpix_trn = np.zeros((self.ncadences, self.apsize, self.apsize))
         for i,c in enumerate(fpix):
             self.fpix_trn[i] = c * self.trn[i]
 
-        self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences),-1),axis=1)
+        self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences), -1), axis=1)
         self.transit = True
 
         return self.fpix_trn, self.flux_trn
 
+    def DisplayDetector(self):
+        '''
+        NOT WORKING YET
+        '''
+
+        xdim = np.linspace(0, self.apsize, 100)
+        ydim = np.linspace(0, self.apsize, 100)
+
+        res = int(1000 / self.apsize)
+
+        pixel_sens = np.zeros((res,res))
+
+        for i in range(res):
+            for j in range(res):
+                pixel_sens[i][j] = np.sum([c * (i-res/2) ** m for m, c in enumerate(self.cx)], axis = 0) + \
+                np.sum([c * (j-res/2) ** m for m, c in enumerate(self.cy)], axis = 0)
+
+        import pdb; pdb.set_trace()
+        intra = np.tile(pixel_sens, (self.apsize, self.apsize))
+
+        return intra * self.inter
 
     def AddVariability(self):
         '''

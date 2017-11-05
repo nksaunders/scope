@@ -227,20 +227,20 @@ def PSF(ccd_args, psfargs, xpos, ypos):
 
     return psf, psferr
 
-def PLD(fpix,trninds):
+def PLD(fpix, trninds):
     '''
     Perform first order PLD on a light curve
     Returns: detrended light curve, raw light curve
     '''
 
-    M = lambda x: np.delete(x,trninds,axis=0)
+    M = lambda x: np.delete(x,trninds, axis=0)
 
     #  generate flux light curve
     fpix = M(fpix)
-    rawflux = np.sum(fpix.reshape(len(fpix),-1),axis=1)
+    rawflux = np.sum(fpix.reshape(len(fpix),-1), axis = 1)
 
     # First order PLD
-    f1 = fpix.reshape(len(fpix),-1) / rawflux.reshape(-1,1)
+    f1 = fpix.reshape(len(fpix), -1) / rawflux.reshape(-1,1)
     pca = PCA(n_components = 20)
     X1 = pca.fit_transform(f1)
 
