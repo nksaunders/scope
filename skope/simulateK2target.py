@@ -191,7 +191,7 @@ class Target(object):
 
     def AddVariability(self, fpix, var_amp=0.0005, freq=0.25):
         '''
-
+        Add a sinusoidal variability model to the given light curve.
         '''
 
         V = 1 + var_amp * np.sin(freq*self.t)
