@@ -183,7 +183,7 @@ class Target(object):
 
     def DisplayDetector(self):
         '''
-        NOT WORKING YET
+        Returns array for CCD pixel sensitivity
         '''
 
         xdim = np.linspace(0, self.apsize, 100)
@@ -198,10 +198,14 @@ class Target(object):
                 pixel_sens[i][j] = np.sum([c * (i-res/2) ** m for m, c in enumerate(self.cx)], axis = 0) + \
                 np.sum([c * (j-res/2) ** m for m, c in enumerate(self.cy)], axis = 0)
 
-        import pdb; pdb.set_trace()
         intra = np.tile(pixel_sens, (self.apsize, self.apsize))
+        self.detector = np.zeros((res*self.apsize,res*self.apsize))
 
-        return intra * self.inter
+        for i in range(self.apsize):
+            for j in range(self.apsize):
+                self.detector[i*res:(i+1)*res][j*res:(j+1)*res] = intra[i*res:(i+1)*res][j*res:(j+1)*res] * self.inter[i][j]
+
+        return self.detector
 
     def AddVariability(self):
         '''
