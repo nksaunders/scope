@@ -213,15 +213,15 @@ def PSF(ccd_args, psfargs, xpos, ypos):
             noise = background_level * np.random.randn()
             psf[i][j] += noise
 
-            # ensure positive
-            while psf[i][j] < 0:
-                psf[i][j] = noise
-
             # add photon noise
             psferr[i][j] = np.sqrt(np.abs(psf[i][j]) * photnoise_conversion)
             randnum = np.random.randn()
             psf[i][j] += psferr[i][j] * randnum
 
+            # ensure positive
+            while psf[i][j] < 0:
+                psf[i][j] = noise
+                
         # multiply each cadence by inter-pixel sensitivity variation
         psf * inter
 
