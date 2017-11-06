@@ -26,7 +26,7 @@ from tqdm import tqdm
 
 class Target(object):
 
-    def __init__(self, ID=205998445, custom_ccd=False, variability=False, transit=False, ftpf=None):
+    def __init__(self, ID=205998445, custom_ccd=False, transit=False, variable=False, ftpf=None):
         '''
 
         '''
@@ -36,6 +36,7 @@ class Target(object):
         self.ftpf = ftpf
         self.custom_ccd = custom_ccd
         self.transit = transit
+        self.variable = variable
 
     def GenerateLightCurve(self, mag, roll=1., background_level=0., neighbor=False, ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
         '''
@@ -125,8 +126,15 @@ class Target(object):
         for c in tqdm(range(self.ncadences)):
             self.fpix[c], self.ferr[c] = PSF(ccd_args, psfargs, self.xpos[c], self.ypos[c])
 
-        # create flux light curve
-        self.flux = np.sum(self.fpix.reshape((self.ncadences),-1),axis=1)
+        # add transit and variability
+        if self.transit:
+            self.fpix, self.flux = self.AddTransit(self.fpix)
+
+        if self.variable:
+            self.fpix, self.flux = self.AddVariability(self.fpix)
+        else:
+            # create flux light curve
+            self.flux = np.sum(self.fpix.reshape((self.ncadences),-1),axis=1)
 
         return self.fpix, self.flux, self.ferr
 
@@ -151,7 +159,7 @@ class Target(object):
         return a * np.exp(-b * (mag+c))
 
 
-    def AddTransit(self, fpix, depth=.01, per=15, dur=.5, t0=5.):
+    def AddTransit(self, fpix, depth=.001, per=15, dur=.5, t0=5.):
         '''
         Injects a transit into light curve
         '''
@@ -181,9 +189,21 @@ class Target(object):
 
         return self.fpix_trn, self.flux_trn
 
+    def AddVariability(self, fpix, var_amp=0.0005, freq=0.25):
+        '''
+
+        '''
+
+        V = 1 + var_amp * np.sin(freq*self.t)
+        V_fpix = [f * V[i] for i,f in enumerate(fpix)]
+
+        V_flux = np.sum(np.array(V_fpix).reshape((self.ncadences), -1), axis=1)
+
+        return V_fpix, V_flux
+
     def DisplayDetector(self):
         '''
-        Returns array for CCD pixel sensitivity
+        Returns matrix for CCD pixel sensitivity
         '''
 
         xdim = np.linspace(0, self.apsize, 100)
@@ -205,11 +225,7 @@ class Target(object):
             for j in range(self.apsize):
                 self.detector[i*res:(i+1)*res][j*res:(j+1)*res] = intra[i*res:(i+1)*res][j*res:(j+1)*res] * self.inter[i][j]
 
+        pl.imshow(self.detector, origin='lower', cmap='gray')
+        pl.show()
+
         return self.detector
-
-    def AddVariability(self):
-        '''
-
-        '''
-
-        pass
