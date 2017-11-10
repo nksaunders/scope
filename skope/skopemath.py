@@ -14,6 +14,7 @@ from scipy.integrate import quad, dblquad
 from sklearn.decomposition import PCA
 from itertools import combinations_with_replacement as multichoose
 import timeit, builtins
+import george
 
 def Polynomial(x, coeffs):
   '''
@@ -220,20 +221,20 @@ def PSF(ccd_args, psfargs, xpos, ypos):
 
             # ensure positive
             while psf[i][j] < 0:
-                psf[i][j] = noise
-                
+                psf[i][j] = background_level * np.random.randn()
+
         # multiply each cadence by inter-pixel sensitivity variation
         psf * inter
 
     return psf, psferr
 
-def PLD(fpix, trninds):
+def PLD(fpix, trninds, ferr, t):
     '''
     Perform first order PLD on a light curve
     Returns: detrended light curve, raw light curve
     '''
 
-    M = lambda x: np.delete(x,trninds, axis=0)
+    M = lambda x: np.delete(x, trninds, axis=0)
 
     #  generate flux light curve
     fpix = M(fpix)
@@ -254,13 +255,21 @@ def PLD(fpix, trninds):
 
     MX = M(X)
 
-    A = np.dot(MX.T, MX)
-    B = np.dot(MX.T, M(rawflux))
+    X = M(rawflux / rawflux.reshape(-1, 1))
+    y = M(rawflux) - np.dot(X, np.linalg.solve(np.dot(X.T, X), np.dot(X.T, M(rawflux))))
+
+    amp = np.nanstd(y)
+    tau = 30.
+
+    gp = george.GP(amp ** 2 * george.kernels.Matern32Kernel(tau ** 2))
+    sigma = gp.get_matrix(M(t)) + np.diag(M(np.sum(ferr.reshape(len(ferr),-1), axis = 1))**2)
+    import pdb; pdb.set_trace()
+    A = np.dot(MX.T, np.linalg.solve(sigma, MX))
+    B = np.dot(MX.T, np.linalg.solve(sigma, M(rawflux)))
     C = np.linalg.solve(A, B)
 
     # compute detrended light curve
     model = np.dot(X, C)
-
     flux = rawflux - model + np.nanmean(rawflux)
 
     # folded
@@ -268,6 +277,27 @@ def PLD(fpix, trninds):
     # T = (t - 5.0 - per / 2.) % per - per / 2.
 
     return flux, rawflux
+
+def GP(fpix, t, ferr, trninds):
+    '''
+
+    '''
+
+    flux = np.sum(np.array(fpix).reshape(len(fpix),-1), axis = 1)
+    M = lambda x: np.delete(x,trninds, axis=0)
+
+    X = M(flux / flux.reshape(-1, 1))
+    y = M(flux) - np.dot(X, np.linalg.solve(np.dot(X.T, X), np.dot(X.T, M(flux))))
+
+    amp = np.nanstd(y)
+    tau = 30.
+    gp = george.GP(amp ** 2 * george.kernels.Matern32Kernel(tau ** 2))
+    gp.compute(M(t), M(np.sum(np.array(ferr).reshape(len(ferr),-1), axis = 1)))
+
+    med = np.nanmedian(M(flux))
+    y, _ = gp.predict(M(flux) - med, t)
+
+    return flux - y
 
 if __name__ == '__main__':
 
