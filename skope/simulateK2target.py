@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 import everest
 from everest.math import SavGol
-from .skopemath import PSF, PLD
+from .skopemath import PSF, PLD, GP
 from random import randint
 from astropy.io import fits
 import pyfits
@@ -138,7 +138,7 @@ class Target(object):
 
         return self.fpix, self.flux, self.ferr
 
-    def Detrend(self,fpix):
+    def Detrend(self, fpix):
         '''
 
         '''
@@ -146,7 +146,15 @@ class Target(object):
         if not self.transit:
             self.trninds = np.array([])
 
-        return PLD(fpix,self.trninds)
+        no = False
+
+        if no:
+            flux = GP(fpix, self.t, self.ferr, self.trninds)
+
+        flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t)
+
+
+        return flux, rawflux
 
     def PSFAmplitude(self, mag):
         '''
@@ -163,6 +171,8 @@ class Target(object):
         '''
         Injects a transit into light curve
         '''
+
+        self.transit = True
 
         # transit information
         self.depth=depth
@@ -193,6 +203,8 @@ class Target(object):
         '''
         Add a sinusoidal variability model to the given light curve.
         '''
+
+        self.variable = True
 
         V = 1 + var_amp * np.sin(freq*self.t)
         V_fpix = [f * V[i] for i,f in enumerate(fpix)]
