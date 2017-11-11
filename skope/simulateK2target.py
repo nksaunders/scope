@@ -25,11 +25,11 @@ import os
 from tqdm import tqdm
 
 class Target(object):
+    '''
+
+    '''
 
     def __init__(self, ID=205998445, custom_ccd=False, transit=False, variable=False, ftpf=None):
-        '''
-
-        '''
 
         # initialize self variables
         self.ID = ID
@@ -143,14 +143,11 @@ class Target(object):
 
         '''
 
+        # Set empty transit mask if no transit provided
         if not self.transit:
             self.trninds = np.array([])
 
-        no = False
-
-        if no:
-            flux = GP(fpix, self.t, self.ferr, self.trninds)
-
+        # Run 2nd order PLD with a Gaussian Process
         flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t)
 
         return flux, rawflux
@@ -173,41 +170,49 @@ class Target(object):
 
         self.transit = True
 
-        # transit information
+        # Transit information
         self.depth=depth
         self.per=per # period (days)
         self.dur=dur # duration (days)
         self.t0=t0 # initial transit time (days)
 
-        # add transit to light curve
+        # Create transit light curve
         if self.depth == 0:
             self.trn = np.ones((self.ncadences))
         else:
             self.trn = Transit(self.t, t0=self.t0, per=self.per, dur=self.dur, depth=self.depth)
 
-        # define transit mask
+        # Define transit mask
         self.trninds = np.where(self.trn>1.0)
         self.M=lambda x: np.delete(x, self.trninds, axis=0)
 
+        # Add transit to light curve
         self.fpix_trn = np.zeros((self.ncadences, self.apsize, self.apsize))
         for i,c in enumerate(fpix):
             self.fpix_trn[i] = c * self.trn[i]
 
+        # Create flux light curve
         self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences), -1), axis=1)
-        self.transit = True
 
         return self.fpix_trn, self.flux_trn
 
-    def AddVariability(self, fpix, var_amp=0.0005, freq=0.25):
+    def AddVariability(self, fpix, var_amp=0.0005, freq=0.25, custom_variability=[]):
         '''
         Add a sinusoidal variability model to the given light curve.
         '''
 
         self.variable = True
 
-        V = 1 + var_amp * np.sin(freq*self.t)
+        # Check for custom variability
+        if len(custom_variability) != 0:
+            V = custom_variability
+        else:
+            V = 1 + var_amp * np.sin(freq*self.t)
+
+        # Add variability to light curve
         V_fpix = [f * V[i] for i,f in enumerate(fpix)]
 
+        # Create flux light curve
         V_flux = np.sum(np.array(V_fpix).reshape((self.ncadences), -1), axis=1)
 
         return V_fpix, V_flux
@@ -217,25 +222,31 @@ class Target(object):
         Returns matrix for CCD pixel sensitivity
         '''
 
+        # Define detector dimensions
         xdim = np.linspace(0, self.apsize, 100)
         ydim = np.linspace(0, self.apsize, 100)
 
+        # Pixel resolution
         res = int(1000 / self.apsize)
 
         pixel_sens = np.zeros((res,res))
 
+        # Calculate sensitivity function with detector parameters for individual pixel
         for i in range(res):
             for j in range(res):
                 pixel_sens[i][j] = np.sum([c * (i-res/2) ** m for m, c in enumerate(self.cx)], axis = 0) + \
                 np.sum([c * (j-res/2) ** m for m, c in enumerate(self.cy)], axis = 0)
 
+        # Tile to create detector
         intra = np.tile(pixel_sens, (self.apsize, self.apsize))
         self.detector = np.zeros((res*self.apsize,res*self.apsize))
 
+        # Multiply by inter-pixel sensitivity variables
         for i in range(self.apsize):
             for j in range(self.apsize):
                 self.detector[i*res:(i+1)*res][j*res:(j+1)*res] = intra[i*res:(i+1)*res][j*res:(j+1)*res] * self.inter[i][j]
 
+        # Display detector
         pl.imshow(self.detector, origin='lower', cmap='gray')
         pl.show()
 
