@@ -255,7 +255,7 @@ def PLD(fpix, trninds, ferr, t):
 
     MX = M(X)
 
-    X = M(rawflux / rawflux.reshape(-1, 1))
+    # X = M(rawflux / rawflux.reshape(-1, 1))
     y = M(rawflux) - np.dot(X, np.linalg.solve(np.dot(X.T, X), np.dot(X.T, M(rawflux))))
 
     amp = np.nanstd(y)
@@ -263,7 +263,7 @@ def PLD(fpix, trninds, ferr, t):
 
     gp = george.GP(amp ** 2 * george.kernels.Matern32Kernel(tau ** 2))
     sigma = gp.get_matrix(M(t)) + np.diag(M(np.sum(ferr.reshape(len(ferr),-1), axis = 1))**2)
-    import pdb; pdb.set_trace()
+
     A = np.dot(MX.T, np.linalg.solve(sigma, MX))
     B = np.dot(MX.T, np.linalg.solve(sigma, M(rawflux)))
     C = np.linalg.solve(A, B)
@@ -271,10 +271,6 @@ def PLD(fpix, trninds, ferr, t):
     # compute detrended light curve
     model = np.dot(X, C)
     flux = rawflux - model + np.nanmean(rawflux)
-
-    # folded
-    # D = (detrended - np.dot(C[1:], X[:,1:].T) + np.nanmedian(detrended)) / np.nanmedian(detrended)
-    # T = (t - 5.0 - per / 2.) % per - per / 2.
 
     return flux, rawflux
 
