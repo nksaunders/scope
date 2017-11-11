@@ -153,7 +153,6 @@ class Target(object):
 
         flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t)
 
-
         return flux, rawflux
 
     def PSFAmplitude(self, mag):
