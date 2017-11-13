@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 import everest
 from everest.math import SavGol
-from .skopemath import PSF, PLD, GP
+from .skopemath import PSF, PLD
 from random import randint
 from astropy.io import fits
 import pyfits
@@ -26,7 +26,7 @@ from tqdm import tqdm
 
 class Target(object):
     '''
-
+    A simulated K2 object with a forward model of the Kepler detector sensitivity variation
     '''
 
     def __init__(self, ID=205998445, custom_ccd=False, transit=False, variable=False, ftpf=None):
@@ -40,16 +40,17 @@ class Target(object):
 
     def GenerateLightCurve(self, mag, roll=1., background_level=0., neighbor=False, ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
         '''
-
+        Creates a light curve for given detector, star, and transiting exoplanet parameters
+        Motion from a real K2 target is applied to the PSF
         '''
 
         self.ncadences = ncadences
         self.t = np.linspace(0, 90, self.ncadences) # simulation lasts 90 days, with n cadences
         self.apsize = apsize # number of pixels to a side for aperture
+        self.background_level = background_level
 
         # calculate PSF amplitude for given Kp Mag
         self.A = self.PSFAmplitude(mag)
-
 
         # read in K2 motion vectors for provided K2 target (EPIC ID #)
         if self.ftpf is None:
@@ -118,19 +119,18 @@ class Target(object):
         self.ferr = np.zeros((self.ncadences, self.apsize, self.apsize))
 
         '''
-        here is where the light curves are created
-        calculates flux in each pixel
-        iterate through cadences (c), and x and y dimensions on the detector (i,j)
+        Here is where the light curves are created
+        PLD function calculates flux in each pixel
+        Iterate through cadences (c), and x and y dimensions on the detector (i,j)
         '''
 
         for c in tqdm(range(self.ncadences)):
-            self.fpix[c], self.ferr[c] = PSF(ccd_args, psfargs, self.xpos[c], self.ypos[c])
+            self.fpix[c], self.target[c], self.ferr[c] = PSF(ccd_args, psfargs, self.xpos[c], self.ypos[c])
 
         # add transit and variability
         if self.transit:
             self.fpix, self.flux = self.AddTransit(self.fpix)
-
-        if self.variable:
+        elif self.variable:
             self.fpix, self.flux = self.AddVariability(self.fpix)
         else:
             # create flux light curve
@@ -140,15 +140,21 @@ class Target(object):
 
     def Detrend(self, fpix):
         '''
-
+        Runs 2nd order PLD with a Gaussian Proccess on a given light curve
         '''
 
         # Set empty transit mask if no transit provided
         if not self.transit:
             self.trninds = np.array([])
 
+        # Check background level and define aperture
+        if self.background_level != 0:
+            aperture = self.Aperture(fpix)
+        else:
+            aperture = np.ones((self.apsize, self.apsize))
+
         # Run 2nd order PLD with a Gaussian Process
-        flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t)
+        flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t, aperture)
 
         return flux, rawflux
 
@@ -216,6 +222,41 @@ class Target(object):
         V_flux = np.sum(np.array(V_fpix).reshape((self.ncadences), -1), axis=1)
 
         return V_fpix, V_flux
+
+    def Aperture(self, fpix):
+        '''
+        Create an aperture including all pixels containing target flux
+        '''
+
+        aperture = np.zeros((self.ncadences, self.apsize, self.apsize))
+
+        # Identify pixels with target flux for each cadence
+        for c,f in enumerate(self.target):
+            for i in range(self.apsize):
+                for j in range(self.apsize):
+                    if f[i][j] < 1.:
+                        aperture[c][i][j] = 0
+                    else:
+                        aperture[c][i][j] = 1
+
+        # Create single aperture
+        finalap = np.zeros((self.apsize, self.apsize))
+
+        # Sum apertures to weight pixels
+        for i in range(self.apsize):
+            for ap in aperture:
+                finalap[i] += ap[i]
+
+        # Normalize to 1
+        finalap /= np.max(finalap)
+
+        # Set excluded pixels to NaN
+        for i in range(self.apsize):
+            for j in range(self.apsize):
+                if finalap[i][j] == 0:
+                    finalap[i][j] = np.nan
+
+        return finalap
 
     def DisplayDetector(self):
         '''
