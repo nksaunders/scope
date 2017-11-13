@@ -206,15 +206,17 @@ def PSF(ccd_args, psfargs, xpos, ypos):
     # Define apertures
     psf = np.zeros((apsize, apsize))
     psferr = np.zeros((apsize, apsize))
+    target = np.zeros((apsize, apsize))
 
     for i in range(apsize):
         for j in range(apsize):
 
             # contribution to pixel from target
             psf[i][j] = PixelFlux(cx, cy, [A], [x0-i+xpos], [y0-j+ypos], sx, sy, rho)
+            target[i][j] = psf[i][j]
 
             # add background noise
-            noise = background_level * np.random.randn()
+            noise = np.sqrt(np.abs(background_level * np.random.randn()))
             psf[i][j] += noise
 
             # add photon noise
@@ -224,27 +226,37 @@ def PSF(ccd_args, psfargs, xpos, ypos):
 
             # ensure positive
             while psf[i][j] < 0:
-                psf[i][j] = background_level * np.random.randn()
+                psf[i][j] = np.sqrt(np.abs(background_level * np.random.randn()))
 
         # multiply each cadence by inter-pixel sensitivity variation
         psf * inter
 
-    return psf, psferr
+    return psf, target, psferr
 
-def PLD(fpix, trninds, ferr, t):
+def PLD(fpix, trninds, ferr, t, aperture):
     '''
     Perform first order PLD on a light curve
     Returns: detrended light curve, raw light curve
     '''
 
+    aperture = [aperture for i in range(len(fpix))]
+
     M = lambda x: np.delete(x, trninds, axis=0)
 
     #  generate flux light curve
     fpix = M(fpix)
-    rawflux = np.sum(fpix.reshape(len(fpix),-1), axis = 1)
+    fpix_rs = (fpix*aperture).reshape(len(fpix),-1)
+    fpix_ap = np.zeros((len(fpix),len(np.delete(fpix_rs[0],np.where(np.isnan(fpix_rs[0]))))))
+
+    for c in range(len(fpix_rs)):
+        naninds = np.where(np.isnan(fpix_rs[c]))
+        fpix_ap[c] = np.delete(fpix_rs[c],naninds)
+
+    fpix = fpix_ap
+    rawflux = np.sum(fpix.reshape(len(fpix),-1), axis=1)
 
     # First order PLD
-    f1 = fpix.reshape(len(fpix), -1) / rawflux.reshape(-1, 1)
+    f1 = fpix / rawflux.reshape(-1, 1)
     pca = PCA(n_components=20)
     X1 = pca.fit_transform(f1)
 
