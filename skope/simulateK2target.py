@@ -119,7 +119,7 @@ class Target(object):
 
         '''
         Here is where the light curves are created
-        PLD function calculates flux in each pixel
+        PSF function calculates flux in each pixel
         Iterate through cadences (c), and x and y dimensions on the detector (i,j)
         '''
 
