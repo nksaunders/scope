@@ -5,8 +5,7 @@ Simulate K2 target
 ------------------
 Generate a simulated K2 target with motion vectors
 from a real K2 observation of a given EPIC ID #.
-Optionally includes synthetic transit injection.
-!! (include sinusoidal stellar variability functionality)
+Optionally includes synthetic transit and variability injection.
 '''
 
 import numpy as np
