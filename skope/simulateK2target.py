@@ -129,11 +129,11 @@ class Target(object):
         # add transit and variability
         if self.transit:
             self.fpix, self.flux = self.AddTransit(self.fpix)
-        elif self.variable:
+        if self.variable:
             self.fpix, self.flux = self.AddVariability(self.fpix)
-        else:
+        if not self.transit and not self.variable:
             # create flux light curve
-            self.flux = np.sum(self.fpix.reshape((self.ncadences),-1),axis=1)
+            self.flux = np.sum(self.fpix.reshape((self.ncadences), -1), axis=1)
 
         return self.fpix, self.flux, self.ferr
 
