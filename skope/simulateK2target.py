@@ -222,6 +222,13 @@ class Target(object):
 
         return V_fpix, V_flux
 
+    def AddNeighbor(self, magdiff=1., distance=2.):
+        '''
+
+        '''
+
+
+
     def Aperture(self, fpix):
         '''
         Create an aperture including all pixels containing target flux
