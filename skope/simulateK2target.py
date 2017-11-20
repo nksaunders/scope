@@ -227,6 +227,7 @@ class Target(object):
 
         '''
 
+        pass
 
 
     def Aperture(self, fpix):
