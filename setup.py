@@ -37,7 +37,7 @@ setup(name = 'skope',
       license = 'MIT',
       packages = ['skope'],
       install_requires = [
-                          'everest',
+                          'everest-pipeline',
                          ],
       include_package_data = True,
       zip_safe = False,
