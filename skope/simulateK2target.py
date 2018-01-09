@@ -11,7 +11,7 @@ Optionally includes synthetic transit and variability injection.
 import numpy as np
 import matplotlib.pyplot as pl
 import everest
-from everest.math import SavGol
+from everest.mathutils import SavGol
 from .skopemath import PSF, PLD
 from random import randint
 from astropy.io import fits
