@@ -102,7 +102,7 @@ class Target(object):
             # sx,sy: standard deviation of Gaussian in x,y
             # rho: rotation angle between x and y dimensions of Gaussian
             sinx = np.linspace(0, 10*np.pi, 100)
-            sinvals = 0.5 + np.sin(xs) / 4
+            sinvals = 0.5 + np.sin(sinx) / 4
             # sx = [0.5 + 0.05 * np.random.randn()]
             # sy = [0.5 + 0.05 * np.random.randn()]
             sx = sinvals
