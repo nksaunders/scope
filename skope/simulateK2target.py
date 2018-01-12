@@ -101,8 +101,12 @@ class Target(object):
 
             # sx,sy: standard deviation of Gaussian in x,y
             # rho: rotation angle between x and y dimensions of Gaussian
-            sx = [0.5 + 0.05 * np.random.randn()]
-            sy = [0.5 + 0.05 * np.random.randn()]
+            sinx = np.linspace(0, 10*np.pi, 100)
+            sinvals = 0.5 + np.sin(xs) / 4
+            # sx = [0.5 + 0.05 * np.random.randn()]
+            # sy = [0.5 + 0.05 * np.random.randn()]
+            sx = sinvals
+            sy = sinvals
             rho = [0.05 + 0.02 * np.random.randn()]
 
             ccd_args = [self.cx, self.cy, [self.A], x0, y0, sx, sy, rho]
