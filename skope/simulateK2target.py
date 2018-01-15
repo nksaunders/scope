@@ -101,12 +101,10 @@ class Target(object):
 
             # sx,sy: standard deviation of Gaussian in x,y
             # rho: rotation angle between x and y dimensions of Gaussian
-            sinx = np.linspace(0, 10*np.pi, 100)
-            sinvals = 0.5 + np.sin(sinx) / 4
-            # sx = [0.5 + 0.05 * np.random.randn()]
-            # sy = [0.5 + 0.05 * np.random.randn()]
-            sx = sinvals
-            sy = sinvals
+            sinx = np.linspace(0, 5*np.pi, self.ncadences) #hack
+            sinvals = 2. + np.sin(sinx)
+            sx = [0.5 + 0.05 * np.random.randn()]
+            sy = [0.5 + 0.05 * np.random.randn()]
             rho = [0.05 + 0.02 * np.random.randn()]
 
             ccd_args = [self.cx, self.cy, [self.A], x0, y0, sx, sy, rho]
@@ -128,6 +126,9 @@ class Target(object):
         '''
 
         for c in tqdm(range(self.ncadences)):
+
+            # TOTALLY HACKY - JUST FOR PLOTS
+            ccd_args = [self.cx, self.cy, [self.A], x0, y0, [0.5 + sinvals[c] / 8], [0.5 + sinvals[c] / 8], rho]
             self.fpix[c], self.target[c], self.ferr[c] = PSF(ccd_args, psfargs, self.xpos[c], self.ypos[c])
 
         # add transit and variability
