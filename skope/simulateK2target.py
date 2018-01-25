@@ -107,7 +107,7 @@ class Target(object):
             sx = [0.5 + 0.05 * np.random.randn()]
             sy = [0.5 + 0.05 * np.random.randn()]
             rho = [0.05 + 0.02 * np.random.randn()]
-            psf_args = [[self.A], x0, y0, sx, sy, rho]
+            psf_args = np.concatenate([[self.A], [x0], [y0], sx, sy, rho])
 
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         r = 10 ** (neighbor_magdiff / 2.5)
@@ -125,7 +125,7 @@ class Target(object):
         PSF function calculates flux in each pixel
         Iterate through cadences (c), and x and y dimensions on the detector (i,j)
         '''
-        print(psf_args)
+
         for c in tqdm(range(self.ncadences)):
 
             self.fpix[c], self.target[c], self.ferr[c] = PSF(psf_args, ccd_args, self.xpos[c], self.ypos[c])
