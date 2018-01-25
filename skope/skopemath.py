@@ -201,8 +201,8 @@ def PSF(psf_args, ccd_args, xpos, ypos):
     '''
 
     # Read in detector and PSF arguments
-    cx, cy, A, x0, y0, sx, sy, rho = psf_args
-    apsize, A, background_level, inter, photnoise_conversion = ccd_args
+    A, x0, y0, sx, sy, rho = psf_args
+    cx, cy, apsize, A, background_level, inter, photnoise_conversion = ccd_args
 
     # Define apertures
     psf = np.zeros((apsize, apsize))
