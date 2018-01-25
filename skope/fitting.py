@@ -62,3 +62,5 @@ class PSFFit(object):
         bic = chisq + len(answer) * np.log(len(fpix))
 
         return answer
+
+        
