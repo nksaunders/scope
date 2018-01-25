@@ -213,7 +213,7 @@ def PSF(psf_args, ccd_args, xpos, ypos):
         for j in range(apsize):
 
             # contribution to pixel from target
-            psf[i][j] = PixelFlux(cx, cy, [A], [x0-i+xpos], [y0-j+ypos], sx, sy, rho)
+            psf[i][j] = PixelFlux(cx, cy, [A], [x0-i+xpos], [y0-j+ypos], [sx], [sy], [rho])
             target[i][j] = psf[i][j]
 
             # add background noise
