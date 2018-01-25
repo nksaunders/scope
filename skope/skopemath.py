@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 from scipy.special import erf
 from scipy.integrate import quad, dblquad
+from scipy.optimize import fmin_powell
 from sklearn.decomposition import PCA
 from itertools import combinations_with_replacement as multichoose
 import timeit, builtins
@@ -194,14 +195,14 @@ def TestIntegration():
     print("Numerical     (%.1e s): %.9e" % (tnum, fnum()))
     print("Difference    (   %.1f x): %.9e" % (tnum/tsem, np.abs(1 - fnum()/fsem())))
 
-def PSF(ccd_args, psfargs, xpos, ypos):
+def PSF(psf_args, ccd_args, xpos, ypos):
     '''
 
     '''
 
     # Read in detector and PSF arguments
-    cx, cy, A, x0, y0, sx, sy, rho = ccd_args
-    apsize, A, background_level, inter, photnoise_conversion = psfargs
+    cx, cy, A, x0, y0, sx, sy, rho = psf_args
+    apsize, A, background_level, inter, photnoise_conversion = ccd_args
 
     # Define apertures
     psf = np.zeros((apsize, apsize))
