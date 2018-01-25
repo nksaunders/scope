@@ -13,7 +13,7 @@ import matplotlib.pyplot as pl
 import everest
 from everest.mathutils import SavGol
 from .skopemath import PSF, PLD
-import fitting
+from . import fitting
 from random import randint
 from astropy.io import fits
 import pyfits
@@ -107,13 +107,13 @@ class Target(object):
             sx = [0.5 + 0.05 * np.random.randn()]
             sy = [0.5 + 0.05 * np.random.randn()]
             rho = [0.05 + 0.02 * np.random.randn()]
-
-            psf_args = [self.cx, self.cy, [self.A], x0, y0, sx, sy, rho]
+            psf_args = [[self.A], x0, y0, sx, sy, rho]
 
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         r = 10 ** (neighbor_magdiff / 2.5)
 
-        ccd_args = [self.apsize, self.A, background_level, self.inter, photnoise_conversion]
+        ccd_args = [self.cx, self.cy, self.apsize, self.A, background_level, self.inter, photnoise_conversion]
+        self.ccd_args = ccd_args
 
         # initialize pixel flux light curve, target light curve, and isolated noise in each pixel
         self.fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
@@ -125,11 +125,9 @@ class Target(object):
         PSF function calculates flux in each pixel
         Iterate through cadences (c), and x and y dimensions on the detector (i,j)
         '''
-
+        print(psf_args)
         for c in tqdm(range(self.ncadences)):
 
-            # TOTALLY HACKY - JUST FOR PLOTS
-            psf_args = [self.cx, self.cy, [self.A], x0, y0, [0.5 + sinvals[c] / 8], [0.5 + sinvals[c] / 8], rho]
             self.fpix[c], self.target[c], self.ferr[c] = PSF(psf_args, ccd_args, self.xpos[c], self.ypos[c])
 
         # add transit and variability
