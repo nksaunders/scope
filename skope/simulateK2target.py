@@ -107,12 +107,12 @@ class Target(object):
             sy = [0.5 + 0.05 * np.random.randn()]
             rho = [0.05 + 0.02 * np.random.randn()]
 
-            ccd_args = [self.cx, self.cy, [self.A], x0, y0, sx, sy, rho]
+            psf_args = [self.cx, self.cy, [self.A], x0, y0, sx, sy, rho]
 
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         r = 10 ** (neighbor_magdiff / 2.5)
 
-        psfargs = [self.apsize, self.A, background_level, self.inter, photnoise_conversion]
+        ccd_args = [self.apsize, self.A, background_level, self.inter, photnoise_conversion]
 
         # initialize pixel flux light curve, target light curve, and isolated noise in each pixel
         self.fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
@@ -128,8 +128,8 @@ class Target(object):
         for c in tqdm(range(self.ncadences)):
 
             # TOTALLY HACKY - JUST FOR PLOTS
-            ccd_args = [self.cx, self.cy, [self.A], x0, y0, [0.5 + sinvals[c] / 8], [0.5 + sinvals[c] / 8], rho]
-            self.fpix[c], self.target[c], self.ferr[c] = PSF(ccd_args, psfargs, self.xpos[c], self.ypos[c])
+            psf_args = [self.cx, self.cy, [self.A], x0, y0, [0.5 + sinvals[c] / 8], [0.5 + sinvals[c] / 8], rho]
+            self.fpix[c], self.target[c], self.ferr[c] = PSF(psf_args, ccd_args, self.xpos[c], self.ypos[c])
 
         # add transit and variability
         if self.transit:
