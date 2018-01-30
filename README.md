@@ -5,7 +5,7 @@
 
 This package includes methods to change magnitude of motion and sensitivity properties of the CCD, inject synthetic transiting exoplanet targets and stellar variability, and test PLD de-trending.
 
-For examples of usage, see [the sample notebook](https://nksaunders.github.io/Example.html).
+For examples of usage, see [the sample notebook](https://nksaunders.github.io/files/Example.html).
 
 Note that **skope** depends on the **EVEREST** pipeline (Luger et. al). **EVEREST** can be installed with:
 <pre><code>pip install everest-pipeline</code></pre>
