@@ -303,3 +303,32 @@ class Target(object):
         pl.show()
 
         return self.detector
+
+
+    def FitPSF(self, fpix):
+        '''
+
+        '''
+
+        PF = fitting.PSFFit(fpix, self.ferr, self.xpos, self.ypos, self.ccd_args)
+
+        A = [200000]
+        sx = [0.5]
+        sy = [0.5]
+        rho = [0.05]
+
+        guess = np.concatenate([A, [self.apsize/2], [self.apsize/2], sx, sy, rho])
+
+        ans_set = []
+        print("Finding solutions...")
+        for i in tqdm(range(self.ncadences)):
+            ans_cadence = PF.FindSolution(guess, i)
+            ans_set.append(ans_cadence)
+
+        print("Creating PSF...")
+        fit_fpix = []
+        for ind, ans in tqdm(enumerate(ans_set)):
+            cadence, _, _ = PSF(ans, self.ccd_args, self.xpos[ind], self.ypos[ind])
+            fit_fpix.append(cadence)
+
+        return fit_fpix
