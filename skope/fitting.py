@@ -15,7 +15,7 @@ class PSFFit(object):
         self.ftol = 0.0001
         self.fpix = fpix
         self.ferr = ferr
-        self.index = 50
+        # self.index = 50
         self.ccd_args = ccd_args
         self.xpos = xpos
         self.ypos = ypos
@@ -53,10 +53,12 @@ class PSFFit(object):
         return PSFres
 
 
-    def FindSolution(self, guess):
+    def FindSolution(self, guess, index):
         '''
         minimize residuals to find best PSF fit for the data
         '''
+
+        self.index = index
 
         answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, guess, xtol = self.xtol, ftol = self.ftol,
                                                              disp = False, full_output = True)
