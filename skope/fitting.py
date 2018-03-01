@@ -5,7 +5,7 @@ from astropy.io import fits
 import pyfits
 import os
 from scipy.optimize import fmin_powell
-from skopemath import PSF, PLD
+from .skopemath import PSF, PLD
 
 class PSFFit(object):
 
