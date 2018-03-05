@@ -227,7 +227,7 @@ class Target(object):
 
         return V_fpix, V_flux
 
-    def AddNeighbor(self, fpix, magdiff=1., dist=2.):
+    def AddNeighbor(self, fpix, magdiff=1., dist=2.5):
         '''
 
         '''
