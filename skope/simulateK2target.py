@@ -226,7 +226,7 @@ class Target(object):
 
         return V_fpix, V_flux
 
-    def AddNeighbor(self, fpix, magdiff=1., distance=2.):
+    def AddNeighbor(self, fpix, magdiff=1., dist=2.):
         '''
 
         '''
@@ -235,8 +235,8 @@ class Target(object):
         neighbor = np.zeros((self.ncadences, self.apsize, self.apsize))
         n_ferr = np.zeros((self.ncadences, self.apsize, self.apsize))
 
-        x_offset = 3 * np.random.randn()
-        y_offset = np.sqrt(9 - x_offset**2)
+        x_offset = dist * np.random.randn()
+        y_offset = np.sqrt(dist**2 - x_offset**2) * random.choice((-1, 1))
         nx0 = (self.apsize / 2.0) + x_offset
         ny0 = (self.apsize / 2.0) + y_offset
         sx = [0.5 + 0.05 * np.random.randn()]
