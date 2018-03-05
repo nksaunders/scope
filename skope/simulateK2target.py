@@ -226,14 +226,14 @@ class Target(object):
 
         return V_fpix, V_flux
 
-    def AddNeighbor(self, magdiff=1., distance=2.):
+    def AddNeighbor(self, fpix, magdiff=1., distance=2.):
         '''
 
         '''
 
         n_fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
-        n_fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
-        n_fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
+        n_target = np.zeros((self.ncadences, self.apsize, self.apsize))
+        n_ferr = np.zeros((self.ncadences, self.apsize, self.apsize))
 
         x_offset = 2 * np.random.randn()
         y_offset = np.sqrt(4 - x_offset**2)
@@ -249,7 +249,11 @@ class Target(object):
 
             n_fpix[c], n_target[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c])
 
-        return self.fpix
+        fpix += n_fpix
+        self.fpix = fpix
+        self.n_fpix = n_fpix
+
+        return fpix
 
     def Aperture(self, fpix):
         '''
