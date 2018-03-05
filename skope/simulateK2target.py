@@ -235,8 +235,8 @@ class Target(object):
         neighbor = np.zeros((self.ncadences, self.apsize, self.apsize))
         n_ferr = np.zeros((self.ncadences, self.apsize, self.apsize))
 
-        x_offset = 2 * np.random.randn()
-        y_offset = np.sqrt(4 - x_offset**2) * np.random.randn()
+        x_offset = 3 * np.random.randn()
+        y_offset = np.sqrt(9 - x_offset**2) * np.random.randn()
         nx0 = (self.apsize / 2.0) + x_offset
         ny0 = (self.apsize / 2.0) + y_offset
         sx = [0.5 + 0.05 * np.random.randn()]
