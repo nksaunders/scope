@@ -231,8 +231,25 @@ class Target(object):
 
         '''
 
-        pass
+        n_fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
+        n_fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
+        n_fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
 
+        x_offset = 2 * np.random.randn()
+        y_offset = np.sqrt(4 - x_offset**2)
+        nx0 = (self.apsize / 2.0) + x_offset
+        ny0 = (self.apsize / 2.0) + y_offset
+        sx = [0.5 + 0.05 * np.random.randn()]
+        sy = [0.5 + 0.05 * np.random.randn()]
+        rho = [0.05 + 0.02 * np.random.randn()]
+
+        neighbor_args = np.concatenate([[self.A / 100], [nx0], [ny0], sx, sy, rho])
+
+        for c in tqdm(range(self.ncadences)):
+
+            n_fpix[c], n_target[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c])
+
+        return self.fpix
 
     def Aperture(self, fpix):
         '''
