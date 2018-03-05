@@ -14,6 +14,7 @@ import everest
 from everest.mathutils import SavGol
 from .skopemath import PSF, PLD
 from . import fitting
+import random
 from random import randint
 from astropy.io import fits
 import pyfits
