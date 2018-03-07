@@ -39,7 +39,7 @@ class GaussInt(object):
         self.a = a
         self.b = b
         self.c = c
-        p = np.sqrt(np.abs(self.a))
+        p = np.sqrt(self.a)
         q = self.b / (2 * p)
         self.GI0 = np.exp(q ** 2 + self.c) * np.sqrt(np.pi) * (erf(q) + erf(p - q)) / (2 * p)
 
@@ -86,7 +86,7 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
         a = 1 / (2 * (1 - rho[k] ** 2) * sx[k] ** 2)
         b = ((y - y0[k]) * rho[k] * sx[k] + x0[k] * sy[k]) / ((1 - rho[k] ** 2) * sx[k] ** 2 * sy[k])
         c = -(x0[k] ** 2 / sx[k] ** 2 + (y - y0[k]) ** 2 / sy[k] ** 2 + 2 * x0[k] * (y - y0[k]) * rho[k] / (sx[k] * sy[k])) / (2 * (1 - rho[k] ** 2))
-        norm = (2 * np.pi * sx[k] * sy[k] * np.sqrt(np.abs(1 - rho[k] ** 2)))
+        norm = (2 * np.pi * sx[k] * sy[k] * np.sqrt(1 - rho[k] ** 2))
         GI = GaussInt(a, b, c)
 
         # Loop over the orders of the x IPV
@@ -214,7 +214,7 @@ def PSF(psf_args, ccd_args, xpos, ypos, targets):
 
                 # read in PSF arguments
                 A, x0, y0, sx, sy, rho = psf_args[0][n:n+6]
-
+                # import pdb; pdb.set_trace()
                 # contribution to pixel from target
                 psf[i][j] = PixelFlux(cx, cy, [A], [x0-i+xpos], [y0-j+ypos], [sx], [sy], [rho])
                 target[i][j] = psf[i][j]
