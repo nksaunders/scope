@@ -362,7 +362,7 @@ class Target(object):
 
         if self.neighbor:
 
-            A2 = [[A] / self.r]
+            A2 = [A[0] / self.r]
             sx2 = sx
             sy2 = sy
             rho2 = rho
@@ -374,7 +374,7 @@ class Target(object):
         ans_set = []
         print("Finding solutions...")
         for i in tqdm(range(self.ncadences)):
-            ans_cadence = PF.FindSolution(guess, i)
+            ans_cadence = PF.FindSolution(guess, i, self.targets)
             ans_set.append(ans_cadence)
 
         print("Creating PSF...")
