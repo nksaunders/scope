@@ -20,10 +20,12 @@ class PSFFit(object):
         self.xpos = xpos
         self.ypos = ypos
 
-    def Residuals(self, params, targets):
+    def Residuals(self, params):
         '''
         takes psf and ccd parameters and single index of fpix, ferr
         '''
+
+        targets = params[-1]
 
         for n in range(targets):
             # Read in PSF arguments
@@ -54,14 +56,16 @@ class PSFFit(object):
         return PSFres
 
 
-    def FindSolution(self, guess, index):
+    def FindSolution(self, guess, index, targets):
         '''
         minimize residuals to find best PSF fit for the data
         '''
 
+        params = np.concatenate([guess, targets])
+
         self.index = index
 
-        answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, guess, xtol = self.xtol, ftol = self.ftol,
+        answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, params, xtol = self.xtol, ftol = self.ftol,
                                                              disp = False, full_output = True)
 
         bic = chisq + len(answer) * np.log(len(self.fpix))
