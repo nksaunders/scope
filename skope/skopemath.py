@@ -213,7 +213,7 @@ def PSF(psf_args, ccd_args, xpos, ypos, targets):
             for n in range(targets):
 
                 # read in PSF arguments
-                A, x0, y0, sx, sy, rho = psf_args[n:n+6]
+                A, x0, y0, sx, sy, rho = psf_args[0][n:n+6]
 
                 # contribution to pixel from target
                 psf[i][j] = PixelFlux(cx, cy, [A], [x0-i+xpos], [y0-j+ypos], [sx], [sy], [rho])
