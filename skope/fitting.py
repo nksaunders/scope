@@ -25,11 +25,12 @@ class PSFFit(object):
         takes psf and ccd parameters and single index of fpix, ferr
         '''
 
-        targets = params[-1]
+        targets = int(len(params) / 6)
 
         for n in range(targets):
+            
             # Read in PSF arguments
-            A, x0, y0, sx, sy, rho = params[n]
+            A, x0, y0, sx, sy, rho = params[n:n+6]
 
             # priors
             if sx > 1 or sx < 0:
@@ -61,11 +62,9 @@ class PSFFit(object):
         minimize residuals to find best PSF fit for the data
         '''
 
-        params = np.concatenate([guess, targets])
-
         self.index = index
 
-        answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, params, xtol = self.xtol, ftol = self.ftol,
+        answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, guess, xtol = self.xtol, ftol = self.ftol,
                                                              disp = False, full_output = True)
 
         bic = chisq + len(answer) * np.log(len(self.fpix))
