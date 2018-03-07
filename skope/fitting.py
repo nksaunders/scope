@@ -20,31 +20,32 @@ class PSFFit(object):
         self.xpos = xpos
         self.ypos = ypos
 
-    def Residuals(self, params):
+    def Residuals(self, params, targets):
         '''
         takes psf and ccd parameters and single index of fpix, ferr
         '''
 
-        # Read in PSF arguments
-        A, x0, y0, sx, sy, rho = params
+        for n in range(targets):
+            # Read in PSF arguments
+            A, x0, y0, sx, sy, rho = params[n]
 
-        # priors
-        if sx > 1 or sx < 0:
-            return 1.0e30
-        if sy > 1 or sy < 0:
-            return 1.0e30
-
-        if rho >= 1 or rho <= -1:
-            return 1.0e30
-
-        if ((2.5 - x0)**2 + (2.5 - y0)**2) > 4:
-            return 1.0e30
-
-
-        # Reject negative values for amplitude and position
-        for elem in [A, x0, y0]:
-            if elem < 0:
+            # priors
+            if sx > 1 or sx < 0:
                 return 1.0e30
+            if sy > 1 or sy < 0:
+                return 1.0e30
+
+            if rho >= 1 or rho <= -1:
+                return 1.0e30
+
+            if ((2.5 - x0)**2 + (2.5 - y0)**2) > 4:
+                return 1.0e30
+
+
+            # Reject negative values for amplitude and position
+            for elem in [A, x0, y0]:
+                if elem < 0:
+                    return 1.0e30
 
         PSFfit = PSF(params, self.ccd_args, self.xpos[self.index], self.ypos[self.index])
 
