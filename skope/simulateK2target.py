@@ -39,6 +39,7 @@ class Target(object):
         self.transit = transit
         self.variable = variable
         self.neighbor = neighbor
+        self.targets = 1
 
     def GenerateLightCurve(self, mag, roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
         '''
@@ -127,7 +128,7 @@ class Target(object):
 
         for c in tqdm(range(self.ncadences)):
 
-            self.fpix[c], self.target[c], self.ferr[c] = PSF(psf_args, ccd_args, self.xpos[c], self.ypos[c])
+            self.fpix[c], self.target[c], self.ferr[c] = PSF(psf_args, ccd_args, self.xpos[c], self.ypos[c], self.targets)
 
         # add transit and variability
         if self.transit:
@@ -270,6 +271,7 @@ class Target(object):
         n_flux = np.sum(np.array(n_fpix).reshape((self.ncadences), -1), axis=1)
 
         self.neighbor = True
+        self.targets += 1
 
         return fpix, n_flux
 
@@ -351,8 +353,6 @@ class Target(object):
 
         PF = fitting.PSFFit(fpix, self.ferr, self.xpos, self.ypos, self.ccd_args)
 
-        targets = 1
-
         A = [200000]
         sx = [0.5]
         sy = [0.5]
@@ -369,8 +369,6 @@ class Target(object):
 
             guess_with_neighbor = np.concatenate([guess, A2, [self.apsize/2], [self.apsize/2], sx2, sy2, rho2])
 
-            targets = 2
-
             guess = guess_with_neighbor
 
         ans_set = []
@@ -382,7 +380,7 @@ class Target(object):
         print("Creating PSF...")
         fit_fpix = []
         for ind, ans in tqdm(enumerate(ans_set)):
-            cadence, _, _ = PSF(ans, self.ccd_args, self.xpos[ind], self.ypos[ind], targets)
+            cadence, _, _ = PSF(ans, self.ccd_args, self.xpos[ind], self.ypos[ind], self.targets)
             fit_fpix.append(cadence)
 
         return fit_fpix
