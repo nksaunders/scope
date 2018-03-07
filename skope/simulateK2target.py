@@ -353,21 +353,21 @@ class Target(object):
 
         PF = fitting.PSFFit(fpix, self.ferr, self.xpos, self.ypos, self.ccd_args)
 
-        A = [200000]
-        sx = [0.5]
-        sy = [0.5]
-        rho = [0.05]
+        A = 200000
+        sx = 0.5
+        sy = 0.5
+        rho = 0.05
 
-        guess = np.concatenate([A, [self.apsize/2], [self.apsize/2], sx, sy, rho])
+        guess = np.concatenate([[A], [self.apsize/2], [self.apsize/2], [sx], [sy], [rho]])
 
         if self.neighbor:
 
-            A2 = [A[0] / self.r]
+            A2 = A / self.r
             sx2 = sx
             sy2 = sy
             rho2 = rho
 
-            guess_with_neighbor = np.concatenate([guess, A2, [self.apsize/2], [self.apsize/2], sx2, sy2, rho2])
+            guess_with_neighbor = [[A, A2], [self.apsize/2, self.apsize/2], [self.apsize/2, self.apsize/2], [sx, sx2], [sy, sy2], [rho, rho2]]
 
             guess = guess_with_neighbor
 
@@ -377,6 +377,7 @@ class Target(object):
             ans_cadence = PF.FindSolution(guess, i, self.targets)
             ans_set.append(ans_cadence)
 
+        import pdb; pdb.set_trace()
         print("Creating PSF...")
         fit_fpix = []
         for ind, ans in tqdm(enumerate(ans_set)):
