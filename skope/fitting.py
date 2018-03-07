@@ -50,7 +50,7 @@ class PSFFit(object):
                 if elem < 0:
                     return 1.0e30
 
-        PSFfit = PSF([params], self.ccd_args, self.xpos[self.index], self.ypos[self.index])
+        PSFfit = PSF([params], self.ccd_args, self.xpos[self.index], self.ypos[self.index], targets)
 
         PSFres = np.nansum(((self.fpix[self.index] - PSFfit) / self.ferr[self.index]) ** 2)
 
