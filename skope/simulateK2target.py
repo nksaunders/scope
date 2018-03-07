@@ -233,7 +233,7 @@ class Target(object):
 
     def AddNeighbor(self, fpix, magdiff=1., dist=2.5):
         '''
-
+        Add a neighbor star with given difference in magnitude and distance at a randomized location
         '''
 
         # initialize arrays
