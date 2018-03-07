@@ -248,7 +248,7 @@ class Target(object):
         sy = [0.5 + 0.05 * np.random.randn()]
         rho = [0.05 + 0.02 * np.random.randn()]
 
-        neighbor_args = np.concatenate([[self.A], [nx0], [ny0], sx, sy, rho])
+        neighbor_args = [np.concatenate([[self.A], [nx0], [ny0], sx, sy, rho])]
 
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         self.r = 10 ** (magdiff / 2.5)
@@ -257,7 +257,7 @@ class Target(object):
         for c in tqdm(range(self.ncadences)):
 
             # iterate through cadences, calculate pixel flux values
-            n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c])
+            n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c], self.targets)
 
             # divide by magdiff factor
             n_fpix[c] /= self.r
@@ -362,7 +362,7 @@ class Target(object):
 
         if self.neighbor:
 
-            A2 = A / self.r
+            A2 = [[A] / self.r]
             sx2 = sx
             sy2 = sy
             rho2 = rho
