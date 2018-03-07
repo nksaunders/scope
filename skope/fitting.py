@@ -28,7 +28,7 @@ class PSFFit(object):
         targets = int(len(params) / 6)
 
         for n in range(targets):
-            
+
             # Read in PSF arguments
             A, x0, y0, sx, sy, rho = params[n:n+6]
 
@@ -50,7 +50,7 @@ class PSFFit(object):
                 if elem < 0:
                     return 1.0e30
 
-        PSFfit = PSF(params, self.ccd_args, self.xpos[self.index], self.ypos[self.index])
+        PSFfit = PSF([params], self.ccd_args, self.xpos[self.index], self.ypos[self.index])
 
         PSFres = np.nansum(((self.fpix[self.index] - PSFfit) / self.ferr[self.index]) ** 2)
 
