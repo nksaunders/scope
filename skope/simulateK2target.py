@@ -251,7 +251,7 @@ class Target(object):
         neighbor_args = np.concatenate([[self.A], [nx0], [ny0], sx, sy, rho])
 
         # calculate comparison factor for neighbor, based on provided difference in magnitude
-        self.r = 10 ** (neighbor_magdiff / 2.5)
+        self.r = 10 ** (magdiff / 2.5)
 
         # create neighbor pixel-level light curve
         for c in tqdm(range(self.ncadences)):
