@@ -111,9 +111,6 @@ class Target(object):
             rho = [0.05 + 0.02 * np.random.randn()]
             psf_args = np.concatenate([[self.A], [x0], [y0], sx, sy, rho])
 
-        # calculate comparison factor for neighbor, based on provided difference in magnitude
-        r = 10 ** (neighbor_magdiff / 2.5)
-
         ccd_args = [self.cx, self.cy, self.apsize, self.A, background_level, self.inter, photnoise_conversion]
         self.ccd_args = ccd_args
 
@@ -252,8 +249,8 @@ class Target(object):
 
         neighbor_args = np.concatenate([[self.A], [nx0], [ny0], sx, sy, rho])
 
-        # magnitude to amplitude difference conversion factor
-        r = 10**(magdiff / 2.5)
+        # calculate comparison factor for neighbor, based on provided difference in magnitude
+        self.r = 10 ** (neighbor_magdiff / 2.5)
 
         # create neighbor pixel-level light curve
         for c in tqdm(range(self.ncadences)):
@@ -262,8 +259,8 @@ class Target(object):
             n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c])
 
             # divide by magdiff factor
-            n_fpix[c] /= r
-            neighbor[c] /= r
+            n_fpix[c] /= self.r
+            neighbor[c] /= self.r
 
         # add neighbor to light curve
         fpix += n_fpix
@@ -271,6 +268,8 @@ class Target(object):
 
         # calculate flux light curve
         n_flux = np.sum(np.array(n_fpix).reshape((self.ncadences), -1), axis=1)
+
+        self.neighbor = True
 
         return fpix, n_flux
 
@@ -358,6 +357,17 @@ class Target(object):
         rho = [0.05]
 
         guess = np.concatenate([A, [self.apsize/2], [self.apsize/2], sx, sy, rho])
+
+        if self.neighbor:
+
+            A2 = A / self.r
+            sx2 = sx
+            sy2 = sy
+            rho2 = rho
+
+            guess_with_neighbor = np.concatenate([guess, A2, [self.apsize/2], [self.apsize/2], sx2, sy2, rho2])
+
+            guess = guess_with_neighbor
 
         ans_set = []
         print("Finding solutions...")
