@@ -200,8 +200,7 @@ def PSF(psf_args, ccd_args, xpos, ypos, targets):
 
     '''
 
-    # Read in detector and PSF arguments
-    A, x0, y0, sx, sy, rho = psf_args
+    # Read in detector arguments
     cx, cy, apsize, A, background_level, inter, photnoise_conversion = ccd_args
 
     # Define apertures
@@ -213,6 +212,7 @@ def PSF(psf_args, ccd_args, xpos, ypos, targets):
         for j in range(apsize):
             for n in range(targets):
 
+                # read in PSF arguments
                 A, x0, y0, sx, sy, rho = psf_args[n]
 
                 # contribution to pixel from target
