@@ -382,7 +382,16 @@ class Target(object):
         fit_fpix = []
         for ind, ans in tqdm(enumerate(ans_set)):
 
-            cadence, _, _ = PSF([ans], self.ccd_args, self.xpos[ind], self.ypos[ind], self.targets)
+            n = self.targets
+
+            A = ans[0:n]
+            x0 = ans[n:2*n]
+            y0 = ans[2*n:3*n]
+            sx = ans[3*n:4*n]
+            sy = ans[4*n:5*n]
+            rho = ans[5*n:6*n]
+
+            cadence, _, _ = PSF([[[A],[x0],[y0],[sx],[sy],[rho]]], self.ccd_args, self.xpos[ind], self.ypos[ind], self.targets)
             fit_fpix.append(cadence)
 
         return fit_fpix

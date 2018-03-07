@@ -210,27 +210,27 @@ def PSF(psf_args, ccd_args, xpos, ypos, targets):
 
     for i in range(apsize):
         for j in range(apsize):
-            for n in range(targets):
 
-                # read in PSF arguments
-                A, x0, y0, sx, sy, rho = psf_args[0][n:n+6]
-                # import pdb; pdb.set_trace()
-                # contribution to pixel from target
-                psf[i][j] = PixelFlux(cx, cy, [A], [x0-i+xpos], [y0-j+ypos], [sx], [sy], [rho])
-                target[i][j] = psf[i][j]
+            # import pdb; pdb.set_trace()
+            # read in PSF arguments
+            A, x0, y0, sx, sy, rho = psf_args[0]
+            # import pdb; pdb.set_trace()
+            # contribution to pixel from target
+            psf[i][j] = PixelFlux(cx, cy, [A], [(x-i+xpos) for x in [x0]], [(y-j+ypos) for y in [y0]], [sx], [sy], [rho])
+            target[i][j] = psf[i][j]
 
-                # add background noise
-                noise = np.sqrt(np.abs(background_level * np.random.randn()))
-                psf[i][j] += noise
+            # add background noise
+            noise = np.sqrt(np.abs(background_level * np.random.randn()))
+            psf[i][j] += noise
 
-                # add photon noise
-                psferr[i][j] = np.sqrt(np.abs(psf[i][j]) * photnoise_conversion)
-                randnum = np.random.randn()
-                psf[i][j] += psferr[i][j] * randnum
+            # add photon noise
+            psferr[i][j] = np.sqrt(np.abs(psf[i][j]) * photnoise_conversion)
+            randnum = np.random.randn()
+            psf[i][j] += psferr[i][j] * randnum
 
-                # ensure positive
-                while psf[i][j] < 0:
-                    psf[i][j] = np.sqrt(np.abs(background_level * np.random.randn()))
+            # ensure positive
+            while psf[i][j] < 0:
+                psf[i][j] = np.sqrt(np.abs(background_level * np.random.randn()))
 
         # multiply each cadence by inter-pixel sensitivity variation
         psf * inter
