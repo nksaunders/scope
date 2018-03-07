@@ -351,6 +351,8 @@ class Target(object):
 
         PF = fitting.PSFFit(fpix, self.ferr, self.xpos, self.ypos, self.ccd_args)
 
+        targets = 1
+
         A = [200000]
         sx = [0.5]
         sy = [0.5]
@@ -367,6 +369,8 @@ class Target(object):
 
             guess_with_neighbor = np.concatenate([guess, A2, [self.apsize/2], [self.apsize/2], sx2, sy2, rho2])
 
+            targets = 2
+
             guess = guess_with_neighbor
 
         ans_set = []
@@ -378,7 +382,7 @@ class Target(object):
         print("Creating PSF...")
         fit_fpix = []
         for ind, ans in tqdm(enumerate(ans_set)):
-            cadence, _, _ = PSF(ans, self.ccd_args, self.xpos[ind], self.ypos[ind])
+            cadence, _, _ = PSF(ans, self.ccd_args, self.xpos[ind], self.ypos[ind], targets)
             fit_fpix.append(cadence)
 
         return fit_fpix
