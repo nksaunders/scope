@@ -380,7 +380,7 @@ class Target(object):
         print("Creating PSF...")
         fit_fpix = []
         for ind, ans in tqdm(enumerate(ans_set)):
-            cadence, _, _ = PSF(ans, self.ccd_args, self.xpos[ind], self.ypos[ind], self.targets)
+            cadence, _, _ = PSF([ans], self.ccd_args, self.xpos[ind], self.ypos[ind], self.targets)
             fit_fpix.append(cadence)
 
         return fit_fpix
