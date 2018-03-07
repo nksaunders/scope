@@ -30,7 +30,7 @@ class Target(object):
     A simulated K2 object with a forward model of the Kepler detector sensitivity variation
     '''
 
-    def __init__(self, ID=205998445, custom_ccd=False, transit=False, variable=False, ftpf=None):
+    def __init__(self, ID=205998445, custom_ccd=False, transit=False, variable=False, neighbor=False, ftpf=None):
 
         # initialize self variables
         self.ID = ID
@@ -38,8 +38,9 @@ class Target(object):
         self.custom_ccd = custom_ccd
         self.transit = transit
         self.variable = variable
+        self.neighbor = neighbor
 
-    def GenerateLightCurve(self, mag, roll=1., background_level=0., neighbor=False, ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
+    def GenerateLightCurve(self, mag, roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
         '''
         Creates a light curve for given detector, star, and transiting exoplanet parameters
         Motion from a real K2 target is applied to the PSF
@@ -136,6 +137,9 @@ class Target(object):
             self.fpix, self.flux = self.AddTransit(self.fpix)
         if self.variable:
             self.fpix, self.flux = self.AddVariability(self.fpix)
+        if self.neighbor:
+            self.fpix, self.flux = self.AddNeighbor(self.fpix)
+
         if not self.transit and not self.variable:
             # create flux light curve
             self.flux = np.sum(self.fpix.reshape((self.ncadences), -1), axis=1)
@@ -232,10 +236,12 @@ class Target(object):
 
         '''
 
+        # initialize arrays
         n_fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
         neighbor = np.zeros((self.ncadences, self.apsize, self.apsize))
         n_ferr = np.zeros((self.ncadences, self.apsize, self.apsize))
 
+        # set neighbor params
         x_offset = dist * np.random.randn()
         y_offset = np.sqrt(dist**2 - x_offset**2) * random.choice((-1, 1))
         nx0 = (self.apsize / 2.0) + x_offset
@@ -244,19 +250,29 @@ class Target(object):
         sy = [0.5 + 0.05 * np.random.randn()]
         rho = [0.05 + 0.02 * np.random.randn()]
 
-        r = 10**(magdiff / 2.5)
-
         neighbor_args = np.concatenate([[self.A], [nx0], [ny0], sx, sy, rho])
 
+        # magnitude to amplitude difference conversion factor
+        r = 10**(magdiff / 2.5)
+
+        # create neighbor pixel-level light curve
         for c in tqdm(range(self.ncadences)):
 
+            # iterate through cadences, calculate pixel flux values
             n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c])
-            n_fpix[c] /= r
 
+            # divide by magdiff factor
+            n_fpix[c] /= r
+            neighbor[c] /= r
+
+        # add neighbor to light curve
         fpix += n_fpix
         self.n_fpix = n_fpix
 
-        return fpix
+        # calculate flux light curve
+        n_flux = np.sum(np.array(n_fpix).reshape((self.ncadences), -1), axis=1)
+
+        return fpix, n_flux
 
     def Aperture(self, fpix):
         '''
