@@ -83,6 +83,12 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
     for k in range(K):
 
         # Get the x Gaussian integrals
+
+        if isinstance(rho, (list,)):
+            rho = rho[0]
+            sx = sx[0]
+            sy = sy[0]
+
         a = 1 / (2 * (1 - rho[k] ** 2) * sx[k] ** 2)
         b = ((y - y0[k]) * rho[k] * sx[k] + x0[k] * sy[k]) / ((1 - rho[k] ** 2) * sx[k] ** 2 * sy[k])
         c = -(x0[k] ** 2 / sx[k] ** 2 + (y - y0[k]) ** 2 / sy[k] ** 2 + 2 * x0[k] * (y - y0[k]) * rho[k] / (sx[k] * sy[k])) / (2 * (1 - rho[k] ** 2))
@@ -211,12 +217,16 @@ def PSF(psf_args, ccd_args, xpos, ypos, targets):
     for i in range(apsize):
         for j in range(apsize):
 
-            # import pdb; pdb.set_trace()
+
             # read in PSF arguments
             A, x0, y0, sx, sy, rho = psf_args[0]
-            # import pdb; pdb.set_trace()
+
+            if not isinstance(x0, (list,)):
+                x0 = [x0]
+                y0 = [y0]
+
             # contribution to pixel from target
-            psf[i][j] = PixelFlux(cx, cy, [A], [(x-i+xpos) for x in [x0]], [(y-j+ypos) for y in [y0]], [sx], [sy], [rho])
+            psf[i][j] = PixelFlux(cx, cy, [A], [(x-i+xpos) for x in x0], [(y-j+ypos) for y in y0], [sx], [sy], [rho])
             target[i][j] = psf[i][j]
 
             # add background noise
