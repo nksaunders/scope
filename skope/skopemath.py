@@ -84,10 +84,14 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
 
         # Get the x Gaussian integrals
 
-        if isinstance(rho, (list,)):
-            rho = rho[0]
-            sx = sx[0]
-            sy = sy[0]
+        rho = rho[0]
+        sx = sx[0]
+        sy = sy[0]
+
+        if isinstance(rho, (float,)):
+            rho = [rho]
+            sx = [sx]
+            sy = [sy]
 
         a = 1 / (2 * (1 - rho[k] ** 2) * sx[k] ** 2)
         b = ((y - y0[k]) * rho[k] * sx[k] + x0[k] * sy[k]) / ((1 - rho[k] ** 2) * sx[k] ** 2 * sy[k])
