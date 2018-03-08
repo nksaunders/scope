@@ -14,6 +14,7 @@ import everest
 from everest.mathutils import SavGol
 from .skopemath import PSF, PLD
 from . import fitting
+from . import psffit as pf
 import random
 from random import randint
 from astropy.io import fits
@@ -395,3 +396,55 @@ class Target(object):
             fit_fpix.append(cadence)
 
         return fit_fpix
+
+    def FindFit(self):
+
+        self.fit = pf.PSFFit(self.fpix,self.ferr)
+
+        amp = [345000.0,(352000.0 / 2)]
+        x0 = [2.6,3.7]
+        y0 = [2.3,4.2]
+        sx = [.4]
+        sy = [.6]
+        rho = [0.01]
+        background = [1000]
+        index = 200
+        guess = np.concatenate([amp,x0,y0,sx,sy,rho])
+        answer = self.fit.FindSolution(guess, index=index)
+        invariant_vals = np.zeros((len(answer)))
+        self.n_fpix = np.zeros((len(self.fpix),5,5))
+        self.subtracted_fpix = np.zeros((len(self.fpix),5,5))
+
+
+        for i,v in enumerate(answer):
+            if i == 0:
+                invariant_vals[i] = 0
+            elif i == 2:
+                invariant_vals[i] = v - self.xpos[index]
+            elif i == 4:
+                invariant_vals[i] = v - self.ypos[index]
+            else:
+                invariant_vals[i] = v
+
+        print("Subtracting neighbor...")
+        for cadence in tqdm(range(len(self.fpix))):
+            n_vals = np.zeros((len(invariant_vals)))
+            for i,v in enumerate(invariant_vals):
+                if i == 2:
+                    n_vals[i] = v + self.xpos[cadence]
+                elif i == 4:
+                    n_vals[i] = v + self.ypos[cadence]
+                else:
+                    n_vals[i] = v
+
+            neighbor_cad = self.fit.PSF(n_vals)
+            self.n_fpix[cadence] = neighbor_cad
+            self.subtracted_fpix[cadence] = self.fpix[cadence] - neighbor_cad
+
+
+        self.answerfit = self.fit.PSF(answer)
+        self.neighborfit = self.fit.PSF(invariant_vals)
+        self.subtraction = self.answerfit - self.neighborfit
+        self.residual = self.fpix[200] - self.answerfit
+        self.subtracted_flux = self.aft.FirstOrderPLD(self.subtracted_fpix)[0]
+        return self.subtraction
