@@ -68,6 +68,8 @@ class PSFFit(object):
         self.index = index
         self.targets = targets
 
+        import pdb; pdb.set_trace()
+
         answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, guess, xtol = self.xtol, ftol = self.ftol,
                                                              disp = False, full_output = True)
 
