@@ -25,6 +25,7 @@ class PSFFit(object):
         '''
         Create PSF model from params
         '''
+        
         amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
 
         cx_1 = [1.,0.,0.]
