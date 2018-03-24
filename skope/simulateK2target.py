@@ -392,7 +392,8 @@ class Target(object):
             sy = ans[4*n:5*n]
             rho = ans[5*n:6*n]
 
-            cadence, _, _ = PSF([[[A],[x0],[y0],[sx],[sy],[rho]]], self.ccd_args, self.xpos[ind], self.ypos[ind], self.targets)
+            cadence, _, _ = PSF(A[0],x0[0],y0[0],sx[0],sy[0],rho[0], self.ccd_args, self.xpos[ind], self.ypos[ind], targets) \
+                            + PSF(A[1],x0[1],y0[1],sx[1],sy[1],rho[1], self.ccd_args, self.xpos[ind], self.ypos[ind], targets)
             fit_fpix.append(cadence)
 
         return fit_fpix

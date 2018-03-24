@@ -53,7 +53,8 @@ class PSFFit(object):
                 if elem.any() < 0:
                     return 1.0e30
 
-        PSFfit = PSF([[A],[x0],[y0],[sx],[sy],[rho]], self.ccd_args, self.xpos[self.index], self.ypos[self.index], targets)
+        PSFfit = PSF(A[0],x0[0],y0[0],sx[0],sy[0],rho[0], self.ccd_args, self.xpos[self.index], self.ypos[self.index], targets) \
+                 + PSF(A[1],x0[1],y0[1],sx[1],sy[1],rho[1], self.ccd_args, self.xpos[self.index], self.ypos[self.index], targets)
 
         PSFres = np.nansum(((self.fpix[self.index] - PSFfit) / self.ferr[self.index]) ** 2)
 
@@ -67,8 +68,6 @@ class PSFFit(object):
 
         self.index = index
         self.targets = targets
-
-        import pdb; pdb.set_trace()
 
         answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, guess, xtol = self.xtol, ftol = self.ftol,
                                                              disp = False, full_output = True)
