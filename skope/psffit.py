@@ -49,8 +49,8 @@ class PSFFit(object):
                               PixelFlux(cx_2, cy_2, [amp2], [x02-i], [y02-j], [sx], [sy], [rho])
         '''
 
-        PSFfit = PSF(np.concatenate([amp1,x01,y01,sx,sy,rho]), self.ccd_args, self.xpos[self.index], self.ypos[self.index]) \
-                 + PSF(np.concatenate([amp2,x02,y02,sx,sy,rho]), self.ccd_args, self.xpos[self.index], self.ypos[self.index])
+        PSFfit = PSF(np.array([amp1,x01,y01,sx,sy,rho]), self.ccd_args, self.xpos[self.index], self.ypos[self.index]) \
+                 + PSF(np.array([amp2,x02,y02,sx,sy,rho]), self.ccd_args, self.xpos[self.index], self.ypos[self.index])
 
         return PSFfit
 

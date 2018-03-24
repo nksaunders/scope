@@ -111,7 +111,7 @@ class Target(object):
             sx = [0.5 + 0.05 * np.random.randn()]
             sy = [0.5 + 0.05 * np.random.randn()]
             rho = [0.05 + 0.02 * np.random.randn()]
-            psf_args = [np.concatenate([[self.A], np.array([x0]), np.array([y0]), sx, sy, rho])]
+            psf_args = np.concatenate([[self.A], np.array([x0]), np.array([y0]), sx, sy, rho])
 
         ccd_args = [self.cx, self.cy, self.apsize, self.A, background_level, self.inter, photnoise_conversion]
         self.ccd_args = ccd_args
@@ -249,7 +249,7 @@ class Target(object):
         sy = [0.5 + 0.05 * np.random.randn()]
         rho = [0.05 + 0.02 * np.random.randn()]
 
-        neighbor_args = [np.concatenate([[self.A], [nx0], [ny0], sx, sy, rho])]
+        neighbor_args = np.concatenate([[self.A], [nx0], [ny0], sx, sy, rho])
 
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         self.r = 10 ** (magdiff / 2.5)
@@ -416,8 +416,8 @@ class Target(object):
         answer = self.fit.FindSolution(guess, self.ccd_args, index=index)
 
         invariant_vals = np.zeros((len(answer)))
-        self.n_fpix = np.zeros((len(self.fpix),5,5))
-        self.subtracted_fpix = np.zeros((len(self.fpix),5,5))
+        self.n_fpix = np.zeros((len(self.fpix),self.apsize,self.apsize))
+        self.subtracted_fpix = np.zeros((len(self.fpix),self.apsize,self.apsize))
 
 
         for i,v in enumerate(answer):

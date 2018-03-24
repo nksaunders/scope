@@ -223,7 +223,7 @@ def PSF(psf_args, ccd_args, xpos, ypos):
 
 
             # read in PSF arguments
-            A, x0, y0, sx, sy, rho = psf_args[0]
+            A, x0, y0, sx, sy, rho = psf_args
 
             if not isinstance(x0, (list,)):
                 x0 = [x0]
