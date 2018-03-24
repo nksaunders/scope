@@ -378,7 +378,6 @@ class Target(object):
             ans_cadence = PF.FindSolution(guess, i)
             ans_set.append(ans_cadence)
 
-        import pdb; pdb.set_trace()
         print("Creating PSF...")
         fit_fpix = []
         for ind, ans in tqdm(enumerate(ans_set)):
@@ -392,26 +391,30 @@ class Target(object):
             sy = ans[4*n:5*n]
             rho = ans[5*n:6*n]
 
-            cadence, _, _ = PSF(A[0],x0[0],y0[0],sx[0],sy[0],rho[0], self.ccd_args, self.xpos[ind], self.ypos[ind]) \
-                            + PSF(A[1],x0[1],y0[1],sx[1],sy[1],rho[1], self.ccd_args, self.xpos[ind], self.ypos[ind])
+            import pdb; pdb.set_trace()
+            cadence, _, _ = PSF(np.concatenate([A[0],x0[0],y0[0],sx[0],sy[0],rho[0]]), self.ccd_args, self.xpos[ind], self.ypos[ind]) \
+                            + PSF(np.concatenate([A[1],x0[1],y0[1],sx[1],sy[1],rho[1]]), self.ccd_args, self.xpos[ind], self.ypos[ind])
             fit_fpix.append(cadence)
 
         return fit_fpix
 
     def FindFit(self):
 
-        self.fit = pf.PSFFit(self.fpix,self.ferr)
+        self.fit = pf.PSFFit(self.fpix,self.ferr, self.xpos, self.ypos)
 
-        amp = [345000.0,(352000.0 / 2)]
-        x0 = [2.6,3.7]
-        y0 = [2.3,4.2]
-        sx = [.4]
-        sy = [.6]
+        amp = [345000.0,(345000.0 / 2)]
+        x0 = [self.apsize/2,self.apsize/2]
+        y0 = [self.apsize/2,self.apsize/2]
+        sx = [.5]
+        sy = [.5]
         rho = [0.01]
         background = [1000]
-        index = 200
+
+        index = 0
         guess = np.concatenate([amp,x0,y0,sx,sy,rho])
-        answer = self.fit.FindSolution(guess, index=index)
+
+        answer = self.fit.FindSolution(guess, self.ccd_args, index=index)
+
         invariant_vals = np.zeros((len(answer)))
         self.n_fpix = np.zeros((len(self.fpix),5,5))
         self.subtracted_fpix = np.zeros((len(self.fpix),5,5))
