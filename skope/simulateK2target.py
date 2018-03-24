@@ -129,7 +129,7 @@ class Target(object):
 
         for c in tqdm(range(self.ncadences)):
 
-            self.fpix[c], self.target[c], self.ferr[c] = PSF(psf_args, ccd_args, self.xpos[c], self.ypos[c], self.targets)
+            self.fpix[c], self.target[c], self.ferr[c] = PSF(psf_args, ccd_args, self.xpos[c], self.ypos[c])
 
         # add transit and variability
         if self.transit:
@@ -258,7 +258,7 @@ class Target(object):
         for c in tqdm(range(self.ncadences)):
 
             # iterate through cadences, calculate pixel flux values
-            n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c], self.targets)
+            n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c])
 
             # divide by magdiff factor
             n_fpix[c] /= self.r
@@ -375,7 +375,7 @@ class Target(object):
         ans_set = []
         print("Finding solutions...")
         for i in tqdm(range(self.ncadences)):
-            ans_cadence = PF.FindSolution(guess, i, self.targets)
+            ans_cadence = PF.FindSolution(guess, i)
             ans_set.append(ans_cadence)
 
         import pdb; pdb.set_trace()
@@ -392,8 +392,8 @@ class Target(object):
             sy = ans[4*n:5*n]
             rho = ans[5*n:6*n]
 
-            cadence, _, _ = PSF(A[0],x0[0],y0[0],sx[0],sy[0],rho[0], self.ccd_args, self.xpos[ind], self.ypos[ind], targets) \
-                            + PSF(A[1],x0[1],y0[1],sx[1],sy[1],rho[1], self.ccd_args, self.xpos[ind], self.ypos[ind], targets)
+            cadence, _, _ = PSF(A[0],x0[0],y0[0],sx[0],sy[0],rho[0], self.ccd_args, self.xpos[ind], self.ypos[ind]) \
+                            + PSF(A[1],x0[1],y0[1],sx[1],sy[1],rho[1], self.ccd_args, self.xpos[ind], self.ypos[ind])
             fit_fpix.append(cadence)
 
         return fit_fpix

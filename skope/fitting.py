@@ -26,7 +26,8 @@ class PSFFit(object):
         '''
 
         # Read in PSF arguments
-        n = self.targets
+
+        n = 2
 
         A = params[0:n]
         x0 = params[n:2*n]
@@ -53,21 +54,20 @@ class PSFFit(object):
                 if elem.any() < 0:
                     return 1.0e30
 
-        PSFfit = PSF(A[0],x0[0],y0[0],sx[0],sy[0],rho[0], self.ccd_args, self.xpos[self.index], self.ypos[self.index], targets) \
-                 + PSF(A[1],x0[1],y0[1],sx[1],sy[1],rho[1], self.ccd_args, self.xpos[self.index], self.ypos[self.index], targets)
+        PSFfit = PSF(A[0],x0[0],y0[0],sx[0],sy[0],rho[0], self.ccd_args, self.xpos[self.index], self.ypos[self.index]) \
+                 + PSF(A[1],x0[1],y0[1],sx[1],sy[1],rho[1], self.ccd_args, self.xpos[self.index], self.ypos[self.index])
 
         PSFres = np.nansum(((self.fpix[self.index] - PSFfit) / self.ferr[self.index]) ** 2)
 
         return PSFres
 
 
-    def FindSolution(self, guess, index, targets):
+    def FindSolution(self, guess, index):
         '''
         minimize residuals to find best PSF fit for the data
         '''
 
         self.index = index
-        self.targets = targets
 
         answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, guess, xtol = self.xtol, ftol = self.ftol,
                                                              disp = False, full_output = True)

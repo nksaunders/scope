@@ -205,7 +205,7 @@ def TestIntegration():
     print("Numerical     (%.1e s): %.9e" % (tnum, fnum()))
     print("Difference    (   %.1f x): %.9e" % (tnum/tsem, np.abs(1 - fnum()/fsem())))
 
-def PSF(psf_args, ccd_args, xpos, ypos, targets):
+def PSF(psf_args, ccd_args, xpos, ypos):
     '''
 
     '''
