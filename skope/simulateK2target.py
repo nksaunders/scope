@@ -441,14 +441,14 @@ class Target(object):
                 else:
                     n_vals[i] = v
 
-            neighbor_cad = self.fit.PSF(n_vals)
+            neighbor_cad = self.fit.CalculatePSF(n_vals)
             self.n_fpix[cadence] = neighbor_cad
             self.subtracted_fpix[cadence] = self.fpix[cadence] - neighbor_cad
 
 
-        self.answerfit = self.fit.PSF(answer)
-        self.neighborfit = self.fit.PSF(invariant_vals)
+        self.answerfit = self.fit.CalculatePSF(answer)
+        self.neighborfit = self.fit.CalculatePSF(invariant_vals)
         self.subtraction = self.answerfit - self.neighborfit
-        self.residual = self.fpix[200] - self.answerfit
-        self.subtracted_flux = self.aft.FirstOrderPLD(self.subtracted_fpix)[0]
+        self.residual = self.fpix[cadence] - self.answerfit
+        # self.subtracted_flux = self.aft.FirstOrderPLD(self.subtracted_fpix)[0]
         return self.subtraction
