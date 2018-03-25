@@ -31,24 +31,6 @@ class PSFFit(object):
 
         amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
 
-        cx_1 = [1.,0.,0.]
-        cx_2 = [1.,0.,0.]
-        cy_1 = [1.,0.,0.]
-        cy_2 = [1.,0.,0.]
-        '''
-        sx = 0.5
-        sy = 0.5
-        rho = 0.0
-
-
-
-        model = np.zeros((5,5))
-        for i in range(5):
-            for j in range(5):
-                model[i][j] = PixelFlux(cx_1, cy_1, [amp1], [x01-i], [y01-j], [sx], [sy], [rho]) + \
-                              PixelFlux(cx_2, cy_2, [amp2], [x02-i], [y02-j], [sx], [sy], [rho])
-        '''
-
         PSFfit = PSF(np.array([amp1,x01,y01,sx,sy,rho]), self.ccd_args, self.xpos[self.index], self.ypos[self.index])[0] \
                  + PSF(np.array([amp2,x02,y02,sx,sy,rho]), self.ccd_args, self.xpos[self.index], self.ypos[self.index])[0]
 
@@ -71,10 +53,15 @@ class PSFFit(object):
         if rho >= 1 or rho <= -1:
             return 1.0e30
 
+
         if ((3.5 - x01)**2 + (3.5 - y01)**2) > 3:
             return 1.0e30
         if ((3.5 - x02)**2 + (3.5 - y02)**2) > 5:
             return 1.0e30
+
+        if np.sqrt((x01-x02)**2 + (y01-y02)**2) < 2:
+            return 1.0e30
+        
 
         # Reject negative values for amplitude and position
         for elem in [amp1,amp2,x01,x02,y01,y02]:
@@ -86,12 +73,14 @@ class PSFFit(object):
         # sum squared difference between data and model
         PSFres = np.nansum(((self.fpix[index] - PSFfit) / self.ferr[index]) ** 2)
 
+        '''
         s_s = 1.
         sx0 = 0.5 + s_s * np.random.randn()
         sy0 = 0.5 + s_s * np.random.randn()
         PSFres += ((sx - sx0) / s_s)**2
         PSFres += ((sy - sy0) / s_s)**2
         PSFres += (rho / s_s)**2
+        '''
 
         print("R = %.2e, x1 = %.2f, x2 = %.2f, y1 = %.2f, y2 = %.2f, sx = %.2f, sy = %.2f, rho = %.2f, a1 = %.2f, a2 = %.2f" % \
              (PSFres, x01, x02, y01, y02, sx, sy, rho, amp1, amp2))
