@@ -59,9 +59,6 @@ class PSFFit(object):
         if ((3.5 - x02)**2 + (3.5 - y02)**2) > 5:
             return 1.0e30
 
-        if np.sqrt((x01-x02)**2 + (y01-y02)**2) < 2:
-            return 1.0e30
-        
 
         # Reject negative values for amplitude and position
         for elem in [amp1,amp2,x01,x02,y01,y02]:

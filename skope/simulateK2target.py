@@ -402,7 +402,7 @@ class Target(object):
 
         self.fit = pf.PSFFit(self.fpix,self.ferr, self.xpos, self.ypos)
 
-        amp = [(250000.0 / self.r),250000.0]
+        amp = [250000.0, (250000.0 / self.r)]
         x0 = [self.apsize/2,self.apsize/2]
         y0 = [self.apsize/2,self.apsize/2]
         sx = [.5]
