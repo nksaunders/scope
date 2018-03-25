@@ -156,12 +156,12 @@ class Target(object):
 
         # Check background level and define aperture
         if self.background_level != 0:
-            aperture = self.Aperture(fpix)
+            self.aperture = self.Aperture(fpix)
         else:
-            aperture = np.ones((self.apsize, self.apsize))
+            self.aperture = np.ones((self.apsize, self.apsize))
 
         # Run 2nd order PLD with a Gaussian Process
-        flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t, aperture)
+        flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t, self.aperture)
 
         return flux, rawflux
 
@@ -402,7 +402,7 @@ class Target(object):
 
         self.fit = pf.PSFFit(self.fpix,self.ferr, self.xpos, self.ypos)
 
-        amp = [200000.0,(200000.0 / self.r)]
+        amp = [250000.0,(250000.0 / self.r)]
         x0 = [self.apsize/2,self.apsize/2]
         y0 = [self.apsize/2,self.apsize/2]
         sx = [.5]
@@ -450,5 +450,46 @@ class Target(object):
         self.neighborfit = self.fit.CalculatePSF(invariant_vals)
         self.subtraction = self.answerfit - self.neighborfit
         self.residual = self.fpix[cadence] - self.answerfit
-        # self.subtracted_flux = self.aft.FirstOrderPLD(self.subtracted_fpix)[0]
+        self.subtracted_flux = PLD(self.subtracted_fpix,self.trninds,  self.ferr, self.aperture)[0]
+
         return self.subtraction
+
+
+    def Plot(self):
+
+        fig, ax = pl.subplots(1,3, sharey=True)
+        fig.set_size_inches(17,5)
+
+        meanfpix = np.mean(self.fpix,axis=0)
+        ax[0].imshow(self.fpix[0],interpolation='nearest',origin='lower',cmap='viridis',vmin=np.min(self.answerfit),vmax=np.max(self.answerfit));
+        ax[1].imshow(self.answerfit,interpolation='nearest',origin='lower',cmap='viridis',vmin=np.min(self.answerfit),vmax=np.max(self.answerfit));
+        ax[2].imshow(self.subtraction,interpolation='nearest',origin='lower',cmap='viridis',vmin=np.min(self.answerfit),vmax=np.max(self.answerfit));
+        ax[0].set_title('Data');
+        ax[1].set_title('Model');
+        ax[2].set_title('Neighbor Subtraction');
+        ax[1].annotate(r'$\mathrm{Max\ Residual\ Percent}: %.4f $' % (np.max(np.abs(self.residual))/np.max(self.fpix[0])),
+                        xy = (0.05, 0.05),xycoords='axes fraction',
+                        color='w', fontsize=12);
+
+
+        unsub_flux = self.aft.FirstOrderPLD(self.fpix)[0]
+        fig, ax = pl.subplots(2,1)
+        ns_depth = self.aft.RecoverTransit(self.subtracted_flux)
+        ax[0].plot(self.t,np.mean(unsub_flux)*self.trn,'r')
+        ax[0].plot(self.t,unsub_flux,'k.')
+        ax[0].set_title('No Subtraction, 1st Order PLD')
+        ax[1].plot(self.t,np.mean(self.subtracted_flux)*self.trn,'r')
+        ax[1].plot(self.t,self.subtracted_flux,'k.')
+        ax[1].set_title('Neighbor Subtraction, 1st Order PLD')
+
+        ax[0].annotate(r'$\mathrm{Recovered\ Depth}: %.4f$' % (self.aft.RecoverTransit(unsub_flux)),
+                        xy = (0.05, 0.05),xycoords='axes fraction',
+                        color='k', fontsize=12);
+        ax[1].annotate(r'$\mathrm{Recovered\ Depth}: %.4f$' % (ns_depth),
+                        xy = (0.05, 0.05),xycoords='axes fraction',
+                        color='k', fontsize=12);
+
+        print("Run time:")
+        print(datetime.now() - self.startTime)
+        print("RTD: %.4f,   Subtracted RTD: %.4f" % (self.aft.RecoverTransit(unsub_flux),ns_depth))
+        pl.show()
