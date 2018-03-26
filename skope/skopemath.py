@@ -247,7 +247,7 @@ def PSF(psf_args, ccd_args, xpos, ypos):
                 psf[i][j] = np.sqrt(np.abs(background_level * np.random.randn()))
 
         # multiply each cadence by inter-pixel sensitivity variation
-        psf * inter
+        psf *= inter
 
     return psf, target, psferr
 
