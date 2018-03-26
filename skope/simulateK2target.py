@@ -473,7 +473,7 @@ class Target(object):
                         color='w', fontsize=12);
 
 
-        unsub_flux = self.aft.FirstOrderPLD(self.fpix)[0]
+        unsub_flux = PLD(self.fpix, self.trninds, self.ferr, self.t, self.aperture)[0]
         fig, ax = pl.subplots(2,1)
         ns_depth = self.aft.RecoverTransit(self.subtracted_flux)
         ax[0].plot(self.t,np.mean(unsub_flux)*self.trn,'r')
