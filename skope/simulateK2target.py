@@ -52,6 +52,7 @@ class Target(object):
         self.t = np.linspace(0, 90, self.ncadences) # simulation lasts 90 days, with n cadences
         self.apsize = apsize # number of pixels to a side for aperture
         self.background_level = background_level
+        self.aperture = np.ones((self.ncadences, self.apsize, self.apsize))
 
         # calculate PSF amplitude for given Kp Mag
         self.A = self.PSFAmplitude(mag)
@@ -450,7 +451,7 @@ class Target(object):
         self.neighborfit = self.fit.CalculatePSF(invariant_vals)
         self.subtraction = self.answerfit - self.neighborfit
         self.residual = self.fpix[cadence] - self.answerfit
-        self.subtracted_flux = PLD(self.subtracted_fpix,self.trninds,  self.ferr, self.aperture)[0]
+        self.subtracted_flux = PLD(self.subtracted_fpix, self.trninds, self.ferr, self.t, self.aperture)[0]
 
         return self.subtraction
 
