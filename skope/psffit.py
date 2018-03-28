@@ -68,7 +68,7 @@ class PSFFit(object):
         PSFfit = self.CalculatePSF(params)
 
         # sum squared difference between data and model
-        PSFres = np.nansum(((self.fpix[index] - PSFfit) / self.ferr[index]) ** 2)
+        PSFres = np.nansum((self.fpix[index] - PSFfit) ** 2)
 
         '''
         s_s = 1.

@@ -475,7 +475,7 @@ class Target(object):
 
         unsub_flux = PLD(self.fpix, self.trninds, self.ferr, self.t, self.aperture)[0]
         fig, ax = pl.subplots(2,1)
-        ns_depth = self.aft.RecoverTransit(self.subtracted_flux)
+        # ns_depth = self.aft.RecoverTransit(self.subtracted_flux)
         ax[0].plot(self.t,np.mean(unsub_flux)*self.trn,'r')
         ax[0].plot(self.t,unsub_flux,'k.')
         ax[0].set_title('No Subtraction, 1st Order PLD')
@@ -486,11 +486,13 @@ class Target(object):
         ax[0].annotate(r'$\mathrm{Recovered\ Depth}: %.4f$' % (self.aft.RecoverTransit(unsub_flux)),
                         xy = (0.05, 0.05),xycoords='axes fraction',
                         color='k', fontsize=12);
+        '''
         ax[1].annotate(r'$\mathrm{Recovered\ Depth}: %.4f$' % (ns_depth),
                         xy = (0.05, 0.05),xycoords='axes fraction',
                         color='k', fontsize=12);
+        '''
 
         print("Run time:")
         print(datetime.now() - self.startTime)
-        print("RTD: %.4f,   Subtracted RTD: %.4f" % (self.aft.RecoverTransit(unsub_flux),ns_depth))
+        # print("RTD: %.4f,   Subtracted RTD: %.4f" % (self.aft.RecoverTransit(unsub_flux),ns_depth))
         pl.show()
