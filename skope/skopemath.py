@@ -222,12 +222,18 @@ def PSF(psf_args, ccd_args, xpos, ypos):
             # read in PSF arguments
             A, x0, y0, sx, sy, rho = psf_args
 
-            if not isinstance(x0, (list,)):
-                x0 = [x0]
-                y0 = [y0]
+            x0 = np.atleast_1d(x0)
+            y0 = np.atleast_1d(y0)
+            sx = np.atleast_1d(sx)
+            sy = np.atleast_1d(sy)
+            rho = np.atleast_1d(rho)
 
             # contribution to pixel from target
-            psf[i][j] = PixelFlux(cx, cy, [A], [(x-i+xpos) for x in x0], [(y-j+ypos) for y in y0], [sx], [sy], [rho])
+            psf[i][j] = PixelFlux(cx, cy, A,
+                                  [(x-i+xpos) for x in x0],
+                                  [(y-j+ypos) for y in y0],
+                                  [sx], [sy], [rho])
+
             target[i][j] = psf[i][j]
 
             # add background noise
