@@ -25,6 +25,7 @@ from k2plr.config import KPLR_ROOT
 from everest.config import KEPPRF_DIR
 import os
 from tqdm import tqdm
+from datetime import datetime
 
 class Target(object):
     '''
@@ -41,6 +42,8 @@ class Target(object):
         self.variable = variable
         self.neighbor = neighbor
         self.targets = 1
+
+        self.startTime = datetime.now()
 
     def GenerateLightCurve(self, mag, roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
         '''
@@ -392,7 +395,6 @@ class Target(object):
             sy = ans[4*n:5*n]
             rho = ans[5*n:6*n]
 
-            import pdb; pdb.set_trace()
             cadence, _, _ = PSF(np.concatenate([A[0],x0[0],y0[0],sx[0],sy[0],rho[0]]), self.ccd_args, self.xpos[ind], self.ypos[ind]) \
                             + PSF(np.concatenate([A[1],x0[1],y0[1],sx[1],sy[1],rho[1]]), self.ccd_args, self.xpos[ind], self.ypos[ind])
             fit_fpix.append(cadence)
@@ -482,10 +484,11 @@ class Target(object):
         ax[1].plot(self.t,self.subtracted_flux,'k.')
         ax[1].set_title('Neighbor Subtraction, 1st Order PLD')
 
+        '''
         ax[0].annotate(r'$\mathrm{Recovered\ Depth}: %.4f$' % (self.aft.RecoverTransit(unsub_flux)),
                         xy = (0.05, 0.05),xycoords='axes fraction',
                         color='k', fontsize=12);
-        '''
+
         ax[1].annotate(r'$\mathrm{Recovered\ Depth}: %.4f$' % (ns_depth),
                         xy = (0.05, 0.05),xycoords='axes fraction',
                         color='k', fontsize=12);
