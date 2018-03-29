@@ -424,9 +424,9 @@ class Target(object):
             if i == 0:
                 invariant_vals[i] = 0
             elif i == 2:
-                invariant_vals[i] = v - self.xpos[index]
+                invariant_vals[i] = v - self.xpos[cadence]
             elif i == 4:
-                invariant_vals[i] = v - self.ypos[index]
+                invariant_vals[i] = v - self.ypos[cadence]
             else:
                 invariant_vals[i] = v
 
