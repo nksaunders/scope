@@ -84,6 +84,7 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
 
         # Get the x Gaussian integrals
 
+        amp = np.atleast_1d(amp)
         x0 = np.atleast_1d(x0)
         y0 = np.atleast_1d(y0)
         sx = np.atleast_1d(sx)
