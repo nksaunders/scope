@@ -24,18 +24,6 @@ class PSFFit(object):
         self.xpos = xpos
         self.ypos = ypos
 
-    def CalculatePSF(self, params):
-        '''
-        Create PSF model from params
-        '''
-
-        amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
-
-        PSFfit = PSF(np.array([amp1,x01,y01,sx,sy,rho]), self.ccd_args, self.xpos[self.cadence], self.ypos[self.cadence])[0] \
-                 + PSF(np.array([amp2,x02,y02,sx,sy,rho]), self.ccd_args, self.xpos[self.cadence], self.ypos[self.cadence])[0]
-
-        return PSFfit
-
     def Residuals(self, params):
         '''
 
@@ -65,7 +53,7 @@ class PSFFit(object):
             if elem < 0:
                 return 1.0e30
 
-        PSFfit = self.CalculatePSF(params)
+        PSFfit = PSF(np.array([[amp1,amp2],[x01,x02],[y01,y02],[sx],[sy],[rho]]), self.ccd_args, self.xpos[self.cadence], self.ypos[self.cadence])[0]
 
         # sum squared difference between data and model
         PSFres = np.nansum((self.fpix[cadence] - PSFfit) ** 2)
