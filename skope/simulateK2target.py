@@ -409,7 +409,6 @@ class Target(object):
         sx = [.5]
         sy = [.5]
         rho = [0.01]
-        background = [1000]
 
         index = 0
         guess = np.concatenate([amp,x0,y0,sx,sy,rho])

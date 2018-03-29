@@ -31,8 +31,8 @@ class PSFFit(object):
 
         amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
 
-        PSFfit = PSF(np.array([amp1,x01,y01,sx,sy,rho]), self.ccd_args, self.xpos[self.index], self.ypos[self.index])[0] \
-                 + PSF(np.array([amp2,x02,y02,sx,sy,rho]), self.ccd_args, self.xpos[self.index], self.ypos[self.index])[0]
+        PSFfit = PSF(np.array([amp1,x01,y01,sx,sy,rho]), self.ccd_args, self.xpos[self.cadence], self.ypos[self.cadence])[0] \
+                 + PSF(np.array([amp2,x02,y02,sx,sy,rho]), self.ccd_args, self.xpos[self.cadence], self.ypos[self.cadence])[0]
 
         return PSFfit
 
@@ -42,7 +42,7 @@ class PSFFit(object):
         '''
 
         amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
-        index = self.index
+        cadence = self.cadence
 
         # constrain parameter values
         if sx > 1 or sx < 0:
@@ -68,7 +68,7 @@ class PSFFit(object):
         PSFfit = self.CalculatePSF(params)
 
         # sum squared difference between data and model
-        PSFres = np.nansum((self.fpix[index] - PSFfit) ** 2)
+        PSFres = np.nansum((self.fpix[cadence] - PSFfit) ** 2)
 
         '''
         s_s = 1.
@@ -84,12 +84,12 @@ class PSFFit(object):
 
         return PSFres
 
-    def FindSolution(self, guess, ccd_args, index=100):
+    def FindSolution(self, guess, ccd_args, cadence=100):
         '''
         Minimize residuals to find best PSF fit for the data
         '''
         self.guess = guess
-        self.index = index
+        self.cadence = cadence
         self.ccd_args = ccd_args
 
         answer, chisq, _, iter, funcalls, warn = fmin_powell(self.Residuals, self.guess, xtol = self.xtol, ftol = self.ftol,
