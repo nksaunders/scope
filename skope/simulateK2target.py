@@ -410,10 +410,10 @@ class Target(object):
         sy = [.5]
         rho = [0.01]
 
-        index = 0
+        cadence = 0
         guess = np.concatenate([amp,x0,y0,sx,sy,rho])
 
-        answer = self.fit.FindSolution(guess, self.ccd_args, index=index)
+        answer = self.fit.FindSolution(guess, self.ccd_args, cadence=cadence)
 
         invariant_vals = np.zeros((len(answer)))
         self.n_fpix = np.zeros((len(self.fpix),self.apsize,self.apsize))
