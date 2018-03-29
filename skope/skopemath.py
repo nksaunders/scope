@@ -293,6 +293,7 @@ def PLD(fpix, trninds, ferr, t, aperture):
     # Mask transits in design matrix
     MX = M(X)
 
+    import pdb; pdb.set_trace()
     # Define gaussian process parameters
     y = M(rawflux) - np.dot(X, np.linalg.solve(np.dot(X.T, X), np.dot(X.T, M(rawflux))))
     amp = np.nanstd(y)

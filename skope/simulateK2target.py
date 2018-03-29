@@ -427,7 +427,7 @@ class Target(object):
                 invariant_vals[i] = 0
             elif i == 2:
                 invariant_vals[i] = v - self.xpos[cadence]
-            elif i == 4:
+            elif i == 3:
                 invariant_vals[i] = v - self.ypos[cadence]
             else:
                 invariant_vals[i] = v
@@ -452,7 +452,7 @@ class Target(object):
         self.neighborfit = self.fit.CalculatePSF(invariant_vals)
         self.subtraction = self.answerfit - self.neighborfit
         self.residual = self.fpix[cadence] - self.answerfit
-        self.subtracted_flux = PLD(self.subtracted_fpix, self.trninds, self.ferr, self.t, self.aperture)[0]
+        # self.subtracted_flux = PLD(self.subtracted_fpix, self.trninds, self.ferr, self.t, self.aperture)[0]
 
         return self.subtraction
 
@@ -480,8 +480,8 @@ class Target(object):
         ax[0].plot(self.t,np.mean(unsub_flux)*self.trn,'r')
         ax[0].plot(self.t,unsub_flux,'k.')
         ax[0].set_title('No Subtraction, 1st Order PLD')
-        ax[1].plot(self.t,np.mean(self.subtracted_flux)*self.trn,'r')
-        ax[1].plot(self.t,self.subtracted_flux,'k.')
+        # ax[1].plot(self.t,np.mean(self.subtracted_flux)*self.trn,'r')
+        # ax[1].plot(self.t,self.subtracted_flux,'k.')
         ax[1].set_title('Neighbor Subtraction, 1st Order PLD')
 
         '''
