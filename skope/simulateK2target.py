@@ -351,60 +351,13 @@ class Target(object):
         return self.detector
 
 
-    def FitPSF(self, fpix):
-        '''
-
-        '''
-
-        PF = fitting.PSFFit(fpix, self.ferr, self.xpos, self.ypos, self.ccd_args)
-
-        A = 200000
-        sx = 0.5
-        sy = 0.5
-        rho = 0.05
-
-        guess = np.concatenate([[A], [self.apsize/2], [self.apsize/2], [sx], [sy], [rho]])
-
-        if self.neighbor:
-
-            A2 = A / self.r
-            sx2 = sx
-            sy2 = sy
-            rho2 = rho
-
-            guess_with_neighbor = [[A, A2], [self.apsize/2, self.apsize/2], [self.apsize/2, self.apsize/2], [sx, sx2], [sy, sy2], [rho, rho2]]
-
-            guess = guess_with_neighbor
-
-        ans_set = []
-        print("Finding solutions...")
-        for i in tqdm(range(self.ncadences)):
-            ans_cadence = PF.FindSolution(guess, i)
-            ans_set.append(ans_cadence)
-
-        print("Creating PSF...")
-        fit_fpix = []
-        for ind, ans in tqdm(enumerate(ans_set)):
-
-            n = self.targets
-
-            A = ans[0:n]
-            x0 = ans[n:2*n]
-            y0 = ans[2*n:3*n]
-            sx = ans[3*n:4*n]
-            sy = ans[4*n:5*n]
-            rho = ans[5*n:6*n]
-
-            cadence, _, _ = PSF(np.concatenate([A[0],x0[0],y0[0],sx[0],sy[0],rho[0]]), self.ccd_args, self.xpos[ind], self.ypos[ind]) \
-                            + PSF(np.concatenate([A[1],x0[1],y0[1],sx[1],sy[1],rho[1]]), self.ccd_args, self.xpos[ind], self.ypos[ind])
-            fit_fpix.append(cadence)
-
-        return fit_fpix
-
     def FindFit(self):
 
+        # initialize fit
         self.fit = pf.PSFFit(self.fpix,self.ferr, self.xpos, self.ypos)
 
+        # set guess
+        # *** HARDCODED FOR DEBUGGING ***
         amp = [250000.0, (250000.0 / self.r)]
         x0 = [self.apsize/2,self.apsize/2]
         y0 = [self.apsize/2,self.apsize/2]
@@ -415,13 +368,14 @@ class Target(object):
         cadence = 0
         guess = np.concatenate([amp,x0,y0,sx,sy,rho])
 
+        # run
         answer = self.fit.FindSolution(guess, self.ccd_args, cadence=cadence)
 
         invariant_vals = np.zeros((len(answer)))
         self.n_fpix = np.zeros((len(self.fpix),self.apsize,self.apsize))
         self.subtracted_fpix = np.zeros((len(self.fpix),self.apsize,self.apsize))
 
-
+        # PSF fit independent of motion vectors
         for i,v in enumerate(answer):
             if i == 0:
                 invariant_vals[i] = 0
