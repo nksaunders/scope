@@ -9,10 +9,10 @@ from everest.config import EVEREST_SRC
 import os
 
 # Number of targets to simulate
-niter = 5
+niter = 10
 
 # Magnitude and motion arrays
-mags = np.arange(10., 16., 0.5)
+mags = np.arange(10., 16., 0.1)
 m_mags = np.arange(0., 22, 1)
 
 def Simulate(arg):
