@@ -45,7 +45,7 @@ class Target(object):
 
         self.startTime = datetime.now()
 
-    def GenerateLightCurve(self, mag, roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
+    def GenerateLightCurve(self, mag, roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=11):
         '''
         Creates a light curve for given detector, star, and transiting exoplanet parameters
         Motion from a real K2 target is applied to the PSF
