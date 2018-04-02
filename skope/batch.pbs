@@ -8,6 +8,6 @@
 ## Note that this is specific to numpy versions linked with OpenBLAS
 export OPENBLAS_NUM_THREADS=1
 
-cd /usr/lusers/nks1994/skope
+cd /usr/lusers/nks1994/skope/skope
 
 mpirun -np $PBS_NP python batch.py
