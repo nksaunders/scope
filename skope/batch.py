@@ -43,7 +43,7 @@ def Benchmark():
     for iter in range(niter):
         cdpp = np.zeros_like(mags)
         for i, mag in enumerate(mags):
-            flux = np.load('batch/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['flux']
+            flux = np.load('batch/benchmark/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['flux']
             cdpp[i] = CDPP(flux)
         if iter == 0:
             ax.plot(mags, cdpp, 'b.', label = 'Synthetic (0x motion)')
@@ -71,7 +71,7 @@ def Benchmark():
     for iter in range(niter):
         cdpp = np.zeros_like(mags)
         for i, mag in enumerate(mags):
-            flux = np.load('batch/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['flux']
+            flux = np.load('batch/benchmark/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['flux']
             cdpp[i] = CDPP(flux)
         if iter == 0:
             ax.plot(mags, cdpp, 'b.', label = 'Synthetic (1x motion)')
@@ -100,7 +100,7 @@ def Benchmark():
         cdpp = [[] for mag in mags]
         for i, mag in enumerate(mags):
             for iter in range(niter):
-                flux = np.load('batch/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))['flux']
+                flux = np.load('batch/benchmark/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))['flux']
                 cdpp[i].append(CDPP(flux))
         cdpp = np.nanmean(np.array(cdpp), axis = 1)
         ax.plot(mags, cdpp, '.', color = color, label = 'Synthetic (%dx motion)' % m_mag)
