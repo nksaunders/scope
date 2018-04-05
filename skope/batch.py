@@ -115,7 +115,9 @@ def Benchmark():
 
 if __name__ == '__main__':
 
-    Benchmark()
+    # Benchmark()
+
+    Simulate((2,13.25,0.))
 
     # Run!
     '''
