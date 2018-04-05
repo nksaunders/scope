@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+skope/batch/
+skope/stars/
+Notebooks/
+skope/fittingtests.ipynb
+
 .DS_Store
 
 # C extensions
