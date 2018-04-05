@@ -16,11 +16,22 @@ mags = np.arange(10., 16., .25)
 m_mags = np.arange(0., 22, 1)
 
 def Simulate(arg):
+
     iter, mag, m_mag = arg
     print("Running mag = %.2f, m_mag = %.2f" % (mag, m_mag))
     sK2 = skope.Target(ftpf = os.path.expanduser('/usr/lusers/nks1994/skope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
-    fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, ncadences=1000)
-    np.savez('batch/benchmark/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
+
+    # check to see if file exists
+    new_lc = Path('batch/benchmark/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))
+
+    # skip if it's already there
+    if new_lc.is_file():
+        pass
+
+    # create missing lc
+    else:
+        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, ncadences=1000)
+        np.savez('batch/benchmark/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
 
 def Benchmark():
     '''
@@ -117,11 +128,7 @@ if __name__ == '__main__':
 
     # Benchmark()
 
-    Simulate((2,13.25,0.))
-
     # Run!
-    '''
     combs = list(itertools.product(range(niter), mags, m_mags))
     with Pool() as pool:
         pool.map(Simulate, combs)
-    '''
