@@ -22,7 +22,7 @@ def Simulate(arg):
     sK2 = skope.Target(ftpf = os.path.expanduser('/usr/lusers/nks1994/skope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
 
     # check to see if file exists
-    new_lc = Path('batch/benchmark/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))
+    new_lc = os.path('batch/benchmark/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))
 
     # skip if it's already there
     if new_lc.is_file():
