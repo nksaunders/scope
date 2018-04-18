@@ -7,6 +7,7 @@ from everest.pool import Pool
 from everest.missions.k2 import CDPP
 from everest.config import EVEREST_SRC
 import os
+import os.path
 
 # Number of targets to simulate
 niter = 5
