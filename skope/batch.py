@@ -21,11 +21,8 @@ def Simulate(arg):
     print("Running mag = %.2f, m_mag = %.2f..." % (mag, m_mag))
     sK2 = skope.Target(ftpf = os.path.expanduser('/usr/lusers/nks1994/skope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
 
-    # check to see if file exists
-    new_lc = os.path('batch/benchmark/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))
-
-    # skip if it's already there
-    if new_lc.is_file():
+    # check to see if file exists, skip if it's already there
+    if os.path.is_file('batch/benchmark/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
         print("Mag = %.2f, m_mag = %.2f already exists!" % (mag, m_mag))
 
     # create missing lc
