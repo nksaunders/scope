@@ -7,5 +7,8 @@ This package includes methods to change magnitude of motion and sensitivity prop
 
 For examples of usage, see [the sample notebook](https://nksaunders.github.io/files/Example.html).
 
-Note that **skope** depends on the **EVEREST** pipeline (Luger et. al). **EVEREST** can be installed with:
+To install **skope**, clone and navigate to the directory and run
+<pre><code>python setup.py install</code></pre>
+
+Note that **skope** depends on the **EVEREST** pipeline (Luger et. al). **EVEREST** can be installed with
 <pre><code>pip install everest-pipeline</code></pre>
