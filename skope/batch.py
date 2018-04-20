@@ -13,8 +13,8 @@ import os.path
 niter = 5
 
 # Magnitude and motion arrays
-mags = np.arange(10., 16., .25)
-m_mags = np.arange(0., 22, 1)
+mags = np.arange(10., 16., .5)
+m_mags = np.arange(0., 20., 2)
 
 def Simulate(arg):
 
@@ -28,7 +28,7 @@ def Simulate(arg):
 
     # create missing lc
     else:
-        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, ncadences=1000)
+        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=50, ncadences=1000)
         np.savez('batch/benchmark/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
 
 def Benchmark():
