@@ -188,10 +188,10 @@ class Target(object):
         self.transit = True
 
         # Transit information
-        self.depth=depth
-        self.per=per # period (days)
-        self.dur=dur # duration (days)
-        self.t0=t0 # initial transit time (days)
+        self.depth = depth
+        self.per = per # period (days)
+        self.dur = dur # duration (days)
+        self.t0 = t0 # initial transit time (days)
 
         # Create transit light curve
         if self.depth == 0:
