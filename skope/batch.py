@@ -28,7 +28,7 @@ def Simulate(arg):
 
     # create missing lc
     else:
-        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=50, ncadences=1000)
+        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=50, ncadences=1000, apsize=11)
         np.savez('batch/background_test/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
 
 def Benchmark():
