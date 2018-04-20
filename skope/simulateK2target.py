@@ -95,7 +95,7 @@ class Target(object):
         self.inter = np.zeros((self.apsize, self.apsize))
         for i in range(self.apsize):
             for j in range(self.apsize):
-                self.inter[i][j] = (0.975 + 0.01 * np.random.randn())
+                self.inter[i][j] = (0.975 + 0.005 * np.random.randn())
 
         # assign PSF model parameters to be passed into PixelFlux function
         if not self.custom_ccd:
