@@ -124,11 +124,9 @@ def Benchmark():
 
 if __name__ == '__main__':
 
-    Benchmark()
+    # Benchmark()
 
-    '''
     # Run!
     combs = list(itertools.product(range(niter), mags, m_mags))
     with Pool() as pool:
         pool.map(Simulate, combs)
-    '''
