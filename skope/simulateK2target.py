@@ -396,11 +396,10 @@ class Target(object):
                     n_vals[i] = v
 
             neighbor_cad = self.fit.CalculatePSF(n_vals, cadence, neighbor=True)
-            # import pdb; pdb.set_trace()
+
             self.n_fpix[cadence] = neighbor_cad
             self.subtracted_fpix[cadence] = self.fpix[cadence] - neighbor_cad
 
-        import pdb; pdb.set_trace()
         self.answerfit = self.fit.CalculatePSF(answer, cadence)
         self.neighborfit = self.fit.CalculatePSF(invariant_vals, cadence, neighbor=True)
         self.subtraction = self.answerfit - self.neighborfit
