@@ -88,7 +88,7 @@ class PSFFit(object):
         return answer
 
 
-    def CalculatePSF(params):
+    def CalculatePSF(self, params):
         '''
 
         '''
