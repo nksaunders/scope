@@ -86,3 +86,14 @@ class PSFFit(object):
         self.bic = chisq + len(answer) * np.log(len(self.fpix))
 
         return answer
+
+
+    def CalculatePSF(params):
+        '''
+
+        '''
+
+        amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
+        PSFfit = PSF(np.array([[amp1,amp2],[x01,x02],[y01,y02],[sx],[sy],[rho]]), self.ccd_args, self.xpos[self.cadence], self.ypos[self.cadence])[0]
+
+        return PSFFit
