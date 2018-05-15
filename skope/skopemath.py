@@ -71,7 +71,7 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
 
     # Dimensions
     N = len(cy)
-    K = 1
+    K = len(amp)
 
     # Get the y IPV
     f = Polynomial(y, cy)
