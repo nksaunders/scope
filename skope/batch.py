@@ -124,7 +124,7 @@ def Benchmark():
 
 if __name__ == '__main__':
 
-    Benchmark()
+    # Benchmark()
 
 
     # Run!
