@@ -397,7 +397,7 @@ class Target(object):
                 else:
                     n_vals[i] = v
 
-            neighbor_cad = self.fit.CalculatePSF(n_vals)
+            neighbor_cad = PSF(n_vals, self.ccd_args, self.xpos[cadence], self.ypos[cadence])[0]
             self.n_fpix[cadence] = neighbor_cad
             self.subtracted_fpix[cadence] = self.fpix[cadence] - neighbor_cad
 
