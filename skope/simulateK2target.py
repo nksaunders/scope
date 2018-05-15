@@ -397,7 +397,8 @@ class Target(object):
                 else:
                     n_vals[i] = v
 
-            neighbor_cad = PSF(n_vals, self.ccd_args, self.xpos[cadence], self.ypos[cadence])[0]
+            n_amp1,n_amp2,n_x01,n_x02,n_y01,n_y02,n_sx,n_sy,n_rho = n_vals
+            neighbor_cad = PSF(np.array([[n_amp1,n_amp2],[n_x01,n_x02],[n_y01,n_y02],[n_sx],[n_sy],[n_rho]]), self.ccd_args, self.xpos[cadence], self.ypos[cadence])[0]
             self.n_fpix[cadence] = neighbor_cad
             self.subtracted_fpix[cadence] = self.fpix[cadence] - neighbor_cad
 
