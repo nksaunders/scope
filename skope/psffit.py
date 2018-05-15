@@ -88,12 +88,16 @@ class PSFFit(object):
         return answer
 
 
-    def CalculatePSF(self, params):
+    def CalculatePSF(self, params, cadence, neighbor=False):
         '''
 
         '''
 
         amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
-        PSFfit = PSF(np.array([[amp1,amp2],[x01,x02],[y01,y02],[sx],[sy],[rho]]), self.ccd_args, self.xpos[self.cadence], self.ypos[self.cadence])[0]
 
-        return PSFFit
+        if neighbor:
+            amp1 = 0
+
+        computed_psf = PSF(np.array([[amp1,amp2],[x01,x02],[y01,y02],[sx],[sy],[rho]]), self.ccd_args, self.xpos[cadence], self.ypos[cadence])[0]
+
+        return computed_psf

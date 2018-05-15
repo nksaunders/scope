@@ -117,7 +117,7 @@ class Target(object):
             rho = [0.05 + 0.02 * np.random.randn()]
             psf_args = np.concatenate([[self.A], np.array([x0]), np.array([y0]), sx, sy, rho])
 
-        ccd_args = [self.cx, self.cy, self.apsize, self.A, background_level, self.inter, photnoise_conversion]
+        ccd_args = [self.cx, self.cy, self.apsize, background_level, self.inter, photnoise_conversion]
         self.ccd_args = ccd_args
 
         # initialize pixel flux light curve, target light curve, and isolated noise in each pixel
@@ -354,7 +354,7 @@ class Target(object):
     def FindFit(self):
 
         # initialize fit
-        self.fit = pf.PSFFit(self.fpix,self.ferr, self.xpos, self.ypos)
+        self.fit = pf.PSFFit(self.fpix, self.ferr, self.xpos, self.ypos)
 
         # set guess
         # *** HARDCODED FOR DEBUGGING ***
@@ -377,9 +377,7 @@ class Target(object):
 
         # PSF fit independent of motion vectors
         for i,v in enumerate(answer):
-            if i == 0:
-                invariant_vals[i] = 0
-            elif i == 2:
+            if i == 2:
                 invariant_vals[i] = v - self.xpos[cadence]
             elif i == 3:
                 invariant_vals[i] = v - self.ypos[cadence]
@@ -397,13 +395,14 @@ class Target(object):
                 else:
                     n_vals[i] = v
 
-            neighbor_cad = self.fit.CalculatePSF(n_vals)
+            neighbor_cad = self.fit.CalculatePSF(n_vals, cadence, neighbor=True)
+            # import pdb; pdb.set_trace()
             self.n_fpix[cadence] = neighbor_cad
             self.subtracted_fpix[cadence] = self.fpix[cadence] - neighbor_cad
 
-
-        self.answerfit = self.fit.CalculatePSF(answer)
-        self.neighborfit = self.fit.CalculatePSF(invariant_vals)
+        import pdb; pdb.set_trace()
+        self.answerfit = self.fit.CalculatePSF(answer, cadence)
+        self.neighborfit = self.fit.CalculatePSF(invariant_vals, cadence, neighbor=True)
         self.subtraction = self.answerfit - self.neighborfit
         self.residual = self.fpix[cadence] - self.answerfit
         # self.subtracted_flux = PLD(self.subtracted_fpix, self.trninds, self.ferr, self.t, self.aperture)[0]
