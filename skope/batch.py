@@ -14,7 +14,7 @@ niter = 1
 
 # Magnitude and motion arrays
 mags = np.arange(10., 16., .5)
-m_mags = np.arange(0., 20., 2)
+m_mags = np.arange(0., 20., 1)
 
 def Simulate(arg):
 
@@ -28,7 +28,7 @@ def Simulate(arg):
 
     # create missing lc
     else:
-        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=10, ncadences=1000, apsize=11)
+        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=0, ncadences=1000, apsize=11)
         np.savez('batch/plot_run/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
 
 def Benchmark():
@@ -80,7 +80,7 @@ def Benchmark():
     for iter in range(niter):
         cdpp = np.zeros_like(mags)
         for i, mag in enumerate(mags):
-            flux = np.load('batch/background_test/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['flux']
+            flux = np.load('batch/plot_run/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['flux']
             cdpp[i] = CDPP(flux)
         if iter == 0:
             ax.plot(mags, cdpp, 'b.', label = 'Synthetic (1x motion)')
@@ -109,7 +109,7 @@ def Benchmark():
         cdpp = [[] for mag in mags]
         for i, mag in enumerate(mags):
             for iter in range(niter):
-                flux = np.load('batch/background_test/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))['flux']
+                flux = np.load('batch/plot_run/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))['flux']
                 cdpp[i].append(CDPP(flux))
         cdpp = np.nanmean(np.array(cdpp), axis = 1)
         ax.plot(mags, cdpp, '.', color = color, label = 'Synthetic (%dx motion)' % m_mag)
