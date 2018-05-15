@@ -23,13 +23,13 @@ def Simulate(arg):
     sK2 = skope.Target(ftpf = os.path.expanduser('/usr/lusers/nks1994/skope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
 
     # check to see if file exists, skip if it's already there
-    if os.path.isfile('batch/background_test/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
+    if os.path.isfile('batch/plot_run/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
         print("Mag = %.2f, m_mag = %.2f already exists!" % (mag, m_mag))
 
     # create missing lc
     else:
         fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=10, ncadences=1000, apsize=11)
-        np.savez('batch/background_test/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
+        np.savez('batch/plot_run/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
 
 def Benchmark():
     '''
@@ -52,7 +52,7 @@ def Benchmark():
     for iter in range(niter):
         cdpp = np.zeros_like(mags)
         for i, mag in enumerate(mags):
-            flux = np.load('batch/background_test/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['flux']
+            flux = np.load('batch/plot_run/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['flux']
             cdpp[i] = CDPP(flux)
         if iter == 0:
             ax.plot(mags, cdpp, 'b.', label = 'Synthetic (0x motion)')
