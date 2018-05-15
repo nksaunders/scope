@@ -101,8 +101,8 @@ class Target(object):
         if not self.custom_ccd:
 
             # cx,cy: intra-pixel variation polynomial coefficients in x,y
-            self.cx = [1.0, 0.0, -0.2]
-            self.cy = [1.0, 0.0, -0.2]
+            self.cx = [1.0, 0.0, -0.3]
+            self.cy = [1.0, 0.0, -0.3]
 
             # x0,y0: center of PSF, half of aperture size plus random deviation
             x0 = (self.apsize / 2.0) + 0.2 * np.random.randn()
@@ -361,9 +361,9 @@ class Target(object):
         amp = [250000.0, (250000.0 / self.r)]
         x0 = [self.apsize/2,self.apsize/2]
         y0 = [self.apsize/2,self.apsize/2]
-        sx = [.5]
-        sy = [.5]
-        rho = [0.01]
+        sx = [.5,.5]
+        sy = [.5,.5]
+        rho = [0.01,0.01]
 
         cadence = 0
         guess = np.concatenate([amp,x0,y0,sx,sy,rho])

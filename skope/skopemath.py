@@ -69,6 +69,13 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
 
     '''
 
+    amp = np.atleast_1d(amp)
+    x0 = np.atleast_1d(x0)
+    y0 = np.atleast_1d(y0)
+    sx = np.atleast_1d(sx)
+    sy = np.atleast_1d(sy)
+    rho = np.atleast_1d(rho)
+
     # Dimensions
     N = len(cy)
     K = len(amp)
@@ -84,17 +91,17 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
 
         # Get the x Gaussian integrals
 
-        amp = np.atleast_1d(amp)
-        x0 = np.atleast_1d(x0)
-        y0 = np.atleast_1d(y0)
-        sx = np.atleast_1d(sx)
-        sy = np.atleast_1d(sy)
-        rho = np.atleast_1d(rho)
-
+        '''
         a = 1 / (2 * (1 - rho[k] ** 2) * sx[k] ** 2)
         b = ((y - y0[k]) * rho[k] * sx[k] + x0[k] * sy[k]) / ((1 - rho[k] ** 2) * sx[k] ** 2 * sy[k])
         c = -(x0[k] ** 2 / sx[k] ** 2 + (y - y0[k]) ** 2 / sy[k] ** 2 + 2 * x0[k] * (y - y0[k]) * rho[k] / (sx[k] * sy[k])) / (2 * (1 - rho[k] ** 2))
         norm = (2 * np.pi * sx[k] * sy[k] * np.sqrt(1 - rho[k] ** 2))
+        '''
+
+        a = 1 / (2 * (1 - rho ** 2) * sx ** 2)
+        b = ((y - y0[k]) * rho * sx + x0[k] * sy) / ((1 - rho ** 2) * sx ** 2 * sy)
+        c = -(x0[k] ** 2 / sx ** 2 + (y - y0[k]) ** 2 / sy ** 2 + 2 * x0[k] * (y - y0[k]) * rho / (sx * sy)) / (2 * (1 - rho ** 2))
+        norm = (2 * np.pi * sx * sy * np.sqrt(1 - rho ** 2))
         GI = GaussInt(a, b, c)
 
         # Loop over the orders of the x IPV

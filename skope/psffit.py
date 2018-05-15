@@ -29,16 +29,25 @@ class PSFFit(object):
 
         '''
 
-        amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
+        amp1,amp2,x01,x02,y01,y02,sx1,sx2,sy1,sy2,rho1,rho2 = params
         cadence = self.cadence
 
         # constrain parameter values
-        if sx > 1 or sx < 0:
+        if sx1 > 1 or sx1 < 0:
             return 1.0e30
-        if sy > 1 or sy < 0:
+        if sy1 > 1 or sy1 < 0:
             return 1.0e30
 
-        if rho >= 1 or rho <= -1:
+        if rho1 >= 0.5 or rho1 <= -0.5:
+            return 1.0e30
+
+        # constrain parameter values
+        if sx2 > 1 or sx2 < 0:
+            return 1.0e30
+        if sy2 > 1 or sy2 < 0:
+            return 1.0e30
+
+        if rho2 >= 0.5 or rho2 <= -0.5:
             return 1.0e30
 
 
@@ -93,11 +102,11 @@ class PSFFit(object):
 
         '''
 
-        amp1,amp2,x01,x02,y01,y02,sx,sy,rho = params
+        amp1,amp2,x01,x02,y01,y02,sx1,sx2,sy1,sy2,rho1,rho2 = params
 
         if neighbor:
             amp1 = 0
 
-        computed_psf = PSF(np.array([[amp1,amp2],[x01,x02],[y01,y02],[sx],[sy],[rho]]), self.ccd_args, self.xpos[cadence], self.ypos[cadence])[0]
+        computed_psf = PSF(np.array([[amp1,amp2],[x01,x02],[y01,y02],[sx1,sx2],[sy1,sy2],[rho1,rho2]]), self.ccd_args, self.xpos[cadence], self.ypos[cadence])[0]
 
         return computed_psf

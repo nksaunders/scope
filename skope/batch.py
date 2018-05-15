@@ -10,11 +10,11 @@ import os
 import os.path
 
 # Number of targets to simulate
-niter = 1
+niter = 5
 
 # Magnitude and motion arrays
 mags = np.arange(10., 16., .5)
-m_mags = np.arange(0., 20., 1)
+m_mags = np.arange(0., 21., 1)
 
 def Simulate(arg):
 
@@ -105,7 +105,7 @@ def Benchmark():
         if len(i) > 10:
             by[b] = np.median(cdpp6r[i])
     ax.plot(bins, by, 'ro', label = 'Raw K2', markeredgecolor = 'k')
-    for m_mag, color in zip([1, 2, 5, 10, 20], ['b', 'g', 'y', 'orange', 'k']):
+    for m_mag, color in zip([1, 2, 5, 10], ['b', 'g', 'y', 'orange', 'k']):
         cdpp = [[] for mag in mags]
         for i, mag in enumerate(mags):
             for iter in range(niter):
@@ -124,7 +124,7 @@ def Benchmark():
 
 if __name__ == '__main__':
 
-    # Benchmark()
+    Benchmark()
 
 
     # Run!
