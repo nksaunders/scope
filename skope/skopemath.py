@@ -240,7 +240,7 @@ def PSF(psf_args, ccd_args, xpos, ypos):
             psf[i][j] = PixelFlux(cx, cy, A,
                                   [(x-i+xpos) for x in x0],
                                   [(y-j+ypos) for y in y0],
-                                  [sx], [sy], [rho])
+                                  sx, sy, rho)
 
             target[i][j] = psf[i][j]
 
