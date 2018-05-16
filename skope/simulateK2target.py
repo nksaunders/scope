@@ -354,16 +354,22 @@ class Target(object):
     def FindFit(self):
 
         # initialize fit
-        self.fit = pf.PSFFit(self.fpix, self.ferr, self.xpos, self.ypos)
+        self.fit = pf.PSFFit(self.fpix, self.ferr, self.xpos, self.ypos, self.ccd_args, self.apsize)
+
+        mcmc_params = self.fit.MCMC_results()
+
+        # pl.imshow(self.fit.CalculatePSF(mcmc_params, 0));pl.show()
+
+        import pdb; pdb.set_trace()
 
         # set guess
         # *** HARDCODED FOR DEBUGGING ***
         amp = [250000.0, (250000.0 / self.r)]
         x0 = [self.apsize/2,self.apsize/2]
         y0 = [self.apsize/2,self.apsize/2]
-        sx = [.5,.5]
-        sy = [.5,.5]
-        rho = [0.01,0.01]
+        sx = [.5]
+        sy = [.5]
+        rho = [0.01]
 
         cadence = 0
         guess = np.concatenate([amp,x0,y0,sx,sy,rho])
