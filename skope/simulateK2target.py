@@ -10,6 +10,7 @@ Optionally includes synthetic transit and variability injection.
 
 import numpy as np
 import matplotlib.pyplot as pl
+from matplotlib.widgets import Button
 import everest
 from everest.mathutils import SavGol
 from .skopemath import PSF, PLD
@@ -356,11 +357,7 @@ class Target(object):
         # initialize fit
         self.fit = pf.PSFFit(self.fpix, self.ferr, self.xpos, self.ypos, self.ccd_args, self.apsize)
 
-        mcmc_params = self.fit.MCMC_results()
-
-        # pl.imshow(self.fit.CalculatePSF(mcmc_params, 0));pl.show()
-
-        import pdb; pdb.set_trace()
+        neighborx, neighbory = self.interactive()
 
         # set guess
         # *** HARDCODED FOR DEBUGGING ***
@@ -413,6 +410,45 @@ class Target(object):
         # self.subtracted_flux = PLD(self.subtracted_fpix, self.trninds, self.ferr, self.t, self.aperture)[0]
 
         return self.subtraction
+
+    def interactive(self):
+
+        fig = pl.figure()
+        ax = fig.add_subplot(111)
+        mask = np.ones((10,10))
+
+        ax.imshow(self.fpix[0], origin='lower', cmap='viridis')
+
+        def onclick(event):
+
+            x, y = event.inaxes.transData.inverted().transform((event.x, event.y))
+            if mask[int(y+.5)][int(x+.5)] == 0:
+                mask[int(y+.5)][int(x+.5)] = 1
+            else:
+                mask[int(y+.5)][int(x+.5)] = 0
+            print('pixel loc=(%d, %d)' % (x+.5, y+.5))
+            ax.clear()
+            ax.imshow(self.fpix[0], origin='lower', cmap='viridis')
+            ax.imshow(mask, origin='lower', alpha=0.5, cmap='Purples')
+            fig.canvas.draw()
+            pl.show()
+
+        pl.subplots_adjust(bottom=0.2)
+        class Index(object):
+
+            def done(self, event):
+                pl.close()
+
+        callback = Index()
+
+        axdone = pl.axes([0.81, 0.05, 0.1, 0.075])
+        bdone = Button(axdone, 'Done')
+        bdone.on_clicked(callback.done)
+
+        fig.canvas.mpl_connect('button_press_event', onclick)
+        pl.show()
+
+        return x, y
 
 
     def Plot(self):
