@@ -418,7 +418,7 @@ class Target(object):
         mask = np.ones((10,10))
 
         ax.imshow(self.fpix[0], origin='lower', cmap='viridis')
-
+        coords = []
         def onclick(event):
 
             x, y = event.inaxes.transData.inverted().transform((event.x, event.y))
@@ -427,6 +427,10 @@ class Target(object):
             else:
                 mask[int(y+.5)][int(x+.5)] = 0
             print('pixel loc=(%d, %d)' % (x+.5, y+.5))
+
+            coords.append(x)
+            coords.append(y)
+
             ax.clear()
             ax.imshow(self.fpix[0], origin='lower', cmap='viridis')
             ax.imshow(mask, origin='lower', alpha=0.5, cmap='Purples')
@@ -446,9 +450,8 @@ class Target(object):
         bdone.on_clicked(callback.done)
 
         fig.canvas.mpl_connect('button_press_event', onclick)
-        pl.show()
 
-        return x, y
+        return coords
 
 
     def Plot(self):

@@ -20,7 +20,7 @@ def Simulate(arg):
 
     iter, mag, m_mag = arg
     print("Running mag = %.2f, m_mag = %.2f..." % (mag, m_mag))
-    sK2 = skope.Target(ftpf = os.path.expanduser('/usr/lusers/nks1994/skope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
+    sK2 = skope.Target(variable=True, ftpf = os.path.expanduser('/usr/lusers/nks1994/skope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
 
     # check to see if file exists, skip if it's already there
     if os.path.isfile('batch/plot_run2/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
