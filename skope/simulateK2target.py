@@ -352,18 +352,21 @@ class Target(object):
         return self.detector
 
 
-    def FindFit(self):
+    def FindFit(self, neighbor_coords=[]):
 
         # initialize fit
         self.fit = pf.PSFFit(self.fpix, self.ferr, self.xpos, self.ypos, self.ccd_args, self.apsize)
 
-        neighborx, neighbory = self.interactive()
+        pl.imshow(self.fpix[0], origin='lower', cmap='viridis')
+        nx = input("Enter x pixel coordinate: ")
+        ny = input("Enter y pixel coordinate: ")
+        neighbor_coords = [int(nx), int(ny)]
 
         # set guess
         # *** HARDCODED FOR DEBUGGING ***
         amp = [250000.0, (250000.0 / self.r)]
-        x0 = [self.apsize/2,self.apsize/2]
-        y0 = [self.apsize/2,self.apsize/2]
+        x0 = [self.apsize/2, int(neighbor_coords[0])]
+        y0 = [self.apsize/2, int(neighbor_coords[1])]
         sx = [.5]
         sy = [.5]
         rho = [0.01]
@@ -415,39 +418,36 @@ class Target(object):
 
         fig = pl.figure()
         ax = fig.add_subplot(111)
-        mask = np.ones((10,10))
+        mask = np.ones((self.apsize,self.apsize))
 
         ax.imshow(self.fpix[0], origin='lower', cmap='viridis')
+        ax.annotate('Select center of neighbor PSF.',
+                    xy = (0.05, 0.05),xycoords='axes fraction',
+                    color='w', fontsize=12)
+
         coords = []
         def onclick(event):
 
             x, y = event.inaxes.transData.inverted().transform((event.x, event.y))
             if mask[int(y+.5)][int(x+.5)] == 0:
                 mask[int(y+.5)][int(x+.5)] = 1
+                pl.close()
             else:
                 mask[int(y+.5)][int(x+.5)] = 0
-            print('pixel loc=(%d, %d)' % (x+.5, y+.5))
+                print('pixel loc=(%d, %d)' % (x+.5, y+.5))
 
-            coords.append(x)
-            coords.append(y)
+                coords.append(int(x+.5))
+                coords.append(int(y+.5))
 
-            ax.clear()
-            ax.imshow(self.fpix[0], origin='lower', cmap='viridis')
-            ax.imshow(mask, origin='lower', alpha=0.5, cmap='Purples')
-            fig.canvas.draw()
-            pl.show()
+                ax.clear()
+                ax.imshow(self.fpix[0], origin='lower', cmap='viridis')
+                ax.imshow(mask, origin='lower', alpha=0.5, cmap='Purples')
+                ax.annotate('Click again to confirm.',
+                            xy = (0.05, 0.05),xycoords='axes fraction',
+                            color='w', fontsize=12)
 
-        pl.subplots_adjust(bottom=0.2)
-        class Index(object):
+                fig.canvas.draw()
 
-            def done(self, event):
-                pl.close()
-
-        callback = Index()
-
-        axdone = pl.axes([0.81, 0.05, 0.1, 0.075])
-        bdone = Button(axdone, 'Done')
-        bdone.on_clicked(callback.done)
 
         fig.canvas.mpl_connect('button_press_event', onclick)
 

@@ -64,7 +64,7 @@ class PSFFit(object):
         PSFfit = PSF(np.array([[amp1,amp2],[x01,x02],[y01,y02],[sx],[sy],[rho]]), self.ccd_args, self.xpos[self.cadence], self.ypos[self.cadence])[0]
 
         # sum squared difference between data and model
-        PSFres = np.nansum((self.fpix[cadence] - PSFfit) ** 2)
+        PSFres = np.nansum(((self.fpix[cadence] - PSFfit) / 1000) ** 2)
 
         '''
         s_s = 1.
