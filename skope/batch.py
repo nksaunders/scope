@@ -23,13 +23,13 @@ def Simulate(arg):
     sK2 = skope.Target(variable=True, ftpf = os.path.expanduser('/usr/lusers/nks1994/skope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
 
     # check to see if file exists, skip if it's already there
-    if os.path.isfile('batch/plot_run2/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
+    if os.path.isfile('batch/plot_run3/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
         print("Mag = %.2f, m_mag = %.2f already exists!" % (mag, m_mag))
 
     # create missing lc
     else:
-        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=50, ncadences=1000, apsize=13)
-        np.savez('batch/plot_run2/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
+        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=10, ncadences=1000, apsize=13)
+        np.savez('batch/plot_run3/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
 
 def Benchmark():
     '''
@@ -52,7 +52,7 @@ def Benchmark():
     for iter in range(niter):
         cdpp = np.zeros_like(mags)
         for i, mag in enumerate(mags):
-            flux = np.load('batch/plot_run2/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['flux']
+            flux = np.load('batch/plot_run3/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['flux']
             cdpp[i] = CDPP(flux)
         if iter == 0:
             ax.plot(mags, cdpp, 'b.', label = 'Synthetic (0x motion)')
@@ -80,7 +80,7 @@ def Benchmark():
     for iter in range(niter):
         cdpp = np.zeros_like(mags)
         for i, mag in enumerate(mags):
-            flux = np.load('batch/plot_run2/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['flux']
+            flux = np.load('batch/plot_run3/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['flux']
             cdpp[i] = CDPP(flux)
         if iter == 0:
             ax.plot(mags, cdpp, 'b.', label = 'Synthetic (1x motion)')
@@ -109,7 +109,7 @@ def Benchmark():
         cdpp = [[] for mag in mags]
         for i, mag in enumerate(mags):
             for iter in range(niter):
-                flux = np.load('batch/plot_run2/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))['flux']
+                flux = np.load('batch/plot_run3/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))['flux']
                 cdpp[i].append(CDPP(flux))
         cdpp = np.nanmean(np.array(cdpp), axis = 1)
         ax.plot(mags, cdpp, '.', color = color, label = 'Synthetic (%dx motion)' % m_mag)
@@ -125,7 +125,6 @@ def Benchmark():
 if __name__ == '__main__':
 
     # Benchmark()
-
 
     # Run!
     combs = list(itertools.product(range(niter), mags, m_mags))
