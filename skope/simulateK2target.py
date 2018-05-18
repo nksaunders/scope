@@ -102,8 +102,8 @@ class Target(object):
         if not self.custom_ccd:
 
             # cx,cy: intra-pixel variation polynomial coefficients in x,y
-            self.cx = [1.0, 0.0, -0.1]
-            self.cy = [1.0, 0.0, -0.1]
+            self.cx = [1.0, 0.0, -0.05]
+            self.cy = [1.0, 0.0, -0.05]
 
             # x0,y0: center of PSF, half of aperture size plus random deviation
             x0 = (self.apsize / 2.0) + 0.2 * np.random.randn()
