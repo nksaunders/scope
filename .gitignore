@@ -3,10 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-skope/batch/
-skope/stars/
+scope/batch/
+scope/stars/
 Notebooks/
-skope/fittingtests.ipynb
 
 .DS_Store
 
