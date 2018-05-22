@@ -25,6 +25,11 @@ import os
 from tqdm import tqdm
 from datetime import datetime
 
+# astroML format for consistent plotting style
+from astroML.plotting import setup_text_plots
+setup_text_plots(fontsize=10, usetex=True)
+
+
 class Target(object):
     '''
     A simulated K2 object with a forward model of the Kepler detector sensitivity variation
@@ -326,15 +331,21 @@ class Target(object):
             for ap in aperture:
                 finalap[i] += ap[i]
 
+        max_counts = np.max(finalap)
+
         # Normalize to 1
-        finalap /= np.max(finalap)
+        self.weighted_aperture = finalap / max_counts
 
         # Set excluded pixels to NaN
         for i in range(self.apsize):
             for j in range(self.apsize):
                 if finalap[i][j] == 0:
                     finalap[i][j] = np.nan
+                else:
+                    finalap[i][j] = 1.
 
+        self.aperture = finalap
+        
         return finalap
 
     def DisplayDetector(self):
@@ -374,14 +385,19 @@ class Target(object):
 
 
     def Plot(self):
+        '''
+        Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves.
+        '''
 
         fig, ax = pl.subplots(1, 2, figsize=(12,3), gridspec_kw = {'width_ratios':[1, 3]})
 
         ax[0].imshow(self.fpix[0])
         ax[0].set_title('First Cadence tpf')
+        ax[0].set_xlabel('x (pixels)')
+        ax[0].set_ylabel('y (pixels)')
 
-        ax[1].plot(self.t, self.flux,'k.')
-        ax[1].plot(self.t, self.Detrend()[0],'r.')
+        ax[1].plot(self.t, self.flux, 'k.', label='raw flux')
+        ax[1].plot(self.t, self.Detrend()[0], 'r.', label='de-trended')
         ax[1].set_xlabel('time (days)')
         ax[1].set_ylabel('flux (counts)')
         ax[1].set_title('Flux Light Curve')
