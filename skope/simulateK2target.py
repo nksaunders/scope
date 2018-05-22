@@ -150,10 +150,13 @@ class Target(object):
 
         return self.fpix, self.flux, self.ferr
 
-    def Detrend(self, fpix):
+    def Detrend(self, fpix=[]):
         '''
         Runs 2nd order PLD with a Gaussian Proccess on a given light curve
         '''
+
+        if len(fpix) == 0:
+            fpix = self.fpix
 
         # Set empty transit mask if no transit provided
         if not self.transit:
