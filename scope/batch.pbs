@@ -1,13 +1,13 @@
 #!/bin/sh
 #PBS -l nodes=4:ppn=16,feature=16core,mem=100gb,walltime=00:10:00:00
 #PBS -j oe
-#PBS -o /usr/lusers/nks1994/skope/batchrun.log
+#PBS -o /usr/lusers/nks1994/scope/batchrun.log
 #PBS -m abe
 
 ## This prevents numpy from multithreading. See http://stackoverflow.com/a/19258728
 ## Note that this is specific to numpy versions linked with OpenBLAS
 export OPENBLAS_NUM_THREADS=1
 
-cd /usr/lusers/nks1994/skope/skope
+cd /usr/lusers/nks1994/scope/scope
 
 mpirun -np $PBS_NP python batch.py
