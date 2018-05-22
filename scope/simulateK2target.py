@@ -13,9 +13,7 @@ import matplotlib.pyplot as pl
 from matplotlib.widgets import Button
 import everest
 from everest.mathutils import SavGol
-from .skopemath import PSF, PLD
-from . import fitting
-from . import psffit as pf
+from .scopemath import PSF, PLD
 import random
 from random import randint
 from astropy.io import fits
@@ -46,7 +44,7 @@ class Target(object):
 
         self.startTime = datetime.now()
 
-    def GenerateLightCurve(self, mag, roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
+    def GenerateLightCurve(self, mag=12., roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1., photnoise_conversion=.000625, ncadences=1000, apsize=7):
         '''
         Creates a light curve for given detector, star, and transiting exoplanet parameters
         Motion from a real K2 target is applied to the PSF

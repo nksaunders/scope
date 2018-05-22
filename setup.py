@@ -9,7 +9,7 @@ if sys.version_info[0] < 3:
 else:
   import builtins
 builtins.__SKOPE_SETUP__ = True
-import skope
+import scope
 
 long_description = \
 """
@@ -20,9 +20,9 @@ and models synthetic stellar PSFs traversing the CCD.
 """
 
 # Setup!
-setup(name = 'skope',
-      version = skope.__version__,
-      description = 'Synthetic K2 Objects for PLD Experimentation',
+setup(name = 'scope',
+      version = scope.__version__,
+      description = 'Simulated CCD Observations for Photometric Experimentation',
       long_description = long_description,
       classifiers = [
                       # 'Development Status :: 5 - Production/Stable',
@@ -31,11 +31,11 @@ setup(name = 'skope',
                       'Programming Language :: Python :: 3',
                       'Topic :: Scientific/Engineering :: Astronomy',
                     ],
-      url = 'https://github.com/nksaunders/skope',
+      url = 'https://github.com/nksaunders/scope',
       author = 'Nicholas Saunders',
       author_email = 'nks1994@uw.edu',
       license = 'MIT',
-      packages = ['skope'],
+      packages = ['scope'],
       install_requires = [
                           'everest-pipeline',
                          ],
