@@ -1,5 +1,5 @@
 # scope
-**S**imulated ***C**CD* **O**bservations for **P**hotometric **E**xperimentation
+**S**imulated **C**CD **O**bservations for **P**hotometric **E**xperimentation
 
 **scope** creates a forward model of telescope CCD detectors with pixel sensitivity variation, and synthetic stellar targets. This model allows the creation of light curves to test de-trending methods.The primary application of this package is the simulation of the *Kepler* Space Telescope detector to prepare for increased instrumental noise in its final campaigns of observation
 
