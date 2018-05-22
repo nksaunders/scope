@@ -28,7 +28,7 @@ def Simulate(arg):
 
     # create missing lc
     else:
-        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=5, ncadences=1000, apsize=13)
+        fpix, flux, ferr = sK2.GenerateLightCurve(mag, roll=m_mag, background_level=0, ncadences=1000, apsize=13)
         np.savez('batch/plot_run5/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
 
 def Benchmark():
@@ -124,9 +124,11 @@ def Benchmark():
 
 if __name__ == '__main__':
 
-    # Benchmark()
-
+    Benchmark()
+    '''
     # Run!
     combs = list(itertools.product(range(niter), mags, m_mags))
     with Pool() as pool:
         pool.map(Simulate, combs)
+
+    '''
