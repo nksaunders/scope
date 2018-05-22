@@ -9,4 +9,4 @@ except NameError:
 
 if not __SCOPE_SETUP__:
 
-    from .simulateK2target import Target
+    from .simulatetarget import Target
