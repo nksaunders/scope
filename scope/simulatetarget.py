@@ -157,6 +157,7 @@ class Target(object):
         Runs 2nd order PLD with a Gaussian Proccess on a given light curve
         '''
 
+        # check if fpix light curve was passed in
         if len(fpix) == 0:
             fpix = self.fpix
 
@@ -191,6 +192,7 @@ class Target(object):
         Injects a transit into light curve
         '''
 
+        # check if fpix light curve was passed in
         if len(fpix) == 0:
             fpix = self.fpix
 
@@ -230,6 +232,7 @@ class Target(object):
         Add a sinusoidal variability model to the given light curve.
         '''
 
+        # check if fpix light curve was passed in
         if len(fpix) == 0:
             fpix = self.fpix
 
@@ -309,6 +312,7 @@ class Target(object):
         Create an aperture including all pixels containing target flux
         '''
 
+        # check if fpix light curve was passed in
         if len(fpix) == 0:
             fpix = self.fpix
 
@@ -345,7 +349,7 @@ class Target(object):
                     finalap[i][j] = 1.
 
         self.aperture = finalap
-        
+
         return finalap
 
     def DisplayDetector(self):
@@ -389,13 +393,16 @@ class Target(object):
         Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves.
         '''
 
+        # initialize subplots with 1:3 width ratio
         fig, ax = pl.subplots(1, 2, figsize=(12,3), gridspec_kw = {'width_ratios':[1, 3]})
 
+        # display first cadence tpf
         ax[0].imshow(self.fpix[0])
         ax[0].set_title('First Cadence tpf')
         ax[0].set_xlabel('x (pixels)')
         ax[0].set_ylabel('y (pixels)')
 
+        # plot raw and de-trend light curves
         ax[1].plot(self.t, self.flux, 'k.', label='raw flux')
         ax[1].plot(self.t, self.Detrend()[0], 'r.', label='de-trended')
         ax[1].set_xlabel('time (days)')
@@ -403,5 +410,4 @@ class Target(object):
         ax[1].set_title('Flux Light Curve')
 
         fig.tight_layout()
-
         pl.show()
