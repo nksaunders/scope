@@ -352,6 +352,18 @@ class Target(object):
 
         return finalap
 
+
+    def DisplayAperture(self):
+        '''
+        Displays aperture overlaid over first cadence tpf
+        '''
+
+        self.Aperture()
+
+        pl.imshow(self.fpix[0] * self.aperture, origin='lower', cmap='viridis', interpolation='nearest')
+        pl.show()
+
+
     def DisplayDetector(self):
         '''
         Returns matrix for CCD pixel sensitivity
@@ -397,7 +409,7 @@ class Target(object):
         fig, ax = pl.subplots(1, 2, figsize=(12,3), gridspec_kw = {'width_ratios':[1, 3]})
 
         # display first cadence tpf
-        ax[0].imshow(self.fpix[0])
+        ax[0].imshow(self.fpix[0], origin='lower', cmap='viridis', interpolation='nearest')
         ax[0].set_title('First Cadence tpf')
         ax[0].set_xlabel('x (pixels)')
         ax[0].set_ylabel('y (pixels)')
@@ -405,8 +417,10 @@ class Target(object):
         # plot raw and de-trend light curves
         ax[1].plot(self.t, self.flux, 'k.', label='raw flux')
         ax[1].plot(self.t, self.Detrend()[0], 'r.', label='de-trended')
-        ax[1].set_xlabel('time (days)')
-        ax[1].set_ylabel('flux (counts)')
+        ax[1].set_xlim([self.t[0], self.t[-1]])
+        ax[1].legend(loc=0)
+        ax[1].set_xlabel('Time (days)')
+        ax[1].set_ylabel('Flux (counts)')
         ax[1].set_title('Flux Light Curve')
 
         fig.tight_layout()
