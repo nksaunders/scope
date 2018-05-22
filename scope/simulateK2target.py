@@ -17,7 +17,6 @@ from .scopemath import PSF, PLD
 import random
 from random import randint
 from astropy.io import fits
-import pyfits
 from everest import Transit
 import k2plr
 from k2plr.config import KPLR_ROOT
@@ -69,7 +68,7 @@ class Target(object):
             ftpf=os.path.join(KPLR_ROOT, 'data', 'k2', 'target_pixel_files', '%d' % self.ID, tpf._filename)
         else:
             ftpf=self.ftpf
-        with pyfits.open(ftpf) as f:
+        with fits.open(ftpf) as f:
 
             # read motion vectors in x and y
             self.xpos=f[1].data['pos_corr1']
@@ -136,11 +135,11 @@ class Target(object):
 
         # add transit and variability
         if self.transit:
-            self.fpix, self.flux = self.AddTransit(self.fpix)
+            self.fpix, self.flux = self.AddTransit()
         if self.variable:
-            self.fpix, self.flux = self.AddVariability(self.fpix)
+            self.fpix, self.flux = self.AddVariability()
         if self.neighbor:
-            self.fpix, self.flux = self.AddNeighbor(self.fpix)
+            self.fpix, self.flux = self.AddNeighbor()
 
         if not self.transit and not self.variable:
             # create flux light curve
@@ -182,10 +181,13 @@ class Target(object):
         return a * np.exp(-b * (mag+c))
 
 
-    def AddTransit(self, fpix, depth=.001, per=15, dur=.5, t0=5.):
+    def AddTransit(self, fpix=[], depth=.001, per=15, dur=.5, t0=5.):
         '''
         Injects a transit into light curve
         '''
+
+        if len(fpix) == 0:
+            fpix = self.fpix
 
         self.transit = True
 
@@ -213,12 +215,18 @@ class Target(object):
         # Create flux light curve
         self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences), -1), axis=1)
 
+        self.fpix = self.fpix_trn
+        self.flux = self.flux_trn
+
         return self.fpix_trn, self.flux_trn
 
-    def AddVariability(self, fpix, var_amp=0.0005, freq=0.25, custom_variability=[]):
+    def AddVariability(self, fpix=[], var_amp=0.0005, freq=0.25, custom_variability=[]):
         '''
         Add a sinusoidal variability model to the given light curve.
         '''
+
+        if len(fpix) == 0:
+            fpix = self.fpix
 
         self.variable = True
 
@@ -234,12 +242,18 @@ class Target(object):
         # Create flux light curve
         V_flux = np.sum(np.array(V_fpix).reshape((self.ncadences), -1), axis=1)
 
+        self.fpix = V_fpix
+        self.flux = V_flux
+
         return V_fpix, V_flux
 
-    def AddNeighbor(self, fpix, magdiff=1., dist=2.5):
+    def AddNeighbor(self, fpix=[], magdiff=1., dist=2.5):
         '''
         Add a neighbor star with given difference in magnitude and distance at a randomized location
         '''
+
+        if len(fpix) == 0:
+            fpix = self.fpix
 
         # initialize arrays
         n_fpix = np.zeros((self.ncadences, self.apsize, self.apsize))
@@ -275,17 +289,23 @@ class Target(object):
         self.n_fpix = n_fpix
 
         # calculate flux light curve
-        n_flux = np.sum(np.array(n_fpix).reshape((self.ncadences), -1), axis=1)
+        flux = np.sum(np.array(fpix).reshape((self.ncadences), -1), axis=1)
 
         self.neighbor = True
         self.targets += 1
 
+        self.fpix = fpix
+        self.flux = flux
+
         return fpix, n_flux
 
-    def Aperture(self, fpix):
+    def Aperture(self, fpix=[]):
         '''
         Create an aperture including all pixels containing target flux
         '''
+
+        if len(fpix) == 0:
+            fpix = self.fpix
 
         aperture = np.zeros((self.ncadences, self.apsize, self.apsize))
 
