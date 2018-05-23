@@ -365,6 +365,7 @@ class Target(object):
         self.Aperture()
 
         pl.imshow(self.fpix[0] * self.aperture, origin='lower', cmap='viridis', interpolation='nearest')
+
         pl.show()
 
 
@@ -399,7 +400,6 @@ class Target(object):
 
         # Display detector
         pl.imshow(self.detector, origin='lower', cmap='gray')
-        pl.show()
 
         return self.detector
 
