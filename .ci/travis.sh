@@ -13,6 +13,9 @@ conda activate test
 conda install -c conda-forge numpy=$NUMPY_VERSION scipy matplotlib setuptools pybind11 pytest pytest-cov pip healpy nbsphinx
 pip install tqdm
 pip install ipython
+pip install sklearn
+pip install scipy
+pip install george
 pip install everest-pipeline
 
 # Build the code
