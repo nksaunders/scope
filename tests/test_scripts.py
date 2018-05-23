@@ -9,7 +9,6 @@ Test all of the scripts.
 from __future__ import division, print_function, absolute_import, \
                        unicode_literals
 
-import matplotlib.pyplot as pl
 pl.switch_backend('agg')
 import sys, os
 SCOPE = os.path.join(os.path.dirname(
