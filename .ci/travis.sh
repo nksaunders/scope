@@ -13,6 +13,7 @@ conda activate test
 conda install -c conda-forge numpy=$NUMPY_VERSION scipy matplotlib setuptools pybind11 pytest pytest-cov pip healpy nbsphinx
 pip install tqdm
 pip install ipython
+pip install everest-pipeline
 
 # Build the code
 # Build the extension
