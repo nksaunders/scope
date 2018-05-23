@@ -17,7 +17,7 @@ install:
     - source .ci/travis.sh
 
 script:
-    - py.test -v
+    - nosetests --with-coverage --cover-package=scope -v -w tests
 
 after_success:
     - if [ "$TRAVIS_BRANCH" = "master" ]; then source .ci/build-docs.sh; fi
