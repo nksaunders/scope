@@ -1,0 +1,2 @@
+.. automodule:: scope.scopemath
+   :members:
