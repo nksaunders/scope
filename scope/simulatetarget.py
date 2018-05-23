@@ -21,6 +21,7 @@ from everest import Transit
 import k2plr
 from k2plr.config import KPLR_ROOT
 from everest.config import KEPPRF_DIR
+from everest.missions.k2 import CDPP
 import os
 from tqdm import tqdm
 from datetime import datetime
@@ -173,6 +174,9 @@ class Target(object):
 
         # Run 2nd order PLD with a Gaussian Process
         flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t, self.aperture)
+
+        self.detrended_cdpp = FindCDPP(flux)
+        self.raw_cdpp = FindCDPP(rawflux)
 
         return flux, rawflux
 
@@ -399,6 +403,19 @@ class Target(object):
 
         return self.detector
 
+
+    def FindCDPP(self, flux=[]):
+        '''
+        Quick function to calculate and return Combined Differential Photometric Precision (CDPP)
+        '''
+
+        # check if flux light curve was passed in
+        if len(flux) == 0:
+            flux = self.flux
+
+        cdpp = CDPP(flux)
+
+        return cdpp
 
     def Plot(self):
         '''
