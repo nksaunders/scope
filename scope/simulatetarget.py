@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
-Simulate K2 target
-------------------
-Generate a simulated K2 target with motion vectors
-from a real K2 observation of a given EPIC ID #.
-Optionally includes synthetic transit and variability injection.
+Simulate Target
+---------------
+Generate a forward model of a telescope detector with sensitivity variation, 
+and simulate stellar targets with motion relative to the CCD.
 '''
 
 import numpy as np

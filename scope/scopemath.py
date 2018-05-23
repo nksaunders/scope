@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
-scopemath.py
------------
-
+Scope Math
+----------
+Mathematical functions for simulating light curves.
 '''
 
 from __future__ import division, print_function, absolute_import, unicode_literals
