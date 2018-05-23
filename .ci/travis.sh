@@ -16,6 +16,7 @@ pip install ipython
 pip install sklearn
 pip install scipy
 pip install george
+pip install astroml
 pip install everest-pipeline
 
 # Build the code
