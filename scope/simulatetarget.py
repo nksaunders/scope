@@ -3,7 +3,7 @@
 '''
 Simulate Target
 ---------------
-Generate a forward model of a telescope detector with sensitivity variation, 
+Generate a forward model of a telescope detector with sensitivity variation,
 and simulate stellar targets with motion relative to the CCD.
 '''
 
@@ -32,7 +32,7 @@ setup_text_plots(fontsize=10, usetex=True)
 
 class Target(object):
     '''
-    A simulated K2 object with a forward model of the Kepler detector sensitivity variation
+    A simulated stellar object with a forward model of a telescope detector's sensitivity variation
     '''
 
     def __init__(self, ID=205998445, custom_ccd=False, transit=False, variable=False, neighbor=False, ftpf=None):
@@ -52,6 +52,10 @@ class Target(object):
         '''
         Creates a light curve for given detector, star, and transiting exoplanet parameters
         Motion from a real K2 target is applied to the PSF
+
+        `mag`: Magnitude of primary target PSF
+        `roll`: Coefficient on K2 motion vectors of target. roll=1 corresponds to current K2 motion
+
         '''
 
         self.ncadences = ncadences
