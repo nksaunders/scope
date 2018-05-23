@@ -9,7 +9,6 @@ Test all of the scripts.
 from __future__ import division, print_function, absolute_import, \
                        unicode_literals
 
-pl.switch_backend('agg')
 import sys, os
 SCOPE = os.path.join(os.path.dirname(
                      os.path.dirname(os.path.abspath(__file__))), 'scope')
