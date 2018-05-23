@@ -8,6 +8,7 @@ Test all of the scripts.
 
 from __future__ import division, print_function, absolute_import, \
                        unicode_literals
+
 import matplotlib.pyplot as pl
 pl.switch_backend('agg')
 import sys, os
@@ -18,15 +19,15 @@ import scope
 
 def test_all():
     '''
-    Test all scripts in the `scope/` directory.
+    Test all scripts in the `scripts/` directory.
 
     '''
+    print('Testing generatetarget...')
+    star = scope.Target()
+    star.GenerateLightCurve(ncadences=1)
 
-    for script in dir(scope):
-        if not script.startswith('_'):
-            print("Testing %s..." % script)
-            getattr(scope, script)._test()
-            pl.close()
+    print('Success!')
+
 
 if __name__ == '__main__':
     test_all()
