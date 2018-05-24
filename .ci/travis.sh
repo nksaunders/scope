@@ -10,7 +10,7 @@ conda update -q conda
 conda info -a
 conda create --yes -n test python=$PYTHON_VERSION
 conda activate test
-conda install -c conda-forge numpy=$NUMPY_VERSION scipy matplotlib setuptools pybind11 pytest pytest-cov pip healpy nbsphinx
+conda install -c conda-forge numpy=$NUMPY_VERSION setuptools pybind11 pytest pytest-cov pip healpy nbsphinx
 pip install matplotlib
 pip install tqdm
 pip install ipython
