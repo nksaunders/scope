@@ -47,7 +47,7 @@ rev=$(git rev-parse --short HEAD)
 
 # Copy the html folder to a temporary location, initialize
 # a new git repo there, add the necessary files, and force-push
-# to planetplanet/gh-pages
+# to scope/gh-pages
 cd .build
 cp -r html tmp_html
 cd tmp_html
