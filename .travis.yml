@@ -2,7 +2,6 @@ language: python
 
 matrix:
   include:
-    - python: 2.7
     - python: 3.4
 
 cache: pip
@@ -20,6 +19,7 @@ install:
   - conda install --yes numpy scipy matplotlib nose pip
   - pip install coveralls
   - pip install astroml
+  - pip install sklearn
   - pip install tqdm
   - pip install datetime
   - pip install everest-pipeline
