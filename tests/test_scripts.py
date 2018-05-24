@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
-test_scripts.py
----------------
-Test all of the scripts.
+test_main.py
+------------
+Test scope script.
 '''
 
 from __future__ import division, print_function, absolute_import, \
@@ -15,10 +15,7 @@ import scope
 
 
 def test_all():
-    '''
-    Test all scripts in the `scripts/` directory.
 
-    '''
     print('Testing scope...')
     star = scope.Target()
     star.GenerateLightCurve(ncadences=1)
