@@ -13,6 +13,13 @@ matrix:
         - os: linux
           env: PYTHON_VERSION=3.4 NUMPY_VERSION=1.11
 
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda2/bin:$PATH
+  - conda update --yes conda
+  
 install:
     - source .ci/travis.sh
 
