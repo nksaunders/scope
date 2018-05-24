@@ -10,17 +10,16 @@ from __future__ import division, print_function, absolute_import, \
                        unicode_literals
 
 import sys, os
-SCOPE = os.path.join(os.path.dirname(
-                     os.path.dirname(os.path.abspath(__file__))), 'scope')
-sys.path.insert(1, SCOPE)
+sys.path.append("..")
 import scope
+
 
 def test_all():
     '''
     Test all scripts in the `scripts/` directory.
 
     '''
-    print('Testing generatetarget...')
+    print('Testing scope...')
     star = scope.Target()
     star.GenerateLightCurve(ncadences=1)
 
