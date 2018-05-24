@@ -1,17 +1,26 @@
 # Miniconda
-wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-bash miniconda.sh -b -p $HOME/miniconda
-export PATH="$HOME/miniconda/bin:$PATH"
+wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+chmod +x miniconda.sh
+./miniconda.sh -b
+export PATH=/home/travis/miniconda2/bin:$PATH
+conda update --yes conda
+
+
+conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+conda install --yes numpy scipy matplotlib nose numba pandas
+ln -sf $(which gcc) x86_64-conda_cos6-linux-gnu-gcc
+
 
 # Conda Python
 hash -r
 conda config --set always_yes yes --set changeps1 no
 conda update -q conda
 conda info -a
-conda create --yes -n test python=$PYTHON_VERSION
+conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+conda install --yes numpy scipy matplotlib nose numba pandas
+ln -sf $(which gcc) x86_64-conda_cos6-linux-gnu-gcc
 conda activate test
-conda install -c conda-forge numpy=$NUMPY_VERSION setuptools pybind11 pytest pytest-cov pip healpy nbsphinx
-pip install matplotlib
+
 pip install tqdm
 pip install ipython
 pip install sklearn
