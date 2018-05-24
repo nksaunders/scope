@@ -19,9 +19,10 @@ before_install:
   - ./miniconda.sh -b
   - export PATH=/home/travis/miniconda2/bin:$PATH
   - conda update --yes conda
-  
+
 install:
     - source .ci/travis.sh
+    - python setup.py install
 
 script:
     - nosetests --with-coverage --cover-package=scope -v -w tests
