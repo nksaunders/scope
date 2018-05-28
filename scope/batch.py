@@ -23,13 +23,13 @@ def Simulate(arg):
     sK2 = scope.Target(variable=True, ftpf = os.path.expanduser('/usr/lusers/nks1994/scope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
 
     # check to see if file exists, skip if it's already there
-    if os.path.isfile('batch/plot_run6/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
+    if os.path.isfile('/usr/lusers/nks1994/hyaktest/everest_data/scope_batch2/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
         print("Mag = %.2f, m_mag = %.2f already exists!" % (mag, m_mag))
 
     # create missing lc
     else:
         fpix, flux, ferr = sK2.GenerateLightCurve(mag=mag, roll=m_mag, background_level=50, ncadences=1000, apsize=13)
-        np.savez('batch/plot_run6/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
+        np.savez('/usr/lusers/nks1994/hyaktest/everest_data/scope_batch2/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
 
 def Benchmark():
     '''
