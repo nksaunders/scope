@@ -9,10 +9,6 @@ from everest.config import EVEREST_SRC
 import os
 import os.path
 
-# astroML format for consistent plotting style
-from astroML.plotting import setup_text_plots
-setup_text_plots(fontsize=10, usetex=True)
-
 # Number of targets to simulate
 niter = 5
 
@@ -39,6 +35,10 @@ def Benchmark():
     '''
 
     '''
+
+    # astroML format for consistent plotting style
+    from astroML.plotting import setup_text_plots
+    setup_text_plots(fontsize=10, usetex=True)
 
     # Compare zero-motion synthetic data to original Kepler raw CDPP
     print("Plotting Figure 1...")
