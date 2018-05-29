@@ -27,13 +27,13 @@ def Simulate(arg):
     sK2 = scope.Target(variable=True, ftpf = os.path.expanduser('/usr/lusers/nks1994/scope/.kplr/data/k2/target_pixel_files/205998445/ktwo205998445-c03_lpd-targ.fits.gz'))
 
     # check to see if file exists, skip if it's already there
-    if os.path.isfile('/usr/lusers/nks1994/hyaktest/everest_data/scope_batch2/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
+    if os.path.isfile('/usr/lusers/nks1994/hyaktest/everest_data/scope_batch3/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag)):
         print("Mag = %.2f, m_mag = %.2f already exists!" % (mag, m_mag))
 
     # create missing lc
     else:
-        fpix, flux, ferr = sK2.GenerateLightCurve(mag=mag, roll=m_mag, background_level=50, ncadences=1000, apsize=13)
-        np.savez('/usr/lusers/nks1994/hyaktest/everest_data/scope_batch2/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux)
+        fpix, flux, ferr = sK2.GenerateLightCurve(mag=mag, roll=m_mag, background_level=20, ncadences=1000, apsize=13)
+        np.savez('/usr/lusers/nks1994/hyaktest/everest_data/scope_batch2/%2dmag%.2fmotion%.2f' % (iter, mag, m_mag), fpix=fpix, flux=flux, ferr=ferr)
 
 def Benchmark():
     '''
@@ -56,8 +56,19 @@ def Benchmark():
     for iter in range(niter):
         cdpp = np.zeros_like(mags)
         for i, mag in enumerate(mags):
-            flux = np.load('batch/plot_run6/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['flux']
+            # flux = np.load('batch/plot_run7/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['flux']
+
+            # load in fpix
+            fpix = np.load('batch/plot_run7/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 0.))['fpix']
+            # crop out extra pixels
+            crop = np.array([f[6:7,6:7] for f in fpix])
+            # sum into flux
+            flux = np.sum(crop.reshape((len(crop)), -1), axis=1)
+
+            # calculate CDPP
             cdpp[i] = CDPP(flux)
+            # import pdb; pdb.set_trace()
+
         if iter == 0:
             ax.plot(mags, cdpp, 'b.', label = 'Synthetic (0x motion)')
         else:
@@ -71,7 +82,7 @@ def Benchmark():
     # Compare 1x motion to K2 raw CDPP from campaign 3
     print("Plotting Figure 2...")
     _, kp, cdpp6r, _, _, _, _, _, _ = np.loadtxt(os.path.join(EVEREST_SRC, 'missions', 'k2', 'tables', 'c03_nPLD.cdpp'), unpack = True, skiprows = 2)
-    fig, ax = pl.subplots(1)
+    fig, ax = pl.subplots(1, figsize=(7.5,5))
     ax.plot(kp, cdpp6r, 'r.', alpha = 0.05, zorder = -1)
     ax.set_rasterization_zorder(-1)
     bins = np.arange(7.5,18.5,0.5)
@@ -84,7 +95,13 @@ def Benchmark():
     for iter in range(niter):
         cdpp = np.zeros_like(mags)
         for i, mag in enumerate(mags):
-            flux = np.load('batch/plot_run6/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['flux']
+            # flux = np.load('batch/plot_run7/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['flux']
+            # perform aperture masking
+            fpix = np.load('batch/plot_run7/%2dmag%.2fmotion%.2f.npz' % (iter, mag, 1.))['fpix']
+            # crop out extra pixels
+            crop = np.array([f[2:10,2:10] for f in fpix])
+            # sum into flux
+            flux = np.sum(crop.reshape((len(crop)), -1), axis=1)
             cdpp[i] = CDPP(flux)
         if iter == 0:
             ax.plot(mags, cdpp, 'b.', label = 'Synthetic (1x motion)')
@@ -113,7 +130,7 @@ def Benchmark():
         cdpp = [[] for mag in mags]
         for i, mag in enumerate(mags):
             for iter in range(niter):
-                flux = np.load('batch/plot_run6/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))['flux']
+                flux = np.load('batch/plot_run7/%2dmag%.2fmotion%.2f.npz' % (iter, mag, m_mag))['flux']
                 cdpp[i].append(CDPP(flux))
         cdpp = np.nanmean(np.array(cdpp), axis = 1)
         ax.plot(mags, cdpp, '.', color = color, label = 'Synthetic (%dx motion)' % m_mag)
