@@ -262,7 +262,7 @@ def PSF(psf_args, ccd_args, xpos, ypos):
 
     return psf, target, psferr
 
-def PLD(fpix, trninds, ferr, t, aperture):
+def PLD(fpix, ferr, trninds, t, aperture):
     '''
     Perform first order PLD on a light curve
     Returns: detrended light curve, raw light curve
