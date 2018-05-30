@@ -287,7 +287,7 @@ def PLD(fpix, ferr, trninds, t, aperture):
 
     # First order PLD
     f1 = fpix / rawflux.reshape(-1, 1)
-    pca = PCA(n_components=20)
+    pca = PCA(n_components=10)
     X1 = pca.fit_transform(f1)
 
     # Second order PLD
