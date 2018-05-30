@@ -179,8 +179,8 @@ class Target(object):
         # Run 2nd order PLD with a Gaussian Process
         flux, rawflux = PLD(fpix, self.ferr, self.trninds, self.t, self.aperture)
 
-        self.detrended_cdpp = FindCDPP(flux)
-        self.raw_cdpp = FindCDPP(rawflux)
+        self.detrended_cdpp = self.FindCDPP(flux)
+        self.raw_cdpp = self.FindCDPP(rawflux)
 
         return flux, rawflux
 
@@ -335,6 +335,14 @@ class Target(object):
                     else:
                         aperture[c][i][j] = 1
 
+        # Identify pixels with target flux for each cadence
+        if self.neighbor:
+            for c,f in enumerate(self.n_fpix):
+                for i in range(self.apsize):
+                    for j in range(self.apsize):
+                        if f[i][j] > 100.:
+                            aperture[c][i][j] = 0
+
         # Create single aperture
         finalap = np.zeros((self.apsize, self.apsize))
 
@@ -429,15 +437,29 @@ class Target(object):
         # initialize subplots with 1:3 width ratio
         fig, ax = pl.subplots(1, 2, figsize=(12,3), gridspec_kw = {'width_ratios':[1, 3]})
 
+        # construct inverted aperture to display over image
+        display_ap = np.ones((self.apsize, self.apsize))
+        display_ap[np.where(self.aperture[0]==1)] = 0
+
         # display first cadence tpf
         ax[0].imshow(self.fpix[0], origin='lower', cmap='viridis', interpolation='nearest')
+        ax[0].imshow(display_ap, origin='lower', cmap='Set3', interpolation='nearest')
+        ax[0].imshow(self.fpix[0]*self.aperture[0], origin='lower', cmap='Set3', interpolation='nearest')
+
         ax[0].set_title('First Cadence tpf')
         ax[0].set_xlabel('x (pixels)')
         ax[0].set_ylabel('y (pixels)')
 
         # plot raw and de-trend light curves
-        ax[1].plot(self.t, self.flux, 'k.', label='raw flux')
-        ax[1].plot(self.t, self.Detrend()[0], 'r.', label='de-trended')
+        det_flux = self.Detrend()[0]
+
+        # make sure CDPP is a number before printing it
+        if np.isnan(self.FindCDPP(self.flux)):
+            ax[1].plot(self.t, self.flux, 'k.', label='raw flux')
+            ax[1].plot(self.t, det_flux, 'r.', label='de-trended')
+        else:
+            ax[1].plot(self.t, self.flux, 'k.', label='raw flux (CDPP = %.i)' % self.FindCDPP(self.flux))
+            ax[1].plot(self.t, det_flux, 'r.', label='de-trended (CDPP = %.i)' % self.FindCDPP(det_flux))
         ax[1].set_xlim([self.t[0], self.t[-1]])
         ax[1].legend(loc=0)
         ax[1].set_xlabel('Time (days)')
