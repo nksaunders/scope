@@ -25,6 +25,7 @@ from everest.missions.k2 import CDPP
 import os
 from tqdm import tqdm
 from datetime import datetime
+from scipy.ndimage import zoom
 
 # astroML format for consistent plotting style
 from astroML.plotting import setup_text_plots
@@ -340,7 +341,7 @@ class Target(object):
             for c,f in enumerate(self.n_fpix):
                 for i in range(self.apsize):
                     for j in range(self.apsize):
-                        if f[i][j] > 100.:
+                        if f[i][j] > (.5 * np.max(f)):
                             aperture[c][i][j] = 0
 
         # Create single aperture
@@ -437,14 +438,22 @@ class Target(object):
         # initialize subplots with 1:3 width ratio
         fig, ax = pl.subplots(1, 2, figsize=(12,3), gridspec_kw = {'width_ratios':[1, 3]})
 
-        # construct inverted aperture to display over image
-        display_ap = np.ones((self.apsize, self.apsize))
-        display_ap[np.where(self.aperture[0]==1)] = 0
+        # Get aperture contour
+        aperture = self.Aperture()
+        def PadWithZeros(vector, pad_width, iaxis, kwargs):
+            vector[:pad_width[0]] = 0
+            vector[-pad_width[1]:] = 0
+            return vector
+        ny, nx = self.fpix[0].shape
+        contour = np.zeros((ny, nx))
+        contour[np.where(aperture==1)] = 1
+        contour = np.lib.pad(contour, 1, PadWithZeros)
+        highres = zoom(contour, 100, order=0, mode='nearest')
+        extent = np.array([-1, nx, -1, ny])
 
         # display first cadence tpf
         ax[0].imshow(self.fpix[0], origin='lower', cmap='viridis', interpolation='nearest')
-        ax[0].imshow(display_ap, origin='lower', cmap='Set3', interpolation='nearest')
-        ax[0].imshow(self.fpix[0]*self.aperture[0], origin='lower', cmap='Set3', interpolation='nearest')
+        ax[0].contour(highres, levels=[0.5], extent=extent, origin='lower', colors='r', linewidths=2)
 
         ax[0].set_title('First Cadence tpf')
         ax[0].set_xlabel('x (pixels)')
