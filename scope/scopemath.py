@@ -274,6 +274,7 @@ def PLD(fpix, ferr, trninds, t, aperture):
 
     #  generate flux light curve
     fpix = M(fpix)
+    aperture = M(aperture)
     fpix_rs = (fpix*aperture).reshape(len(fpix),-1)
     fpix_ap = np.zeros((len(fpix),len(np.delete(fpix_rs[0],np.where(np.isnan(fpix_rs[0]))))))
 
