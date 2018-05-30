@@ -177,7 +177,7 @@ class Target(object):
             self.aperture = np.ones((self.apsize, self.apsize))
 
         # Run 2nd order PLD with a Gaussian Process
-        flux, rawflux = PLD(fpix, self.trninds, self.ferr, self.t, self.aperture)
+        flux, rawflux = PLD(fpix, self.ferr, self.trninds, self.t, self.aperture)
 
         self.detrended_cdpp = FindCDPP(flux)
         self.raw_cdpp = FindCDPP(rawflux)
