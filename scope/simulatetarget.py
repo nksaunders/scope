@@ -171,11 +171,10 @@ class Target(object):
         if not self.transit:
             self.trninds = np.array([])
 
-        # Check background level and define aperture
-        if self.background_level != 0:
-            self.aperture = self.Aperture(fpix)
-        else:
-            self.aperture = np.ones((self.apsize, self.apsize))
+        # define aperture
+
+        self.aperture = self.Aperture(fpix)
+
 
         # Run 2nd order PLD with a Gaussian Process
         flux, rawflux = PLD(fpix, self.ferr, self.trninds, self.t, self.aperture)
@@ -440,6 +439,8 @@ class Target(object):
 
         # Get aperture contour
         aperture = self.Aperture()
+
+
         def PadWithZeros(vector, pad_width, iaxis, kwargs):
             vector[:pad_width[0]] = 0
             vector[-pad_width[1]:] = 0
