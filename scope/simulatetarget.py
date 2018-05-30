@@ -330,7 +330,7 @@ class Target(object):
         for c,f in enumerate(self.target):
             for i in range(self.apsize):
                 for j in range(self.apsize):
-                    if f[i][j] < 1.:
+                    if f[i][j] < 100.:
                         aperture[c][i][j] = 0
                     else:
                         aperture[c][i][j] = 1
