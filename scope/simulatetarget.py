@@ -119,8 +119,6 @@ class Target(object):
 
             # sx,sy: standard deviation of Gaussian in x,y
             # rho: rotation angle between x and y dimensions of Gaussian
-            sinx = np.linspace(0, 5*np.pi, self.ncadences) #hack
-            sinvals = 2. + np.sin(sinx)
             sx = [0.5 + 0.05 * np.random.randn()]
             sy = [0.5 + 0.05 * np.random.randn()]
             rho = [0.05 + 0.02 * np.random.randn()]
@@ -263,7 +261,7 @@ class Target(object):
 
         return V_fpix, V_flux
 
-    def AddNeighbor(self, fpix=[], magdiff=1., dist=2.5):
+    def AddNeighbor(self, fpix=[], magdiff=1., dist=1.7):
         '''
         Add a neighbor star with given difference in magnitude and distance at a randomized location
         '''
@@ -278,27 +276,23 @@ class Target(object):
 
         # set neighbor params
         x_offset = dist * np.random.randn()
-        y_offset = np.sqrt(dist**2 - x_offset**2) * random.choice((-1, 1))
+        y_offset = np.sqrt(np.abs(dist**2 - x_offset**2)) * random.choice((-1, 1))
         nx0 = (self.apsize / 2.0) + x_offset
         ny0 = (self.apsize / 2.0) + y_offset
         sx = [0.5 + 0.05 * np.random.randn()]
         sy = [0.5 + 0.05 * np.random.randn()]
         rho = [0.05 + 0.02 * np.random.randn()]
 
-        neighbor_args = np.concatenate([[self.A], [nx0], [ny0], sx, sy, rho])
-
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         self.r = 10 ** (magdiff / 2.5)
+
+        neighbor_args = np.concatenate([[self.A / self.r], np.array([nx0]), np.array([ny0]), sx, sy, rho])
 
         # create neighbor pixel-level light curve
         for c in tqdm(range(self.ncadences)):
 
             # iterate through cadences, calculate pixel flux values
             n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c])
-
-            # divide by magdiff factor
-            n_fpix[c] /= self.r
-            neighbor[c] /= self.r
 
         # add neighbor to light curve
         fpix += n_fpix
@@ -440,7 +434,6 @@ class Target(object):
         # Get aperture contour
         aperture = self.Aperture()
 
-
         def PadWithZeros(vector, pad_width, iaxis, kwargs):
             vector[:pad_width[0]] = 0
             vector[-pad_width[1]:] = 0
@@ -452,6 +445,7 @@ class Target(object):
         highres = zoom(contour, 100, order=0, mode='nearest')
         extent = np.array([-1, nx, -1, ny])
 
+
         # display first cadence tpf
         ax[0].imshow(self.fpix[0], origin='lower', cmap='viridis', interpolation='nearest')
         ax[0].contour(highres, levels=[0.5], extent=extent, origin='lower', colors='r', linewidths=2)
@@ -461,15 +455,15 @@ class Target(object):
         ax[0].set_ylabel('y (pixels)')
 
         # plot raw and de-trend light curves
-        det_flux = self.Detrend()[0]
+        det_flux, rawflux = self.Detrend()
 
         # make sure CDPP is a number before printing it
         if np.isnan(self.FindCDPP(self.flux)):
-            ax[1].plot(self.t, self.flux, 'k.', label='raw flux')
-            ax[1].plot(self.t, det_flux, 'r.', label='de-trended')
+            ax[1].plot(self.t, rawflux, 'r.', alpha=0.3, label='raw flux')
+            ax[1].plot(self.t, det_flux, 'k.', label='de-trended')
         else:
-            ax[1].plot(self.t, self.flux, 'k.', label='raw flux (CDPP = %.i)' % self.FindCDPP(self.flux))
-            ax[1].plot(self.t, det_flux, 'r.', label='de-trended (CDPP = %.i)' % self.FindCDPP(det_flux))
+            ax[1].plot(self.t, rawflux, 'r.', alpha=0.3, label='raw flux (CDPP = %.i)' % self.FindCDPP(rawflux))
+            ax[1].plot(self.t, det_flux, 'k.', label='de-trended (CDPP = %.i)' % self.FindCDPP(det_flux))
         ax[1].set_xlim([self.t[0], self.t[-1]])
         ax[1].legend(loc=0)
         ax[1].set_xlabel('Time (days)')
