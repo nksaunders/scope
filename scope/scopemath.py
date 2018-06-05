@@ -147,7 +147,8 @@ def PixelFlux(cx, cy, amp, x0, y0, sx, sy, rho, fast=True, **kwargs):
     of the convolution of a 2D gaussian with a polynomial.
 
     `cx`: The intra-pixel variability polynomial coefficients along the `x` axis, expressed as a list from 0th to 3rd order.
-    `cy`: The intra-pixel variability polynomial coefficients along the `y` axis, expressed as a list from 0th to 3rd order.
+
+    `cy`: The intra-pixel variability polynomial coefficients along the `y` axis, expressed as a list from 0th to 3rd order.  
     `amp`: The amplitude of the normalized gaussian (the integral of the gaussian over the entire xy plane is equal to this value).
     `x0`: The `x` position of the center of the gaussian relative to the left pixel edge.
     `y0`: The `y` position of the center of the gaussian relative to the bottom pixel edge.
