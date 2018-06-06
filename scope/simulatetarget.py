@@ -55,12 +55,12 @@ class Target(object):
         Creates a light curve for given detector, star, and transiting exoplanet parameters
         Motion from a real K2 target is applied to the PSF.
 
-        `cx`: The intra-pixel variability polynomial coefficients along the `x`
-            axis, expressed as a list from 0th to 3rd order.
-        `mag`: Magnitude of primary target
-            PSF.
+        `cx`: The intra-pixel variability polynomial coefficients along the `x` axis, expressed as a list from 0th to 3rd order.
+
+        `mag`: Magnitude of primary target PSF.
+
         `roll`: Coefficient on K2 motion vectors of target. roll=1 corresponds to current K2 motion.
-            
+             .
 
         '''
 
