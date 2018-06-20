@@ -114,7 +114,6 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
 def Gauss2D(x, y, amp, x0, y0, sx, sy, rho):
     '''
     A two-dimensional gaussian with arbitrary covariance.
-
     '''
 
     norm = (2 * np.pi * sx * sy * np.sqrt(1 - rho ** 2))
