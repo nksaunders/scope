@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as pl
 import scope
+from scope.scopemath import PLD
 from tqdm import tqdm
 import itertools
 from everest.pool import Pool
@@ -78,7 +79,7 @@ def Benchmark():
     ax.set_ylim(-10, 500)
     ax.set_xlim(8, 18)
     ax.legend(loc = 'best')
-
+    '''
     # Compare 1x motion to K2 raw CDPP from campaign 3
     print("Plotting Figure 2...")
     _, kp, cdpp6r, _, _, _, _, _, _ = np.loadtxt(os.path.join(EVEREST_SRC, 'missions', 'k2', 'tables', 'c03_nPLD.cdpp'), unpack = True, skiprows = 2)
@@ -140,7 +141,7 @@ def Benchmark():
     ax.set_ylim(-30, 2500)
     ax.set_xlim(8, 18)
     ax.legend(loc = 'best')
-
+    '''
     pl.show()
 
 if __name__ == '__main__':
