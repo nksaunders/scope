@@ -20,7 +20,7 @@ and models synthetic stellar PSFs traversing the CCD.
 """
 
 # Setup!
-setup(name = 'scope',
+setup(name = 'tele-scope',
       version = scope.__version__,
       description = 'Simulated CCD Observations for Photometric Experimentation',
       long_description = long_description,
@@ -38,6 +38,7 @@ setup(name = 'scope',
       packages = ['scope'],
       install_requires = [
                           'everest-pipeline',
+                          'astroML',
                          ],
       include_package_data = True,
       zip_safe = False,
