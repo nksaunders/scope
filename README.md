@@ -12,8 +12,8 @@ This package includes methods to change magnitude of motion and sensitivity prop
 
 For examples of usage, see [the sample notebook](https://nksaunders.github.io/files/Example.html).
 
-To install **scope**, clone and navigate to the directory and run
-<pre><code>python setup.py install</code></pre>
+To install **scope**, run
+<pre><code>pip install tele-scope</code></pre>
 
 Note that **scope** depends on the **EVEREST** pipeline (Luger et. al). **EVEREST** can be installed with
 <pre><code>pip install everest-pipeline</code></pre>
