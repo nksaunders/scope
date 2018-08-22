@@ -204,6 +204,9 @@ class Target(object):
     def PSFAmplitude(self, mag):
         '''
         Returns the amplitude of the PSF for a star of a given magnitude.
+
+        `mag`:
+            Input magnitude.
         '''
 
         # mag/flux relation constants
@@ -214,7 +217,18 @@ class Target(object):
 
     def AddTransit(self, fpix=[], depth=.001, per=15, dur=.5, t0=5.):
         '''
-        Injects a transit into light curve
+        Injects a transit into light curve.
+
+        `fpix`:
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences).
+        `depth`:
+            Drop in flux due to transit relative to mean flux value.
+        `per`:
+            Period of transit in days.
+        `dur`:
+            Duration of transit in days.
+        't0':
+            Initial transit time in days.
         '''
 
         # check if fpix light curve was passed in
