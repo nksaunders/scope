@@ -307,7 +307,12 @@ class Target(object):
         '''
         Add a neighbor star with given difference in magnitude and distance at a randomized location.
 
-
+        `fpix`:
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
+        `magdiff`:
+            Difference in stellar magnitude between target and neighbor. Positive magdiff corresponds to higher values for the neighbor star's magnitude.
+        `dist`:
+            Distance (in pixels) between cetroid position of target and neighbor. The (x, y) coordinates of the neighbor are chosen arbitrarily to result in the given distance.
         '''
 
         if len(fpix) == 0:
@@ -355,7 +360,10 @@ class Target(object):
 
     def Aperture(self, fpix=[]):
         '''
-        Create an aperture including all pixels containing target flux
+        Create an aperture including all pixels containing target flux.
+
+        `fpix`:
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
         '''
 
         # check if fpix light curve was passed in
@@ -409,7 +417,7 @@ class Target(object):
 
     def DisplayAperture(self):
         '''
-        Displays aperture overlaid over first cadence tpf
+        Displays aperture overlaid over the first cadence target pixel file.
         '''
 
         self.Aperture()
@@ -421,7 +429,7 @@ class Target(object):
 
     def DisplayDetector(self):
         '''
-        Returns matrix for CCD pixel sensitivity
+        Returns matrix of dimensions (apsize, apsize) for CCD pixel sensitivity.
         '''
 
         # Define detector dimensions
@@ -456,7 +464,10 @@ class Target(object):
 
     def FindCDPP(self, flux=[]):
         '''
-        Quick function to calculate and return Combined Differential Photometric Precision (CDPP)
+        Quick function to calculate and return Combined Differential Photometric Precision (CDPP) of a given light curve. If no light curve is passed, this funtion returns the CDPP of the light curve generated in GenerateLightCurve().
+
+        `flux`:
+            1-dimensional flux light curve for which CDPP is calculated. If nothing is passed into FindCDPP(), it returns the CDPP of the light curve generated in GenerateLightCurve()
         '''
 
         # check if flux light curve was passed in
