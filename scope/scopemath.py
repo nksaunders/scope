@@ -145,27 +145,24 @@ def PixelFlux(cx, cy, amp, x0, y0, sx, sy, rho, fast=True, **kwargs):
     The flux in a given pixel of the detector, calculated from the integral
     of the convolution of a 2D gaussian with a polynomial.
 
-    `cx`: The intra-pixel variability polynomial coefficients along the `x`
-        axis, expressed as a list from 0th to 3rd order.
-    `cy`: The intra-pixel variability polynomial coefficients along the `y`
-        axis, expressed as a list from 0th to 3rd order.
-    `amp`: The amplitude of the normalized gaussian (the integral of the
-        gaussian over the entire xy plane is equal to this value).
-    `x0`: The `x` position of the center of the gaussian relative to the
-        left pixel edge.
-    `y0`: The `y` position of the center of the gaussian relative to the
-        bottom pixel edge.
-    `sx`: The standard deviation of the gaussian in the `x` direction
-        (before rotation).
-    `sy`: The standard deviation of the gaussian in the `y` direction
-        (before rotation).
-    `rho`: The correlation coefficient between `x` and `y`, a value between
-         -1 and 1. See en.wikipedia.org/wiki/Pearson_correlation_coefficient.
-         If this is 0, `x` and `y` are uncorrelated (zero rotation).
-    `fast`: If `True`, analytically integrates the function along the `x`
-          axis and numerically integrates it along the `y` axis. This
-          can greatly speed things up, with no loss of accuracy. If `False`,
-          numerically integrates in both dimensions (not recommended).
+    `cx`:
+        The intra-pixel variability polynomial coefficients along the `x` axis, expressed as a list from 0th to 3rd order.
+    `cy`:
+        The intra-pixel variability polynomial coefficients along the `y` axis, expressed as a list from 0th to 3rd order.
+    `amp`:
+        The amplitude of the normalized gaussian (the integral of the gaussian over the entire xy plane is equal to this value).
+    `x0`:
+        The `x` position of the center of the gaussian relative to the left pixel edge.
+    `y0`:
+        The `y` position of the center of the gaussian relative to the bottom pixel edge.
+    `sx`:
+        The standard deviation of the gaussian in the `x` direction (before rotation).
+    `sy`:
+        The standard deviation of the gaussian in the `y` direction (before rotation).
+    `rho`:
+        The correlation coefficient between `x` and `y`, a value between -1 and 1. See en.wikipedia.org/wiki/Pearson_correlation_coefficient. If this is 0, `x` and `y` are uncorrelated (zero rotation).
+    `fast`:
+        If `True`, analytically integrates the function along the `x` axis and numerically integrates it along the `y` axis. This can greatly speed things up, with no loss of accuracy. If `False`, numerically integrates in both dimensions (not recommended).
 
     '''
 
