@@ -177,7 +177,10 @@ class Target(object):
 
     def Detrend(self, fpix=[]):
         '''
-        Runs 2nd order PLD with a Gaussian Proccess on a given light curve
+        Runs 2nd order PLD with a Gaussian Proccess on a given light curve.
+
+        `fpix`:
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.        
         '''
 
         # check if fpix light curve was passed in
