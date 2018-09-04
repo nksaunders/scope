@@ -17,7 +17,7 @@ import scope
 def test_all():
 
     print('Testing scope...')
-    star = scope.Target()
+    star = scope.Target(ftpf='.kplr/data/k2/target_pixel_files/205998445')
     star.GenerateLightCurve(ncadences=1)
 
     print('Success!')
