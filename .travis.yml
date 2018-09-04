@@ -27,7 +27,6 @@ install:
 
 script:
   - nosetests -w tests
-  - coverage run --source=scope setup.py test
 
 after_success:
   - if [ "$TRAVIS_BRANCH" = "master" ]; then source .ci/build-docs.sh; fi
