@@ -72,7 +72,12 @@ class Target(object):
         return self.flux
 
     @property
+    def error(self):
+        return self.ferr
 
+    @property
+    def target_flux(self):
+        return self.target
 
     @property
     def roll_ID(self):
