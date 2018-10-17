@@ -64,16 +64,19 @@ class Target(object):
             self.fpix, self.flux = self.add_neighbor()
 
     @property
-    def TargetPixelFile(self):
+    def targetpixelfile(self):
         return self.fpix
 
     @property
-    def LightCurve(self):
+    def lightcurve(self):
         return self.flux
 
     @property
-    def ID(self):
-        return self.ID
+
+
+    @property
+    def roll_ID(self):
+        return self.roll_ID
 
     def detrend(self, fpix=[]):
         '''
