@@ -1,5 +1,5 @@
-# Version number
-__version__ = "1.0.3"
+from .version import __version__
+from .simulatetarget import *
 
 # Was scope imported from setup.py?
 try:
