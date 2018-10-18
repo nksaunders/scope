@@ -159,6 +159,8 @@ class Target(object):
         '''
         Add a sinusoidal variability model to the given light curve.
 
+        Parameters
+        ----------
         `fpix`:
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
         `var_amp`:
@@ -196,6 +198,8 @@ class Target(object):
         '''
         Add a neighbor star with given difference in magnitude and distance at a randomized location.
 
+        Parameters
+        ----------
         `fpix`:
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
         `magdiff`:
@@ -251,6 +255,8 @@ class Target(object):
         '''
         Create an aperture including all pixels containing target flux.
 
+        Parameters
+        ----------
         `fpix`:
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
         '''
@@ -351,6 +357,8 @@ class Target(object):
         Quick function to calculate and return Combined Differential Photometric Precision (CDPP) of a given light curve.
          If no light curve is passed, this funtion returns the CDPP of the light curve generated in GenerateLightCurve().
 
+        Parameters
+        ----------
         `flux`:
             1-dimensional flux light curve for which CDPP is calculated. If nothing is passed into FindCDPP(), it returns
             the CDPP of the light curve generated in GenerateLightCurve()
@@ -418,6 +426,9 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
                     photnoise_conversion=.000625, ncadences=1000, apsize=7, ID=205998445,
                     custom_ccd=False, transit=False, variable=False, neighbor=False, ftpf=None):
     '''
+    
+    Parameters
+    ----------
      `mag`:
          Magnitude of primary target PSF.
      `roll`:
