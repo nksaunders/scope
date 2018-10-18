@@ -97,12 +97,10 @@ class Target(object):
 
 
         # Run 2nd order PLD with a Gaussian Process
-        flux, rawflux = PLD(fpix, self.ferr, self.trninds, self.t, self.aperture)
+        self.flux, self.rawflux = PLD(fpix, self.ferr, self.trninds, self.t, self.aperture)
 
-        self.detrended_cdpp = self.find_CDPP(flux)
-        self.raw_cdpp = self.find_CDPP(rawflux)
-
-        return flux, rawflux
+        self.detrended_cdpp = self.find_CDPP(self.flux)
+        self.raw_cdpp = self.find_CDPP(self.rawflux)
 
     def add_transit(self, fpix=[], depth=.001, per=15, dur=.5, t0=5.):
         '''
@@ -153,8 +151,6 @@ class Target(object):
         self.fpix = self.fpix_trn
         self.flux = self.flux_trn
 
-        return self.fpix_trn, self.flux_trn
-
     def add_variability(self, fpix=[], var_amp=0.0005, freq=0.25, custom_variability=[]):
         '''
         Add a sinusoidal variability model to the given light curve.
@@ -191,8 +187,6 @@ class Target(object):
 
         self.fpix = V_fpix
         self.flux = V_flux
-
-        return V_fpix, V_flux
 
     def add_neighbor(self, fpix=[], magdiff=1., dist=1.7):
         '''
@@ -248,8 +242,6 @@ class Target(object):
 
         self.fpix = fpix
         self.flux = flux
-
-        return fpix, flux
 
     def create_aperture(self, fpix=[]):
         '''
@@ -404,15 +396,15 @@ class Target(object):
         ax[0].set_ylabel('y (pixels)')
 
         # plot raw and de-trend light curves
-        det_flux, rawflux = self.detrend()
+        self.detrend()
 
         # make sure CDPP is a number before printing it
         if np.isnan(self.find_CDPP(self.flux)):
-            ax[1].plot(self.t, rawflux, 'r.', alpha=0.3, label='raw flux')
-            ax[1].plot(self.t, det_flux, 'k.', label='de-trended')
+            ax[1].plot(self.t, self.rawflux, 'r.', alpha=0.3, label='raw flux')
+            ax[1].plot(self.t, self.flux, 'k.', label='de-trended')
         else:
-            ax[1].plot(self.t, rawflux, 'r.', alpha=0.3, label='raw flux (CDPP = %.i)' % self.find_CDPP(rawflux))
-            ax[1].plot(self.t, det_flux, 'k.', label='de-trended (CDPP = %.i)' % self.find_CDPP(det_flux))
+            ax[1].plot(self.t, self.rawflux, 'r.', alpha=0.3, label='raw flux (CDPP = %.i)' % self.find_CDPP(self.rawflux))
+            ax[1].plot(self.t, self.flux, 'k.', label='de-trended (CDPP = %.i)' % self.find_CDPP(self.flux))
         ax[1].set_xlim([self.t[0], self.t[-1]])
         ax[1].legend(loc=0)
         ax[1].set_xlabel('Time (days)')
@@ -426,7 +418,7 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
                     photnoise_conversion=.000625, ncadences=1000, apsize=7, ID=205998445,
                     custom_ccd=False, transit=False, variable=False, neighbor=False, ftpf=None):
     '''
-    
+
     Parameters
     ----------
      `mag`:
@@ -533,8 +525,8 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     flux = np.sum(fpix.reshape((ncadences), -1), axis=1)
 
-    return Target(fpix, flux, ferr, target, t, mag=12., roll=1., neighbor_magdiff=1.,
-                 ncadences=1000, apsize=7, transit=False, variable=False, neighbor=False)
+    return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll, neighbor_magdiff=neighbor_magdiff,
+                 ncadences=ncadences, apsize=apsize, transit=transit, variable=variable, neighbor=neighbor)
 
 def calculate_PSF_amplitude(mag):
     '''
