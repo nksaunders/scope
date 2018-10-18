@@ -33,7 +33,8 @@ class Target(object):
     '''
 
     def __init__(self, fpix, flux, ferr, target, t, mag=12., roll=1., neighbor_magdiff=1.,
-                 ncadences=1000, apsize=7, transit=False, variable=False, neighbor=False):
+                 ncadences=1000, apsize=7, transit=False, variable=False, neighbor=False,
+                 ccd_args=[]):
 
         # initialize self variables
         self.transit = transit
@@ -44,6 +45,7 @@ class Target(object):
         self.ncadences = ncadences
         self.neighbor_magdiff = neighbor_magdiff
         self.mag = mag
+        self.ccd_args = ccd_args
 
         self.t = t
         self.fpix = fpix
@@ -53,11 +55,11 @@ class Target(object):
 
         # add transit and variability
         if transit:
-            self.fpix, self.flux = self.add_transit()
+            self.add_transit()
         if variable:
-            self.fpix, self.flux = self.add_variability()
+            self.add_variability()
         if neighbor:
-            self.fpix, self.flux = self.add_neighbor()
+            self.add_neighbor()
 
     @property
     def targetpixelfile(self):
@@ -80,7 +82,8 @@ class Target(object):
         Runs 2nd order PLD with a Gaussian Proccess on a given light curve.
 
         `fpix`:
-            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix
+            generated in GenerateLightCurve() unless a different light curve is passed.
         '''
 
         # check if fpix light curve was passed in
@@ -102,12 +105,15 @@ class Target(object):
         self.detrended_cdpp = self.find_CDPP(self.flux)
         self.raw_cdpp = self.find_CDPP(self.rawflux)
 
+        return self
+
     def add_transit(self, fpix=[], depth=.001, per=15, dur=.5, t0=5.):
         '''
         Injects a transit into light curve.
 
         `fpix`:
-            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to
+            fpix generated in GenerateLightCurve() unless a different light curve is passed.
         `depth`:
             Drop in flux due to transit relative to mean flux value.
         `per`:
@@ -151,6 +157,8 @@ class Target(object):
         self.fpix = self.fpix_trn
         self.flux = self.flux_trn
 
+        return self
+
     def add_variability(self, fpix=[], var_amp=0.0005, freq=0.25, custom_variability=[]):
         '''
         Add a sinusoidal variability model to the given light curve.
@@ -158,13 +166,15 @@ class Target(object):
         Parameters
         ----------
         `fpix`:
-            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically
+            set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
         `var_amp`:
             Amplitude of sin wave, which is multiplied by the light curve.
         `freq`:
             Frequency of sin wave in days.
         `custom_variability`:
-            A custom 1-dimensional array of length ncadences can be passed into the AddVariability() function, which will be multiplied by the light curve.
+            A custom 1-dimensional array of length ncadences can be passed into the AddVariability()
+            function, which will be multiplied by the light curve.
         '''
 
         # check if fpix light curve was passed in
@@ -188,18 +198,24 @@ class Target(object):
         self.fpix = V_fpix
         self.flux = V_flux
 
+        return self
+
     def add_neighbor(self, fpix=[], magdiff=1., dist=1.7):
         '''
-        Add a neighbor star with given difference in magnitude and distance at a randomized location.
+        Add a neighbor star with given difference in magnitude and distance at a
+        randomized location.
 
         Parameters
         ----------
         `fpix`:
-            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically
+            set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
         `magdiff`:
-            Difference in stellar magnitude between target and neighbor. Positive magdiff corresponds to higher values for the neighbor star's magnitude.
+            Difference in stellar magnitude between target and neighbor. Positive magdiff
+            corresponds to higher values for the neighbor star's magnitude.
         `dist`:
-            Distance (in pixels) between cetroid position of target and neighbor. The (x, y) coordinates of the neighbor are chosen arbitrarily to result in the given distance.
+            Distance (in pixels) between cetroid position of target and neighbor. The (x, y)
+            coordinates of the neighbor are chosen arbitrarily to result in the given distance.
         '''
 
         if len(fpix) == 0:
@@ -243,6 +259,8 @@ class Target(object):
         self.fpix = fpix
         self.flux = flux
 
+        return self
+
     def create_aperture(self, fpix=[]):
         '''
         Create an aperture including all pixels containing target flux.
@@ -250,7 +268,8 @@ class Target(object):
         Parameters
         ----------
         `fpix`:
-            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
+            Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to
+            fpix generated in GenerateLightCurve() unless a different light curve is passed.
         '''
 
         # check if fpix light curve was passed in
@@ -315,6 +334,9 @@ class Target(object):
         Returns matrix of dimensions (apsize, apsize) for CCD pixel sensitivity.
         '''
 
+        # read in ccd parameters
+        cx, cy, apsize, background_level, inter, photnoise_conversion = self.ccd_args
+
         # Define detector dimensions
         xdim = np.linspace(0, self.apsize, 100)
         ydim = np.linspace(0, self.apsize, 100)
@@ -327,8 +349,8 @@ class Target(object):
         # Calculate sensitivity function with detector parameters for individual pixel
         for i in range(res):
             for j in range(res):
-                pixel_sens[i][j] = np.sum([c * (i-res/2) ** m for m, c in enumerate(self.cx)], axis = 0) + \
-                np.sum([c * (j-res/2) ** m for m, c in enumerate(self.cy)], axis = 0)
+                pixel_sens[i][j] = np.sum([c * (i-res/2) ** m for m, c in enumerate(cx)], axis = 0) + \
+                np.sum([c * (j-res/2) ** m for m, c in enumerate(cy)], axis = 0)
 
         # Tile to create detector
         intra = np.tile(pixel_sens, (self.apsize, self.apsize))
@@ -337,7 +359,7 @@ class Target(object):
         # Multiply by inter-pixel sensitivity variables
         for i in range(self.apsize):
             for j in range(self.apsize):
-                self.detector[i*res:(i+1)*res][j*res:(j+1)*res] = intra[i*res:(i+1)*res][j*res:(j+1)*res] * self.inter[i][j]
+                self.detector[i*res:(i+1)*res][j*res:(j+1)*res] = intra[i*res:(i+1)*res][j*res:(j+1)*res] * inter[i][j]
 
         # Display detector
         pl.imshow(self.detector, origin='lower', cmap='gray')
@@ -436,7 +458,8 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
          `inter`: matrix (apsize x apsize) of stochastic inter-pixel sensitivity variation
          `photnoise_conversion`: see below
      `neighbor_magdiff`:
-         Difference between magnitude of target and neighbor. Only accessed if neighbor initialized as `True` or if AddNeighbor() function is called.
+         Difference between magnitude of target and neighbor. Only accessed if neighbor initialized as
+         `True` or if AddNeighbor() function is called.
      `photnoise_conversion`:
          Conversion factor for photon noise, defaults to 0.000625 for consistency with benchmark.
      `ncadences`:
@@ -526,7 +549,8 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
     flux = np.sum(fpix.reshape((ncadences), -1), axis=1)
 
     return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll, neighbor_magdiff=neighbor_magdiff,
-                 ncadences=ncadences, apsize=apsize, transit=transit, variable=variable, neighbor=neighbor)
+                 ncadences=ncadences, apsize=apsize, transit=transit, variable=variable, neighbor=neighbor,
+                 ccd_args=ccd_args)
 
 def calculate_PSF_amplitude(mag):
     '''
