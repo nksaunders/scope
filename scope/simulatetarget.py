@@ -32,14 +32,10 @@ class Target(object):
     A simulated stellar object with a forward model of a telescope detector's sensitivity variation
     '''
 
-    def __init__(self, fpix, flux, ferr, target, t, mag=12., roll=1., ccd_args=[], neighbor_magdiff=1.,
-                 ncadences=1000, apsize=7, roll_ID=205998445, custom_ccd=False, transit=False,
-                 variable=False, neighbor=False, ftpf=None):
+    def __init__(self, fpix, flux, ferr, target, t, mag=12., roll=1., neighbor_magdiff=1.,
+                 ncadences=1000, apsize=7, transit=False, variable=False, neighbor=False):
 
         # initialize self variables
-        self.roll_ID = roll_ID
-        self.ftpf = ftpf
-        self.custom_ccd = custom_ccd
         self.transit = transit
         self.variable = variable
         self.neighbor = neighbor
@@ -78,10 +74,6 @@ class Target(object):
     @property
     def target_flux(self):
         return self.target
-
-    @property
-    def roll_ID(self):
-        return self.roll_ID
 
     def detrend(self, fpix=[]):
         '''
@@ -530,9 +522,8 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     flux = np.sum(fpix.reshape((ncadences), -1), axis=1)
 
-    return Target(fpix, flux, ferr, target, t, mag=12., roll=1., ccd_args=[], neighbor_magdiff=1.,
-                 ncadences=1000, apsize=7, roll_ID=205998445, custom_ccd=False, transit=False,
-                 variable=False, neighbor=False, ftpf=None)
+    return Target(fpix, flux, ferr, target, t, mag=12., roll=1., neighbor_magdiff=1.,
+                 ncadences=1000, apsize=7, transit=False, variable=False, neighbor=False)
 
 def calculate_PSF_amplitude(mag):
     '''
