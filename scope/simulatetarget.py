@@ -364,8 +364,6 @@ class Target(object):
         # Display detector
         pl.imshow(self.detector, origin='lower', cmap='gray')
 
-        return self.detector
-
     def find_CDPP(self, flux=[]):
         '''
         Quick function to calculate and return Combined Differential Photometric Precision (CDPP) of a given light curve.
