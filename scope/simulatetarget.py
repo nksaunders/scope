@@ -238,13 +238,15 @@ class Target(object):
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         self.r = 10 ** (magdiff / 2.5)
 
-        neighbor_args = np.concatenate([[self.A / self.r], np.array([nx0]), np.array([ny0]), sx, sy, rho])
+        neighbor_args = np.concatenate([[self.A / self.r], np.array([nx0]),
+                                       np.array([ny0]), sx, sy, rho])
 
         # create neighbor pixel-level light curve
         for c in tqdm(range(self.ncadences)):
 
             # iterate through cadences, calculate pixel flux values
-            n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args, self.xpos[c], self.ypos[c])
+            n_fpix[c], neighbor[c], n_ferr[c] = PSF(neighbor_args, self.ccd_args,
+                                                    self.xpos[c], self.ypos[c])
 
         # add neighbor to light curve
         fpix += n_fpix
@@ -326,7 +328,8 @@ class Target(object):
         '''
 
         self.create_aperture()
-        pl.imshow(self.fpix[0] * self.aperture, origin='lower', cmap='viridis', interpolation='nearest')
+        pl.imshow(self.fpix[0] * self.aperture, origin='lower',
+                  cmap='viridis', interpolation='nearest')
         pl.show()
 
     def display_detector(self):
@@ -423,8 +426,10 @@ class Target(object):
             ax[1].plot(self.t, self.rawflux, 'r.', alpha=0.3, label='raw flux')
             ax[1].plot(self.t, self.flux, 'k.', label='de-trended')
         else:
-            ax[1].plot(self.t, self.rawflux, 'r.', alpha=0.3, label='raw flux (CDPP = %.i)' % self.find_CDPP(self.rawflux))
-            ax[1].plot(self.t, self.flux, 'k.', label='de-trended (CDPP = %.i)' % self.find_CDPP(self.flux))
+            ax[1].plot(self.t, self.rawflux, 'r.', alpha=0.3, label='raw flux (CDPP = %.i)'
+                       % self.find_CDPP(self.rawflux))
+            ax[1].plot(self.t, self.flux, 'k.', label='de-trended (CDPP = %.i)'
+                       % self.find_CDPP(self.flux))
         ax[1].set_xlim([self.t[0], self.t[-1]])
         ax[1].legend(loc=0)
         ax[1].set_xlabel('Time (days)')
@@ -478,7 +483,8 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
         client = k2plr.API()
         star = client.k2_star(ID)
         tpf = star.get_target_pixel_files(fetch = True)[0]
-        ftpf = os.path.join(KPLR_ROOT, 'data', 'k2', 'target_pixel_files', '%d' % ID, tpf._filename)
+        ftpf = os.path.join(KPLR_ROOT, 'data', 'k2', 'target_pixel_files', '%d'
+                            % ID, tpf._filename)
 
     with fits.open(ftpf) as f:
 
