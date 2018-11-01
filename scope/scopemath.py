@@ -18,24 +18,15 @@ import timeit, builtins
 import george
 
 def Polynomial(x, coeffs):
-  '''
-  Returns a polynomial with coefficients `coeffs` evaluated at `x`.
+  """Returns a polynomial with coefficients `coeffs` evaluated at `x`."""
 
-  '''
 
   return np.sum([c * x ** m for m, c in enumerate(coeffs)], axis = 0)
 
 class GaussInt(object):
-    '''
-    Returns the definite integral of x^n * exp(-ax^2 + bx + c) from 0 to 1.
-
-    '''
+    """Returns the definite integral of x^n * exp(-ax^2 + bx + c) from 0 to 1."""
 
     def __init__(self, a, b, c):
-        '''
-
-        '''
-
         self.a = a
         self.b = b
         self.c = c
@@ -44,10 +35,6 @@ class GaussInt(object):
         self.GI0 = np.exp(q ** 2 + self.c) * np.sqrt(np.pi) * (erf(q) + erf(p - q)) / (2 * p)
 
     def __call__(self, n):
-        '''
-
-        '''
-
         if n == 0:
             return self.GI0
         elif n == 1:
@@ -60,14 +47,13 @@ class GaussInt(object):
             raise NotImplementedError("Intrapixel variability above 3rd order still needs to be added.")
 
 def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
-    '''
+    """
     This is the product of the 2D Gaussian PSF, a polynomial in y,
     and a polynomial in x, *analytically integrated along x*. The integral
     along y is not analytic and must be done numerically. However, the
     analytical integration along the first dimension speeds up the entire
     calculation by a factor of ~20.
-
-    '''
+    """
 
     amp = np.atleast_1d(amp)
     x0 = np.atleast_1d(x0)
@@ -112,20 +98,17 @@ def PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho):
     return f * g
 
 def Gauss2D(x, y, amp, x0, y0, sx, sy, rho):
-    '''
-    A two-dimensional gaussian with arbitrary covariance.
-    '''
+    """A two-dimensional gaussian with arbitrary covariance."""
 
     norm = (2 * np.pi * sx * sy * np.sqrt(1 - rho ** 2))
     return (amp / norm) * np.exp(-((x - x0) ** 2 / sx ** 2 + (y - y0) ** 2 / sy ** 2 - 2 * rho * (x - x0) * (y - y0) / (sx * sy)) / (2 * (1 - rho ** 2)))
 
 def PolyGaussIntegrand2D(x, y, cx, cy, amp, x0, y0, sx, sy, rho):
-    '''
+    """
     This is straight up the product of the 2D Gaussian PSF, a polynomial in y,
     and a polynomial in x, at a given location on the pixel. Integrating this
     in 2D across the entire pixel yields the total flux in that pixel.
-
-    '''
+    """
 
     # Dimensions
     K = len(x0)
@@ -141,7 +124,7 @@ def PolyGaussIntegrand2D(x, y, cx, cy, amp, x0, y0, sx, sy, rho):
     return f * g * h
 
 def PixelFlux(cx, cy, amp, x0, y0, sx, sy, rho, fast=True, **kwargs):
-    '''
+    """
     The flux in a given pixel of the detector, calculated from the integral
     of the convolution of a 2D gaussian with a polynomial.
 
@@ -163,8 +146,7 @@ def PixelFlux(cx, cy, amp, x0, y0, sx, sy, rho, fast=True, **kwargs):
         The correlation coefficient between `x` and `y`, a value between -1 and 1. See en.wikipedia.org/wiki/Pearson_correlation_coefficient. If this is 0, `x` and `y` are uncorrelated (zero rotation).
     `fast`:
         If `True`, analytically integrates the function along the `x` axis and numerically integrates it along the `y` axis. This can greatly speed things up, with no loss of accuracy. If `False`, numerically integrates in both dimensions (not recommended).
-
-    '''
+    """
 
     if fast:
         F = lambda y: PolyGaussIntegrand1D(y, cx, cy, amp, x0, y0, sx, sy, rho)
@@ -175,12 +157,11 @@ def PixelFlux(cx, cy, amp, x0, y0, sx, sy, rho, fast=True, **kwargs):
     return res
 
 def TestIntegration():
-    '''
+    """
     Compares the fast and slow ways of computing the flux. Reports the
     time each method took and the difference in the flux between the
     two methods.
-
-    '''
+    """
 
     # Define the params
     cx = np.random.randn(3); cx[0] = np.abs(cx[0])
@@ -207,9 +188,9 @@ def TestIntegration():
     print("Difference    (   %.1f x): %.9e" % (tnum/tsem, np.abs(1 - fnum()/fsem())))
 
 def PSF(psf_args, ccd_args, xpos, ypos):
-    '''
+    """
 
-    '''
+    """
 
     # Read in detector arguments
     cx, cy, apsize, background_level, inter, photnoise_conversion = ccd_args
@@ -259,10 +240,16 @@ def PSF(psf_args, ccd_args, xpos, ypos):
     return psf, target, psferr
 
 def PLD(fpix, ferr, trninds, t, aperture):
-    '''
+    """
     Perform first order PLD on a light curve
-    Returns: detrended light curve, raw light curve
-    '''
+
+    Returns
+    -------
+    flux :
+        detrended light curve
+    rawflux :
+        raw light curve
+    """
 
     aperture = [aperture for i in range(len(fpix))]
 
