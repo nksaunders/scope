@@ -70,9 +70,9 @@ class Target(object):
         return self.flux
 
     @property
-    def t(self):
+    def time(self):
         return self.t
-        
+
     @property
     def error(self):
         return self.ferr
