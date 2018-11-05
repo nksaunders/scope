@@ -70,6 +70,10 @@ class Target(object):
         return self.flux
 
     @property
+    def t(self):
+        return self.t
+        
+    @property
     def error(self):
         return self.ferr
 
