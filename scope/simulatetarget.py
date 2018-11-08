@@ -28,9 +28,7 @@ from scipy.ndimage import zoom
 
 
 class Target(object):
-    '''
-    A simulated stellar object with a forward model of a telescope detector's sensitivity variation
-    '''
+    """A simulated stellar object with a forward model of a telescope detector's sensitivity variation"""
 
     def __init__(self, fpix, flux, ferr, target, t, mag=12., roll=1., neighbor_magdiff=1.,
                  ncadences=1000, apsize=7, transit=False, variable=False, neighbor=False,
@@ -82,13 +80,15 @@ class Target(object):
         return self.target
 
     def detrend(self, fpix=[]):
-        '''
+        """
         Runs 2nd order PLD with a Gaussian Proccess on a given light curve.
 
-        `fpix`:
+        Parameters
+        ----------
+        `fpix` :
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix
             generated in GenerateLightCurve() unless a different light curve is passed.
-        '''
+        """
 
         # check if fpix light curve was passed in
         if len(fpix) == 0:
@@ -112,21 +112,23 @@ class Target(object):
         return self
 
     def add_transit(self, fpix=[], depth=.001, per=15, dur=.5, t0=5.):
-        '''
+        """
         Injects a transit into light curve.
 
-        `fpix`:
+        Parameters
+        ----------
+        `fpix` :
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to
             fpix generated in GenerateLightCurve() unless a different light curve is passed.
-        `depth`:
+        `depth` :
             Drop in flux due to transit relative to mean flux value.
-        `per`:
+        `per` :
             Period of transit in days.
-        `dur`:
+        `dur` :
             Duration of transit in days.
-        't0':
+        't0' :
             Initial transit time in days.
-        '''
+        """
 
         # check if fpix light curve was passed in
         if len(fpix) == 0:
@@ -164,22 +166,22 @@ class Target(object):
         return self
 
     def add_variability(self, fpix=[], var_amp=0.0005, freq=0.25, custom_variability=[]):
-        '''
+        """
         Add a sinusoidal variability model to the given light curve.
 
         Parameters
         ----------
-        `fpix`:
+        `fpix` :
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically
             set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
-        `var_amp`:
+        `var_amp` :
             Amplitude of sin wave, which is multiplied by the light curve.
-        `freq`:
+        `freq` :
             Frequency of sin wave in days.
-        `custom_variability`:
+        `custom_variability` :
             A custom 1-dimensional array of length ncadences can be passed into the AddVariability()
             function, which will be multiplied by the light curve.
-        '''
+        """
 
         # check if fpix light curve was passed in
         if len(fpix) == 0:
@@ -205,22 +207,22 @@ class Target(object):
         return self
 
     def add_neighbor(self, fpix=[], magdiff=1., dist=1.7):
-        '''
+        """
         Add a neighbor star with given difference in magnitude and distance at a
         randomized location.
 
         Parameters
         ----------
-        `fpix`:
+        `fpix` :
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically
             set to fpix generated in GenerateLightCurve() unless a different light curve is passed.
-        `magdiff`:
+        `magdiff` :
             Difference in stellar magnitude between target and neighbor. Positive magdiff
             corresponds to higher values for the neighbor star's magnitude.
-        `dist`:
+        `dist` :
             Distance (in pixels) between cetroid position of target and neighbor. The (x, y)
             coordinates of the neighbor are chosen arbitrarily to result in the given distance.
-        '''
+        """
 
         if len(fpix) == 0:
             fpix = self.fpix
@@ -268,15 +270,15 @@ class Target(object):
         return self
 
     def create_aperture(self, fpix=[]):
-        '''
+        """
         Create an aperture including all pixels containing target flux.
 
         Parameters
         ----------
-        `fpix`:
+        `fpix` :
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to
             fpix generated in GenerateLightCurve() unless a different light curve is passed.
-        '''
+        """
 
         # check if fpix light curve was passed in
         if len(fpix) == 0:
@@ -327,9 +329,7 @@ class Target(object):
         return finalap
 
     def display_aperture(self):
-        '''
-        Displays aperture overlaid over the first cadence target pixel file.
-        '''
+        """Displays aperture overlaid over the first cadence target pixel file."""
 
         self.create_aperture()
         pl.imshow(self.fpix[0] * self.aperture, origin='lower',
@@ -337,9 +337,7 @@ class Target(object):
         pl.show()
 
     def display_detector(self):
-        '''
-        Returns matrix of dimensions (apsize, apsize) for CCD pixel sensitivity.
-        '''
+        """Returns matrix of dimensions (apsize, apsize) for CCD pixel sensitivity."""
 
         # read in ccd parameters
         cx, cy, apsize, background_level, inter, photnoise_conversion = self.ccd_args
@@ -372,16 +370,21 @@ class Target(object):
         pl.imshow(self.detector, origin='lower', cmap='gray')
 
     def find_CDPP(self, flux=[]):
-        '''
+        """
         Quick function to calculate and return Combined Differential Photometric Precision (CDPP) of a given light curve.
          If no light curve is passed, this funtion returns the CDPP of the light curve generated in GenerateLightCurve().
 
         Parameters
         ----------
-        `flux`:
+        `flux` :
             1-dimensional flux light curve for which CDPP is calculated. If nothing is passed into FindCDPP(), it returns
             the CDPP of the light curve generated in GenerateLightCurve()
-        '''
+
+        Returns
+        -------
+        `cdpp` : float
+            Combined Differential Photometric Precision (CDPP) of given `flux` light curve
+        """
 
         # check if flux light curve was passed in
         if len(flux) == 0:
@@ -392,9 +395,7 @@ class Target(object):
         return cdpp
 
     def plot(self):
-        '''
-        Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves.
-        '''
+        """Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves."""
 
         # initialize subplots with 1:3 width ratio
         fig, ax = pl.subplots(1, 2, figsize=(12,3), gridspec_kw = {'width_ratios':[1, 3]})
@@ -446,34 +447,39 @@ class Target(object):
 def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1.,
                     photnoise_conversion=.000625, ncadences=1000, apsize=7, ID=205998445,
                     custom_ccd=False, transit=False, variable=False, neighbor=False, ftpf=None):
-    '''
+    """
 
     Parameters
     ----------
-     `mag`:
+     `mag` :
          Magnitude of primary target PSF.
-     `roll`:
+     `roll` :
          Coefficient on K2 motion vectors of target. roll=1 corresponds to current K2 motion.
-     `background_level`:
+     `background_level` :
          Constant background signal in each pixel. Defaults to 0.
-     `ccd_args`:
+     `ccd_args` :
          Autogenerated if nothing passed, otherwise takes the following arguments:
-         `cx`: sensitivity variation coefficients in `x`
-         `cy`: sensitivity variation coefficients in `y`
-         `apsize`: see below
-         `background_level`: see above
-         `inter`: matrix (apsize x apsize) of stochastic inter-pixel sensitivity variation
+         `cx` : sensitivity variation coefficients in `x`
+         `cy` : sensitivity variation coefficients in `y`
+         `apsize` : see below
+         `background_level` : see above
+         `inter` : matrix (apsize x apsize) of stochastic inter-pixel sensitivity variation
          `photnoise_conversion`: see below
-     `neighbor_magdiff`:
+     `neighbor_magdiff` :
          Difference between magnitude of target and neighbor. Only accessed if neighbor initialized as
          `True` or if AddNeighbor() function is called.
-     `photnoise_conversion`:
+     `photnoise_conversion` :
          Conversion factor for photon noise, defaults to 0.000625 for consistency with benchmark.
-     `ncadences`:
+     `ncadences` :
          Number of cadences in simulated light curve.
-     `apsize`:
+     `apsize` :
          Dimension of aperture on each side.
-    '''
+
+     Returns
+     -------
+     `Target`: :class:`Target` object
+        A simulated CCD observation
+    """
     t = np.linspace(0, 90, ncadences) # simulation lasts 90 days, with n cadences
     aperture = np.ones((ncadences, apsize, apsize))
 
@@ -561,12 +567,19 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
                  ccd_args=ccd_args)
 
 def calculate_PSF_amplitude(mag):
-    '''
+    """
     Returns the amplitude of the PSF for a star of a given magnitude.
 
-    `mag`:
+    Parameters
+    ----------
+    `mag`: float
         Input magnitude.
-    '''
+
+    Returns
+    -------
+    amp : float
+        Corresponding PSF applitude.
+    """
 
     # mag/flux relation constants
     a,b,c = 1.65e+07, 0.93, -7.35
