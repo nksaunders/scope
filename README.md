@@ -19,5 +19,5 @@ For examples of usage, see [the sample notebook](https://nksaunders.github.io/fi
 To install **scope**, run
 <pre><code>pip install tele-scope</code></pre>
 
-Note that **scope** depends on the **EVEREST** pipeline (Luger et. al). **EVEREST** can be installed with
+Note that **scope** depends on the **EVEREST** pipeline ([Luger et. al 2016](https://rodluger.github.io/everest/pipeline.html)). **EVEREST** can be installed with
 <pre><code>pip install everest-pipeline</code></pre>
