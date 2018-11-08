@@ -13,8 +13,8 @@ import scope
 
 long_description = \
 """
-Synthetic K2 Objects for PLD Experimentation
-Generates a forward model of the Kepler detector
+Simulated CCD Observations for Photometric Experimentation
+Generates a forward model of the CCD detectors
 including inter- and intra-pixel sensitivity variation,
 and models synthetic stellar PSFs traversing the CCD.
 """
