@@ -99,9 +99,7 @@ class Target(object):
             self.trninds = np.array([])
 
         # define aperture
-
         self.aperture = self.create_aperture(fpix)
-
 
         # Run 2nd order PLD with a Gaussian Process
         self.flux, self.rawflux = PLD(fpix, self.ferr, self.trninds, self.t, self.aperture)
