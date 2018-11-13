@@ -189,7 +189,18 @@ def TestIntegration():
 
 def PSF(psf_args, ccd_args, xpos, ypos):
     """
+    Computes a stellar Point Spread Function (PSF) from given parameters.
 
+    Parameters
+    ----------
+    psf_args :
+        array of PSF parameters
+    ccd_args :
+        array of CCD parameters
+    xpos :
+        array of PSF motion in x around detector relative to `(x_0, y_0)`
+    ypos :
+        array of PSF motion in y around detector relative to `(x_0, y_0)`
     """
 
     # Read in detector arguments
