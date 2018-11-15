@@ -392,6 +392,19 @@ class Target(object):
 
         return cdpp
 
+    def to_lightkurve(self):
+        """Woo lightkurve fun!"""
+
+        # make sure the lightkurve package is installed
+        try:
+            from lightkurve import KeplerLightCurve
+        except:
+            raise ImportError('Could not import lightkurve.')
+
+        # define `KeplerLightCurve` object
+        self.lk = KeplerLightCurve(time=self.time, flux=self.flux)
+        return self.lk
+
     def plot(self):
         """Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves."""
 
