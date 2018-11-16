@@ -392,7 +392,7 @@ class Target(object):
 
         return cdpp
 
-    def to_lightkurve(self):
+    def to_lightkurve_lc(self):
         """Woo lightkurve fun!"""
 
         # make sure the lightkurve package is installed
@@ -402,8 +402,21 @@ class Target(object):
             raise ImportError('Could not import lightkurve.')
 
         # define `KeplerLightCurve` object
-        self.lk = KeplerLightCurve(time=self.time, flux=self.flux)
-        return self.lk
+        self.lc = KeplerLightCurve(time=self.time, flux=self.flux)
+        return self.lc
+
+    def to_lightkurve_tpf(self):
+        """Woo lightkurve fun!"""
+
+        # make sure the lightkurve package is installed
+        try:
+            from lightkurve import KeplerLightTargetPixelFile
+        except:
+            raise ImportError('Could not import lightkurve.')
+
+        # define `KeplerLightCurve` object
+        self.lc = KeplerLightCurve(time=self.time, flux=self.flux)
+        return self.lc
 
     def plot(self):
         """Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves."""
@@ -510,7 +523,7 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
     with fits.open(ftpf) as hdu:
         # read motion vectors in x and y
         xpos = hdu[1].data['pos_corr1']
-        ypos = hdu[1].data['pos_corr2']`
+        ypos = hdu[1].data['pos_corr2']
 
     # throw out outliers
     for i in range(len(xpos)):
