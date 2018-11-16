@@ -393,7 +393,14 @@ class Target(object):
         return cdpp
 
     def to_lightkurve_lc(self):
-        """Woo lightkurve fun!"""
+        """
+        Integration with the lightkurve package.
+
+        Returns
+        -------
+        lc : lightkurve.KeplerLightCurve object
+            A `KeplerLightCurve` object from the lightkurve package
+        """
 
         # make sure the lightkurve package is installed
         try:
@@ -406,7 +413,19 @@ class Target(object):
         return self.lc
 
     def to_lightkurve_tpf(self, target_id="Simulated Target"):
-        """Woo lightkurve fun!"""
+        """
+        Integration with the lightkurve package.
+
+        Parameters
+        ----------
+        target_id : str
+            Name of the simulated target. Defaults to "Simulated Target"
+
+        Returns
+        -------
+        tpf : lightkurve.KeplerTargetPixelFile object
+            A `KeplerTargetPixelFile` object from the lightkurve package
+        """
 
         # make sure the lightkurve package is installed
         try:
