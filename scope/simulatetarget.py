@@ -414,11 +414,14 @@ class Target(object):
         except:
             raise ImportError('Could not import lightkurve.')
 
+        # instantiate a factory to build our tpf
         factory = KeplerTargetPixelFileFactory(self.ncadences, self.apsize, self.apsize,
                                                target_id=target_id)
+        # one cadence at a time, add the flux matrices to the tpf
         for i, tpf in enumerate(self.targetpixelfile):
             factory.add_cadence(flux=tpf, frameno=i)
 
+        # set factory time to simulated time
         factory.time = self.time
         self.tpf = factory.get_tpf()
 
