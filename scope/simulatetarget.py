@@ -405,18 +405,24 @@ class Target(object):
         self.lc = KeplerLightCurve(time=self.time, flux=self.flux)
         return self.lc
 
-    def to_lightkurve_tpf(self):
+    def to_lightkurve_tpf(self, target_id="Simulated Target"):
         """Woo lightkurve fun!"""
 
         # make sure the lightkurve package is installed
         try:
-            from lightkurve import KeplerLightTargetPixelFile
+            from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
         except:
             raise ImportError('Could not import lightkurve.')
 
-        # define `KeplerLightCurve` object
-        self.lc = KeplerLightCurve(time=self.time, flux=self.flux)
-        return self.lc
+        factory = KeplerTargetPixelFileFactory(self.ncadences, self.apsize, self.apsize,
+                                               target_id=target_id)
+        for i, tpf in enumerate(self.targetpixelfile):
+            factory.add_cadence(flux=tpf, frameno=i)
+
+        factory.time = self.time
+        self.tpf = factory.get_tpf()
+
+        return self.tpf
 
     def plot(self):
         """Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves."""
