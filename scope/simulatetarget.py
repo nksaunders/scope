@@ -507,11 +507,10 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
         ftpf = os.path.join(KPLR_ROOT, 'data', 'k2', 'target_pixel_files', '%d'
                             % ID, tpf._filename)
 
-    with fits.open(ftpf) as f:
-
+    with fits.open(ftpf) as hdu:
         # read motion vectors in x and y
-        xpos = f[1].data['pos_corr1']
-        ypos = f[1].data['pos_corr2']
+        xpos = hdu[1].data['pos_corr1']
+        ypos = hdu[1].data['pos_corr2']`
 
     # throw out outliers
     for i in range(len(xpos)):
