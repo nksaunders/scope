@@ -32,7 +32,7 @@ class Target(object):
 
     def __init__(self, fpix, flux, ferr, target, t, mag=12., roll=1., neighbor_magdiff=1.,
                  ncadences=1000, apsize=7, transit=False, variable=False, neighbor=False,
-                 ccd_args=[]):
+                 ccd_args=[], xpos=None, ypos=None):
 
         # initialize self variables
         self.transit = transit
@@ -44,6 +44,8 @@ class Target(object):
         self.neighbor_magdiff = neighbor_magdiff
         self.mag = mag
         self.ccd_args = ccd_args
+        self.xpos = xpos
+        self.ypos = ypos
 
         self.t = t
         self.fpix = fpix
@@ -436,12 +438,18 @@ class Target(object):
         # instantiate a factory to build our tpf
         factory = KeplerTargetPixelFileFactory(self.ncadences, self.apsize, self.apsize,
                                                target_id=target_id)
+
         # one cadence at a time, add the flux matrices to the tpf
         for i, tpf in enumerate(self.targetpixelfile):
             factory.add_cadence(flux=tpf, frameno=i)
 
-        # set factory time to simulated time
+        # set factory values
         factory.time = self.time
+        factory.pos_corr1 = self.xpos
+        factory.pos_corr2 = self.ypos
+        factory.flux_err = self.ferr
+
+        # generate the tpf
         self.tpf = factory.get_tpf()
 
         return self.tpf
@@ -615,7 +623,7 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll, neighbor_magdiff=neighbor_magdiff,
                  ncadences=ncadences, apsize=apsize, transit=transit, variable=variable, neighbor=neighbor,
-                 ccd_args=ccd_args)
+                 ccd_args=ccd_args, xpos=xpos, ypos=ypos)
 
 def calculate_PSF_amplitude(mag):
     """
