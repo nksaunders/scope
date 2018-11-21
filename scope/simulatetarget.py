@@ -359,15 +359,19 @@ class Target(object):
 
         # Tile to create detector
         intra = np.tile(pixel_sens, (self.apsize, self.apsize))
+        intra_norm = 1-(intra + np.max(intra))/np.min(intra)
         self.detector = np.zeros((res*self.apsize,res*self.apsize))
 
         # Multiply by inter-pixel sensitivity variables
         for i in range(self.apsize):
             for j in range(self.apsize):
-                self.detector[i*res:(i+1)*res][j*res:(j+1)*res] = intra[i*res:(i+1)*res][j*res:(j+1)*res] * inter[i][j]
+                self.detector[i*res:(i+1)*res][j*res:(j+1)*res] = intra_norm[i*res:(i+1)*res][j*res:(j+1)*res] * inter[i][j]
 
         # Display detector
         pl.imshow(self.detector, origin='lower', cmap='gray')
+        pl.xticks([])
+        pl.yticks([])
+        pl.colorbar()
 
     def find_CDPP(self, flux=[]):
         """
