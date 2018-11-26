@@ -106,8 +106,8 @@ class Target(object):
         # Run 2nd order PLD with a Gaussian Process
         self.flux, self.rawflux = PLD(fpix, self.ferr, self.trninds, self.t, self.aperture)
 
-        self.detrended_cdpp = self.find_CDPP(self.flux)
-        self.raw_cdpp = self.find_CDPP(self.rawflux)
+        self.detrended_cdpp = self.estimate_CDPP(self.flux)
+        self.raw_cdpp = self.estimate_CDPP(self.rawflux)
 
         return self
 
@@ -373,7 +373,7 @@ class Target(object):
         pl.yticks([])
         pl.colorbar()
 
-    def find_CDPP(self, flux=[]):
+    def estimate_CDPP(self, flux=[]):
         """
         Quick function to calculate and return Combined Differential Photometric Precision (CDPP) of a given light curve.
          If no light curve is passed, this funtion returns the CDPP of the light curve generated in GenerateLightCurve().
@@ -491,14 +491,14 @@ class Target(object):
         self.detrend()
 
         # make sure CDPP is a number before printing it
-        if np.isnan(self.find_CDPP(self.flux)):
+        if np.isnan(self.estimate_CDPP(self.flux)):
             ax[1].plot(self.t, self.rawflux, 'r.', alpha=0.3, label='raw flux')
             ax[1].plot(self.t, self.flux, 'k.', label='de-trended')
         else:
             ax[1].plot(self.t, self.rawflux, 'r.', alpha=0.3, label='raw flux (CDPP = %.i)'
-                       % self.find_CDPP(self.rawflux))
+                       % self.estimate_CDPP(self.rawflux))
             ax[1].plot(self.t, self.flux, 'k.', label='de-trended (CDPP = %.i)'
-                       % self.find_CDPP(self.flux))
+                       % self.estimate_CDPP(self.flux))
         ax[1].set_xlim([self.t[0], self.t[-1]])
         ax[1].legend(loc=0)
         ax[1].set_xlabel('Time (days)')
