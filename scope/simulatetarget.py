@@ -625,9 +625,11 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     flux = np.sum(fpix.reshape((ncadences), -1), axis=1)
 
-    return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll, neighbor_magdiff=neighbor_magdiff,
-                 ncadences=ncadences, apsize=apsize, transit=transit, variable=variable, neighbor=neighbor,
-                 ccd_args=ccd_args, xpos=xpos, ypos=ypos)
+    return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll,
+                  neighbor_magdiff=neighbor_magdiff, ncadences=ncadences,
+                  apsize=apsize, transit=transit, variable=variable,
+                  neighbor=neighbor, ccd_args=ccd_args, xpos=xpos,
+                  ypos=ypos)
 
 def calculate_PSF_amplitude(mag):
     """
