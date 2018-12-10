@@ -14,7 +14,7 @@ import scope
 from scope import PACKAGEDIR
 
 # set file directory to local tpf
-ftpf = abspath(join(PACKAGEDIR, os.pardir, '.kplr', 'data', 'k2',
+ftpf = abspath(join(PACKAGEDIR, '.kplr', 'data', 'k2',
                     'target_pixel_files', '205998445',
                     'ktwo205998445-c03_lpd-targ.fits.gz'))
 
