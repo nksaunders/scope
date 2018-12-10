@@ -1,0 +1,2 @@
+.. automodule:: scope.batch
+   :members:

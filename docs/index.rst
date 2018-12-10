@@ -19,6 +19,7 @@ This package includes methods to change magnitude of motion and sensitivity prop
 
    simulatetarget
    scopemath
+   batch
 
    Source Code on Github <https://github.com/nksaunders/scope>
 
