@@ -1,0 +1,11 @@
+codecov:
+status:
+  project: yes
+  patch: yes
+  changes: no
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: true  # if true: only post the comment if coverage changes
+  require_base: no        # [yes :: must have a base report to post]
+  require_head: no        # [yes :: must have a head report to post]
