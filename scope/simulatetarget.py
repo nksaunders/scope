@@ -13,7 +13,6 @@ import matplotlib.pyplot as pl
 from matplotlib.widgets import Button
 import everest
 from everest.mathutils import SavGol
-from .scopemath import PSF, PLD
 import random
 from random import randint
 from astropy.io import fits
@@ -26,6 +25,10 @@ import os
 from tqdm import tqdm
 from scipy.ndimage import zoom
 
+from .scopemath import PSF, PLD
+from .utils import *
+
+__all__ = ['Target', 'generate_target']
 
 class Target(object):
     """A simulated stellar object with a forward model of a telescope detector's sensitivity variation"""
@@ -43,6 +46,7 @@ class Target(object):
         self.ncadences = ncadences
         self.neighbor_magdiff = neighbor_magdiff
         self.mag = mag
+        self.roll = roll
         self.ccd_args = ccd_args
         self.xpos = xpos
         self.ypos = ypos
@@ -553,12 +557,17 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
     # read in K2 motion vectors for provided K2 target (EPIC ID #)
     if ftpf is None:
 
-        # access target information
-        client = k2plr.API()
-        star = client.k2_star(ID)
-        tpf = star.get_target_pixel_files(fetch = True)[0]
-        ftpf = os.path.join(KPLR_ROOT, 'data', 'k2', 'target_pixel_files', '%d'
-                            % ID, tpf._filename)
+        try:
+            # access target information
+            client = k2plr.API()
+            star = client.k2_star(ID)
+            tpf = star.get_target_pixel_files(fetch = True)[0]
+            ftpf = os.path.join(KPLR_ROOT, 'data', 'k2', 'target_pixel_files', '%d'
+                                % ID, tpf._filename)
+        except OSError:
+            raise ScopeError('Unable to access internet. Please provide a path '
+                             '(str) to desired file for motion using the `ftpf` '
+                             'keyword.')
 
     with fits.open(ftpf) as hdu:
         # read motion vectors in x and y

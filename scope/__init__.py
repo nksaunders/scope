@@ -1,5 +1,9 @@
+import os
+PACKAGEDIR = os.path.abspath(os.path.dirname(__file__))
+
 from .version import __version__
 from .simulatetarget import *
+from .batch import *
 
 # Was scope imported from setup.py?
 try:

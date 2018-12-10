@@ -17,6 +17,8 @@ from itertools import combinations_with_replacement as multichoose
 import timeit, builtins
 import george
 
+from .utils import *
+
 def Polynomial(x, coeffs):
   """Returns a polynomial with coefficients `coeffs` evaluated at `x`."""
 
@@ -295,10 +297,15 @@ def PLD(fpix, ferr, trninds, t, aperture):
     # Mask transits in design matrix
     MX = M(X)
 
-    # Define gaussian process parameters
-    y = M(rawflux) - np.dot(X, np.linalg.solve(np.dot(X.T, X), np.dot(X.T, M(rawflux))))
-    amp = np.nanstd(y)
-    tau = 30.
+    try:
+        # Define gaussian process parameters
+        y = M(rawflux) - np.dot(X, np.linalg.solve(np.dot(X.T, X), np.dot(X.T, M(rawflux))))
+        amp = np.nanstd(y)
+        tau = 30.
+    except:
+        raise ScopeError('`numpy.linalg.solve` returned a singular matrix. The '
+                         'flux array may contain too few cadences to compute '
+                         'Gaussian Process parameters.')
 
     # Set up gaussian process
     gp = george.GP(amp ** 2 * george.kernels.Matern32Kernel(tau ** 2))
