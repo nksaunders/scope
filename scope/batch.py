@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+'''
+Batch
+-----
+Perform a batch run to generate multiple simulated observations.
+'''
+
 import numpy as np
 import matplotlib.pyplot as pl
 import scope

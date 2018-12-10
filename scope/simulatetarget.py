@@ -5,7 +5,6 @@ Simulate Target
 ---------------
 Generate a forward model of a telescope detector with sensitivity variation,
 and simulate stellar targets with motion relative to the CCD.
-
 '''
 
 import numpy as np
