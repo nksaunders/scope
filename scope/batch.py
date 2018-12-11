@@ -27,6 +27,7 @@ __all__ = ['Batch', 'run_batch']
 class Batch(object):
 
     def __init__(self, n, mags, motion_mags, directory):
+        """A batch object to generate multiple simulated light curves."""
 
         self.n = n
         self.mags = mags
