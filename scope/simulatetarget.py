@@ -418,7 +418,7 @@ class Target(object):
             raise ImportError('Could not import lightkurve.')
 
         # define `KeplerLightCurve` object
-        self.lc = KeplerLightCurve(time=self.time, flux=self.flux)
+        self.lc = self.to_lightkurve_tpf().to_lightcurve()
         return self.lc
 
     def to_lightkurve_tpf(self, target_id="Simulated Target"):
