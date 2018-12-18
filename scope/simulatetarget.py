@@ -23,6 +23,7 @@ from everest.missions.k2 import CDPP
 import os
 from tqdm import tqdm
 from scipy.ndimage import zoom
+from astropy import units as u
 
 from .scopemath import PSF, PLD
 from .utils import *
@@ -114,7 +115,7 @@ class Target(object):
 
         return self
 
-    def add_transit(self, fpix=[], depth=.001, per=15, dur=.5, t0=5.):
+    def add_transit(self, fpix=[], rprs=.001, period=15, t0=5., i=90):
         """
         Injects a transit into light curve.
 
@@ -123,12 +124,10 @@ class Target(object):
         `fpix` :
             Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to
             fpix generated in GenerateLightCurve() unless a different light curve is passed.
-        `depth` :
-            Drop in flux due to transit relative to mean flux value.
-        `per` :
+        `rprs` :
+            R_planet / R_star. Ratio of the planet's radius to the star's radius.
+        `period` :
             Period of transit in days.
-        `dur` :
-            Duration of transit in days.
         't0' :
             Initial transit time in days.
         """
@@ -139,17 +138,27 @@ class Target(object):
 
         self.transit = True
 
+        # calculate duration
+        self.dur = self.calculate_duration(rprs, period, i)
+
+        # enforce bounds
+        if self.dur <= .01:
+            self.dur = .01
+        elif self.dur >= .5:
+            self.dur = .5
+
         # Transit information
-        self.depth = depth
-        self.per = per # period (days)
-        self.dur = dur # duration (days)
+        self.rprs = rprs
+        self.period = period # period (days)
         self.t0 = t0 # initial transit time (days)
 
+
         # Create transit light curve
-        if self.depth == 0:
+        if self.rprs == 0:
             self.trn = np.ones((self.ncadences))
         else:
-            self.trn = Transit(self.t, t0=self.t0, per=self.per, dur=self.dur, depth=self.depth)
+            depth = self.rprs ** 2
+            self.trn = Transit(self.t, t0=self.t0, per=self.period, dur=self.dur, depth=depth)
 
         # Define transit mask
         self.trninds = np.where(self.trn>1.0)
@@ -330,6 +339,15 @@ class Target(object):
         self.aperture = finalap
 
         return finalap
+
+    def calculate_duration(self, rprs, period, i):
+        """ """
+
+        a = .001
+        b = ((1 + rprs)**2 - ((1/a)*np.cos(i*u.deg))**2) / (1 - np.cos(i*u.deg)**2)
+
+        dur = (period / np.pi) * np.arcsin(a * b**1/2).value
+        return dur
 
     def display_aperture(self):
         """Displays aperture overlaid over the first cadence target pixel file."""
