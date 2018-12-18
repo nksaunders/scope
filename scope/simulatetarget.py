@@ -138,6 +138,7 @@ class Target(object):
 
         self.transit = True
 
+        '''
         # calculate duration
         self.dur = self.calculate_duration(rprs, period, i)
 
@@ -146,6 +147,10 @@ class Target(object):
             self.dur = .01
         elif self.dur >= .5:
             self.dur = .5
+        '''
+
+        # HACK!
+        self.dur = .02
 
         # Transit information
         self.rprs = rprs
