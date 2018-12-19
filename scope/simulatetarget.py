@@ -24,6 +24,8 @@ import os
 from tqdm import tqdm
 from scipy.ndimage import zoom
 from astropy import units as u
+import starry
+import warnings
 
 from .scopemath import PSF, PLD
 from .utils import *
@@ -115,7 +117,7 @@ class Target(object):
 
         return self
 
-    def add_transit(self, fpix=[], rprs=.001, period=15, t0=5., i=90):
+    def add_transit(self, fpix=[], rprs=.01, period=15, t0=5., i=90, ecc=0):
         """
         Injects a transit into light curve.
 
@@ -128,7 +130,7 @@ class Target(object):
             R_planet / R_star. Ratio of the planet's radius to the star's radius.
         `period` :
             Period of transit in days.
-        't0' :
+        `t0` :
             Initial transit time in days.
         """
 
@@ -137,6 +139,51 @@ class Target(object):
             fpix = self.fpix
 
         self.transit = True
+        self.rprs = rprs
+        self.period = period
+        self.t0 = t0
+        self.i = i
+        self.ecc = ecc
+
+        # instantiate a starry primary object (star)
+        star = starry.kepler.Primary()
+
+        # quadradic limb darkening
+        star[1] = 0.40
+        star[2] = 0.26
+
+        # instantiate a starry secondary object (planet)
+        planet = starry.kepler.Secondary(lmax=5)
+
+        # define its parameters
+        planet.r = rprs
+        planet.porb = period
+        planet.tref = t0
+        planet.w = i
+        planet.ecc = ecc
+
+        if not planet.is_physical():
+            warnings.warn('Planet parameters are not physical.', ScopeWarning)
+
+        system = starry.kepler.System(star, planet)
+        system.compute(self.t)
+
+        self.trn = system.lightcurve
+
+        # Define transit mask
+        self.trninds = np.where(self.trn > 1.0)
+        self.M = lambda x: np.delete(x, self.trninds, axis=0)
+
+        # Add transit to light curve
+        self.fpix_trn = np.zeros((self.ncadences, self.apsize, self.apsize))
+        for i,c in enumerate(fpix):
+            self.fpix_trn[i] = c * self.trn[i]
+
+        # Create flux light curve
+        self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences), -1), axis=1)
+
+        self.fpix = self.fpix_trn
+        self.flux = self.flux_trn
 
         '''
         # calculate duration
@@ -147,7 +194,6 @@ class Target(object):
             self.dur = .01
         elif self.dur >= .5:
             self.dur = .5
-        '''
 
         # HACK!
         self.dur = .02
@@ -180,6 +226,7 @@ class Target(object):
         self.fpix = self.fpix_trn
         self.flux = self.flux_trn
 
+        '''
         return self
 
     def add_variability(self, fpix=[], var_amp=0.0005, freq=0.25, custom_variability=[]):
