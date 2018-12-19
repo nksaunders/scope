@@ -38,6 +38,7 @@ setup(name = 'tele-scope',
       install_requires = [
                           'everest-pipeline',
                           'astroML',
+                          'starry',
                          ],
       include_package_data = True,
       zip_safe = False,
