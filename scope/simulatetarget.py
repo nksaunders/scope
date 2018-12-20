@@ -619,7 +619,7 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
      `Target`: :class:`Target` object
         A simulated CCD observation
     """
-    t = np.linspace(0, 90, ncadences) # simulation lasts 90 days, with n cadences
+
     aperture = np.ones((ncadences, apsize, apsize))
 
     # calculate PSF amplitude for given Kp Mag
@@ -644,7 +644,8 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
         # read motion vectors in x and y
         xpos = hdu[1].data['pos_corr1']
         ypos = hdu[1].data['pos_corr2']
-
+        t = hdu[1].data['time'][:ncadences]
+        
     # throw out outliers
     for i in range(len(xpos)):
         if abs(xpos[i]) >= 50 or abs(ypos[i]) >= 50:
