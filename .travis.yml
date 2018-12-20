@@ -18,7 +18,7 @@ install:
   - source activate test
   - conda install --yes numpy scipy matplotlib nose pip
   - conda config --add channels conda-forge
-  - conda install starry
+  - conda install --yes starry
   - pip install coveralls
   - pip install astroml
   - pip install sklearn
