@@ -147,6 +147,8 @@ class Target(object):
 
         # instantiate a starry primary object (star)
         star = starry.kepler.Primary()
+        self.stellar_r = star.r
+        self.stellar_L = star.L
 
         # quadradic limb darkening
         star[1] = 0.40
