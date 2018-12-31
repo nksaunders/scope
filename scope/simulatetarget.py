@@ -163,7 +163,7 @@ class Target(object):
         planet.tref = t0
         planet.w = i
         planet.ecc = ecc
-        
+
         system = starry.kepler.System(star, planet)
         system.compute(self.t)
 
@@ -184,48 +184,6 @@ class Target(object):
         self.fpix = self.fpix_trn
         self.flux = self.flux_trn
 
-        '''
-        # calculate duration
-        self.dur = self.calculate_duration(rprs, period, i)
-
-        # enforce bounds
-        if self.dur <= .01:
-            self.dur = .01
-        elif self.dur >= .5:
-            self.dur = .5
-
-        # HACK!
-        self.dur = .02
-
-        # Transit information
-        self.rprs = rprs
-        self.period = period # period (days)
-        self.t0 = t0 # initial transit time (days)
-
-
-        # Create transit light curve
-        if self.rprs == 0:
-            self.trn = np.ones((self.ncadences))
-        else:
-            depth = self.rprs ** 2
-            self.trn = Transit(self.t, t0=self.t0, per=self.period, dur=self.dur, depth=depth)
-
-        # Define transit mask
-        self.trninds = np.where(self.trn>1.0)
-        self.M=lambda x: np.delete(x, self.trninds, axis=0)
-
-        # Add transit to light curve
-        self.fpix_trn = np.zeros((self.ncadences, self.apsize, self.apsize))
-        for i,c in enumerate(fpix):
-            self.fpix_trn[i] = c * self.trn[i]
-
-        # Create flux light curve
-        self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences), -1), axis=1)
-
-        self.fpix = self.fpix_trn
-        self.flux = self.flux_trn
-
-        '''
         return self
 
     def add_variability(self, fpix=[], var_amp=0.0005, freq=0.25, custom_variability=[]):
