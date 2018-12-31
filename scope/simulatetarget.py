@@ -163,10 +163,7 @@ class Target(object):
         planet.tref = t0
         planet.w = i
         planet.ecc = ecc
-
-        if not planet.is_physical():
-            warnings.warn('Planet parameters are not physical.', ScopeWarning)
-
+        
         system = starry.kepler.System(star, planet)
         system.compute(self.t)
 
@@ -645,7 +642,7 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
         xpos = hdu[1].data['pos_corr1']
         ypos = hdu[1].data['pos_corr2']
         t = hdu[1].data['time'][:ncadences]
-        
+
     # throw out outliers
     for i in range(len(xpos)):
         if abs(xpos[i]) >= 50 or abs(ypos[i]) >= 50:
