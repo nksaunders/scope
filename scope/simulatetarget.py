@@ -578,7 +578,7 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
     aperture = np.ones((ncadences, apsize, apsize))
 
     # calculate PSF amplitude for given Kp Mag
-    A = calculate_PSF_amplitude(mag)
+    A = _calculate_PSF_amplitude(mag)
 
     # read in K2 motion vectors for provided K2 target (EPIC ID #)
     if ftpf is None:
@@ -597,9 +597,9 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     with fits.open(ftpf) as hdu:
         # read motion vectors in x and y
-        xpos = hdu[1].data['pos_corr1']
-        ypos = hdu[1].data['pos_corr2']
-        t = hdu[1].data['time'][:ncadences]
+        xpos = _nan_interpolation(hdu[1].data['pos_corr1'])
+        ypos = _nan_interpolation(hdu[1].data['pos_corr2'])
+        t = _nan_interpolation(hdu[1].data['time'][:ncadences])
 
     # throw out outliers
     for i in range(len(xpos)):
@@ -667,7 +667,7 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
                   neighbor=neighbor, ccd_args=ccd_args, xpos=xpos,
                   ypos=ypos)
 
-def calculate_PSF_amplitude(mag):
+def _calculate_PSF_amplitude(mag):
     """
     Returns the amplitude of the PSF for a star of a given magnitude.
 
@@ -685,3 +685,32 @@ def calculate_PSF_amplitude(mag):
     # mag/flux relation constants
     a,b,c = 1.65e+07, 0.93, -7.35
     return a * np.exp(-b * (mag+c))
+
+def _nan_interpolation(y):
+    """Helper to handle indices and logical indices of NaNs.
+
+    Parameters
+    ----------
+    `y` :
+        1d numpy array with possible NaNs
+
+    Returns
+    -------
+    `nans` :
+        logical indices of NaNs
+    `index` :
+        a function, with signature indices= index(logical_indices),
+        to convert logical indices of NaNs to 'equivalent' indices
+
+    Example
+    -------
+    >>> # linear interpolation of NaNs
+    >>> nans, x= nan_helper(y)
+    >>> y[nans]= np.interp(x(nans), x(~nans), y[~nans])
+    """
+
+    nans = np.isnan(y)
+    x = lambda z: z.nonzero()[0]
+
+    y[nans]= np.interp(x(nans), x(~nans), y[~nans])
+    return y
