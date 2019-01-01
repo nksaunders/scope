@@ -597,9 +597,9 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     with fits.open(ftpf) as hdu:
         # read motion vectors in x and y
-        xpos = _nan_interpolation(hdu[1].data['pos_corr1'])
-        ypos = _nan_interpolation(hdu[1].data['pos_corr2'])
-        t = _nan_interpolation(hdu[1].data['time'][:ncadences])
+        xpos = _interpolate_nans(hdu[1].data['pos_corr1'])
+        ypos = _interpolate_nans(hdu[1].data['pos_corr2'])
+        t = _interpolate_nans(hdu[1].data['time'][:ncadences])
 
     # throw out outliers
     for i in range(len(xpos)):
@@ -686,7 +686,7 @@ def _calculate_PSF_amplitude(mag):
     a,b,c = 1.65e+07, 0.93, -7.35
     return a * np.exp(-b * (mag+c))
 
-def _nan_interpolation(y):
+def _interpolate_nans(y):
     """Helper to handle indices and logical indices of NaNs.
 
     Parameters
