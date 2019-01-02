@@ -26,11 +26,13 @@ install:
   - pip install everest-pipeline
   - pip install codecov
   - pip install coverage
+  - pip install pytest
+  - pip install pytest-cov
   - pip install sphinx_rtd_theme
   - python setup.py install
 
 script:
-  - nosetests --with-coverage --cover-package=scope -v -w tests
+  - pytest tests/* --cov=scope/
 
 after_success:
   - codecov
