@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://travis-ci.org/nksaunders/scope"><img src="https://travis-ci.org/nksaunders/scope.svg?branch=master"/></a>
   <a href="https://nksaunders.github.io/scope"><img src="https://img.shields.io/badge/read-the_docs-blue.svg?style=flat"/></a>   <a href="https://github.com/nksaunders/scope/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-f4d041.svg"/></a>
-  <a href="https://badge.fury.io/py/tele-scope"><img src="https://badge.fury.io/py/tele-scope.svg">
+  <a href="https://badge.fury.io/py/tele-scope"><img src="https://badge.fury.io/py/tele-scope.svg"></a>
 </p>
 
 **S**imulated **C**CD **O**bservations for **P**hotometric **E**xperimentation
