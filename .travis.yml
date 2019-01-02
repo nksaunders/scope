@@ -28,7 +28,7 @@ install:
   - python setup.py install
 
 script:
-  - nosetests -w tests
+  - nosetests -w tests cov=scope
 
 after_success:
   - if [ "$TRAVIS_BRANCH" = "master" ]; then source .ci/build-docs.sh; fi
