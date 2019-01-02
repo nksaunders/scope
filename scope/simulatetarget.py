@@ -8,22 +8,26 @@ and simulate stellar targets with motion relative to the CCD.
 '''
 
 import numpy as np
-import matplotlib.pyplot as pl
-from matplotlib.widgets import Button
-import everest
-from everest.mathutils import SavGol
+import matplotlib.pyplot as plt
 import random
 from random import randint
-from astropy.io import fits
-from everest import Transit
-import k2plr
-from k2plr.config import KPLR_ROOT
-from everest.config import KEPPRF_DIR
-from everest.missions.k2 import CDPP
 import os
 from tqdm import tqdm
-from scipy.ndimage import zoom
+import warnings
+
 from astropy import units as u
+from astropy.constants import G
+from astropy.io import fits
+
+import everest
+from everest.mathutils import SavGol
+from everest.config import KEPPRF_DIR
+from everest.missions.k2 import CDPP
+
+import k2plr
+from k2plr.config import KPLR_ROOT
+
+from scipy.ndimage import zoom
 import starry
 import warnings
 
@@ -117,7 +121,7 @@ class Target(object):
 
         return self
 
-    def add_transit(self, fpix=[], rprs=.01, period=15, t0=5., i=90, ecc=0):
+    def add_transit(self, fpix=[], rprs=.01, period=15., t0=5., i=90, ecc=0, m_star=1.):
         """
         Injects a transit into light curve.
 
@@ -138,17 +142,23 @@ class Target(object):
         if len(fpix) == 0:
             fpix = self.fpix
 
+        # instantiate a starry primary object (star)
+        star = starry.kepler.Primary()
+        self.stellar_r = star.r
+        self.stellar_L = star.L
+
+        # calculate separation
+        a = (((G*m_star*u.solMass/(4*np.pi**2))*(period*u.day)**2)**(1/3)).to(u.AU).value
+
+        # store values
         self.transit = True
         self.rprs = rprs
         self.period = period
         self.t0 = t0
         self.i = i
         self.ecc = ecc
-
-        # instantiate a starry primary object (star)
-        star = starry.kepler.Primary()
-        self.stellar_r = star.r
-        self.stellar_L = star.L
+        self.m_star = m_star
+        self.a = a
 
         # quadradic limb darkening
         star[1] = 0.40
@@ -163,10 +173,11 @@ class Target(object):
         planet.tref = t0
         planet.inc = i
         planet.ecc = ecc
+        planet.a = star.r*(a*u.AU).to(u.solRad).value
 
+        # create a system and compute its lightcurve
         system = starry.kepler.System(star, planet)
         system.compute(self.t)
-
         self.trn = system.lightcurve
 
         # Define transit mask
@@ -362,9 +373,9 @@ class Target(object):
         """Displays aperture overlaid over the first cadence target pixel file."""
 
         self.create_aperture()
-        pl.imshow(self.fpix[0] * self.aperture, origin='lower',
+        plt.imshow(self.fpix[0] * self.aperture, origin='lower',
                   cmap='viridis', interpolation='nearest')
-        pl.show()
+        plt.show()
 
     def display_detector(self):
         """Returns matrix of dimensions (apsize, apsize) for CCD pixel sensitivity."""
@@ -398,10 +409,10 @@ class Target(object):
                 self.detector[i*res:(i+1)*res][j*res:(j+1)*res] = intra_norm[i*res:(i+1)*res][j*res:(j+1)*res] * inter[i][j]
 
         # Display detector
-        pl.imshow(self.detector, origin='lower', cmap='gray')
-        pl.xticks([])
-        pl.yticks([])
-        pl.colorbar()
+        plt.imshow(self.detector, origin='lower', cmap='gray')
+        plt.xticks([])
+        plt.yticks([])
+        plt.colorbar()
 
     def estimate_CDPP(self, flux=[]):
         """
@@ -492,7 +503,7 @@ class Target(object):
         """Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves."""
 
         # initialize subplots with 1:3 width ratio
-        fig, ax = pl.subplots(1, 2, figsize=(12,3), gridspec_kw = {'width_ratios':[1, 3]})
+        fig, ax = plt.subplots(1, 2, figsize=(12,3), gridspec_kw = {'width_ratios':[1, 3]})
 
         # Get aperture contour
         aperture = self.create_aperture()
@@ -536,7 +547,7 @@ class Target(object):
         ax[1].set_title('Flux Light Curve')
 
         fig.tight_layout()
-        pl.show()
+        plt.show()
 
 def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1.,
                     photnoise_conversion=.000625, ncadences=1000, apsize=7, ID=205998445,
