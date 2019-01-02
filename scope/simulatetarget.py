@@ -161,7 +161,7 @@ class Target(object):
         planet.r = rprs
         planet.porb = period
         planet.tref = t0
-        planet.w = i
+        planet.inc = i
         planet.ecc = ecc
 
         system = starry.kepler.System(star, planet)
