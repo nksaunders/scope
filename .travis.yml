@@ -31,7 +31,7 @@ install:
   - python setup.py install
 
 script:
-  - pytest scope/tests/*
+  - pytest --cov=scope/
 
 after_success:
   - codecov
