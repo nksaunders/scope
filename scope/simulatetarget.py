@@ -24,8 +24,7 @@ from everest.mathutils import SavGol
 from everest.config import KEPPRF_DIR
 from everest.missions.k2 import CDPP
 
-import k2plr
-from k2plr.config import KPLR_ROOT
+import lightkurve as lk
 
 from scipy.ndimage import zoom
 import starry
@@ -41,7 +40,7 @@ class Target(object):
 
     def __init__(self, fpix, flux, ferr, target, t, mag=12., roll=1., neighbor_magdiff=1.,
                  ncadences=1000, apsize=7, transit=False, variable=False, neighbor=False,
-                 ccd_args=[], xpos=None, ypos=None):
+                 ccd_args=[], psf_args=[], xpos=None, ypos=None):
 
         # initialize self variables
         self.transit = transit
@@ -54,6 +53,7 @@ class Target(object):
         self.mag = mag
         self.roll = roll
         self.ccd_args = ccd_args
+        self.psf_args = psf_args
         self.xpos = xpos
         self.ypos = ypos
 
@@ -168,7 +168,7 @@ class Target(object):
         planet = starry.kepler.Secondary(lmax=5)
 
         # define its parameters
-        planet.r = rprs
+        planet.r = rprs * star.r
         planet.porb = period
         planet.tref = t0
         planet.inc = i
@@ -184,16 +184,18 @@ class Target(object):
         self.trninds = np.where(self.trn > 1.0)
         self.M = lambda x: np.delete(x, self.trninds, axis=0)
 
-        # Add transit to light curve
+        self.fpix, self.flux, self.ferr, self.target = calculate_pixel_values(ncadences=self.ncadences, apsize=self.apsize,
+                                                                              psf_args=self.psf_args, ccd_args=self.ccd_args,
+                                                                              xpos=self.xpos, ypos=self.ypos, signal=self.trn)
+
+        """# Add transit to light curve
         self.fpix_trn = np.zeros((self.ncadences, self.apsize, self.apsize))
         for i,c in enumerate(fpix):
             self.fpix_trn[i] = c * self.trn[i]
 
         # Create flux light curve
-        self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences), -1), axis=1)
+        self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences), -1), axis=1)"""
 
-        self.fpix = self.fpix_trn
-        self.flux = self.flux_trn
 
         return self
 
@@ -551,7 +553,8 @@ class Target(object):
 
 def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1.,
                     photnoise_conversion=.000625, ncadences=1000, apsize=7, ID=205998445,
-                    custom_ccd=False, transit=False, variable=False, neighbor=False, ftpf=None):
+                    custom_ccd=False, transit=False, variable=False, neighbor=False, tpf_path=None,
+                    no_variation=False, signal=None):
     """
 
     Parameters
@@ -588,29 +591,25 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     aperture = np.ones((ncadences, apsize, apsize))
 
+    # TODO: need to define signal if variability or transit are True
+
     # calculate PSF amplitude for given Kp Mag
     A = _calculate_PSF_amplitude(mag)
 
-    # read in K2 motion vectors for provided K2 target (EPIC ID #)
-    if ftpf is None:
-
+    if tpf_path is None:
+        # read in K2 motion vectors for provided K2 target (EPIC ID #)
         try:
-            # access target information
-            client = k2plr.API()
-            star = client.k2_star(ID)
-            tpf = star.get_target_pixel_files(fetch = True)[0]
-            ftpf = os.path.join(KPLR_ROOT, 'data', 'k2', 'target_pixel_files', '%d'
-                                % ID, tpf._filename)
+            tpf = lk.search_targetpixelfile(ID)[0].download()
         except OSError:
             raise ScopeError('Unable to access internet. Please provide a path '
-                             '(str) to desired file for motion using the `ftpf` '
+                             '(str) to desired file for motion using the `tpf` '
                              'keyword.')
+    else:
+        tpf = lk.open(tpf_path)
 
-    with fits.open(ftpf) as hdu:
-        # read motion vectors in x and y
-        xpos = _interpolate_nans(hdu[1].data['pos_corr1'])
-        ypos = _interpolate_nans(hdu[1].data['pos_corr2'])
-        t = _interpolate_nans(hdu[1].data['time'][:ncadences])
+    xpos = tpf.pos_corr1
+    ypos = tpf.pos_corr2
+    t = tpf.time
 
     # throw out outliers
     for i in range(len(xpos)):
@@ -649,10 +648,34 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
         sx = [0.5 + 0.05 * np.random.randn()]
         sy = [0.5 + 0.05 * np.random.randn()]
         rho = [0.05 + 0.02 * np.random.randn()]
+        # TODO: This should be a dictionary
         psf_args = np.concatenate([[A], np.array([x0]), np.array([y0]), sx, sy, rho])
+
+    if no_variation:
+        cx = [1., 0., 0.]
+        cy = [1., 0., 0.]
+        inter = np.ones((apsize, apsize))
 
     ccd_args = [cx, cy, apsize, background_level, inter, photnoise_conversion]
     ccd_args = ccd_args
+
+    fpix, flux, ferr, target = calculate_pixel_values(ncadences=ncadences, apsize=apsize,
+                                              psf_args=psf_args, ccd_args=ccd_args,
+                                              xpos=xpos, ypos=ypos, signal=signal)
+
+    return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll,
+                  neighbor_magdiff=neighbor_magdiff, ncadences=ncadences,
+                  apsize=apsize, transit=transit, variable=variable,
+                  neighbor=neighbor, ccd_args=ccd_args, psf_args=psf_args, xpos=xpos,
+                  ypos=ypos)
+
+
+def calculate_pixel_values(ncadences, apsize, psf_args, ccd_args, xpos, ypos, signal=None):
+    """ """
+    if signal is None:
+        signal_amplitude = np.ones(ncadences)
+    else:
+        signal_amplitude = signal
 
     # initialize pixel flux light curve, target light curve, and isolated noise in each pixel
     fpix = np.zeros((ncadences, apsize, apsize))
@@ -667,16 +690,13 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     for c in tqdm(range(ncadences)):
 
+        psf_args[0] *= signal_amplitude[c]
         fpix[c], target[c], ferr[c] = PSF(psf_args, ccd_args, xpos[c], ypos[c])
-
 
     flux = np.sum(fpix.reshape((ncadences), -1), axis=1)
 
-    return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll,
-                  neighbor_magdiff=neighbor_magdiff, ncadences=ncadences,
-                  apsize=apsize, transit=transit, variable=variable,
-                  neighbor=neighbor, ccd_args=ccd_args, xpos=xpos,
-                  ypos=ypos)
+    return fpix, flux, ferr, target
+
 
 def _calculate_PSF_amplitude(mag):
     """
@@ -695,7 +715,9 @@ def _calculate_PSF_amplitude(mag):
 
     # mag/flux relation constants
     a,b,c = 1.65e+07, 0.93, -7.35
-    return a * np.exp(-b * (mag+c))
+    amp = a * np.exp(-b * (mag+c))
+    return amp
+
 
 def _interpolate_nans(y):
     """Helper to handle indices and logical indices of NaNs.
