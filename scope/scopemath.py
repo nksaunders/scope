@@ -195,18 +195,23 @@ def PSF(psf_args, ccd_args, xpos, ypos):
 
     Parameters
     ----------
-    psf_args :
-        array of PSF parameters
-    ccd_args :
-        array of CCD parameters
-    xpos :
+    psf_args : dict
+        dictionary of PSF parameters
+    ccd_args : dict
+        dictionary of CCD parameters
+    xpos : arraylike
         array of PSF motion in x around detector relative to `(x_0, y_0)`
-    ypos :
+    ypos : arraylike
         array of PSF motion in y around detector relative to `(x_0, y_0)`
     """
 
     # Read in detector arguments
-    cx, cy, apsize, background_level, inter, photnoise_conversion = ccd_args
+    cx = ccd_args['cx']
+    cy = ccd_args['cy']
+    apsize = ccd_args['apsize']
+    background_level = ccd_args['background_level']
+    inter = ccd_args['inter']
+    photnoise_conversion = ccd_args['photnoise_conversion']
 
     # Define apertures
     psf = np.zeros((apsize, apsize))
@@ -218,13 +223,12 @@ def PSF(psf_args, ccd_args, xpos, ypos):
 
 
             # read in PSF arguments
-            A, x0, y0, sx, sy, rho = psf_args
-
-            x0 = np.atleast_1d(x0)
-            y0 = np.atleast_1d(y0)
-            sx = np.atleast_1d(sx)
-            sy = np.atleast_1d(sy)
-            rho = np.atleast_1d(rho)
+            A = psf_args['A']
+            x0 = np.atleast_1d(psf_args['x0'])
+            y0 = np.atleast_1d(psf_args['y0'])
+            sx = np.atleast_1d(psf_args['sx'])
+            sy = np.atleast_1d(psf_args['sy'])
+            rho = np.atleast_1d(psf_args['rho'])
 
             # contribution to pixel from target
             psf[i][j] = PixelFlux(cx, cy, A,
@@ -321,6 +325,26 @@ def PLD(fpix, ferr, trninds, t, aperture):
     flux = rawflux - model + np.nanmean(rawflux)
 
     return flux, rawflux
+
+def _calculate_PSF_amplitude(mag):
+    """
+    Returns the amplitude of the PSF for a star of a given magnitude.
+
+    Parameters
+    ----------
+    `mag`: float
+        Input magnitude.
+
+    Returns
+    -------
+    amp : float
+        Corresponding PSF applitude.
+    """
+
+    # mag/flux relation constants
+    a,b,c = 1.65e+07, 0.93, -7.35
+    amp = a * np.exp(-b * (mag+c))
+    return amp
 
 if __name__ == '__main__':
 
