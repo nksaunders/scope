@@ -32,6 +32,7 @@ import warnings
 
 from .scopemath import PSF, PLD
 from .utils import *
+from .transit import TransitModel
 
 __all__ = ['Target', 'generate_target']
 
@@ -138,64 +139,16 @@ class Target(object):
             Initial transit time in days.
         """
 
-        # check if fpix light curve was passed in
-        if len(fpix) == 0:
-            fpix = self.fpix
-
-        # instantiate a starry primary object (star)
-        star = starry.kepler.Primary()
-        self.stellar_r = star.r
-        self.stellar_L = star.L
-
-        # calculate separation
-        a = (((G*m_star*u.solMass/(4*np.pi**2))*(period*u.day)**2)**(1/3)).to(u.AU).value
-
-        # store values
-        self.transit = True
-        self.rprs = rprs
-        self.period = period
-        self.t0 = t0
-        self.i = i
-        self.ecc = ecc
-        self.m_star = m_star
-        self.a = a
-
-        # quadradic limb darkening
-        star[1] = 0.40
-        star[2] = 0.26
-
-        # instantiate a starry secondary object (planet)
-        planet = starry.kepler.Secondary(lmax=5)
-
-        # define its parameters
-        planet.r = rprs * star.r
-        planet.porb = period
-        planet.tref = t0
-        planet.inc = i
-        planet.ecc = ecc
-        planet.a = star.r*(a*u.AU).to(u.solRad).value
-
-        # create a system and compute its lightcurve
-        system = starry.kepler.System(star, planet)
-        system.compute(self.t)
-        self.trn = system.lightcurve
+        model = TransitModel(self.t)
+        self.transit_signal = model.create_starry_model(rprs=.01, period=15., t0=5.,
+                                                        i=90, ecc=0., m_star=1.)
 
         # Define transit mask
-        self.trninds = np.where(self.trn > 1.0)
-        self.M = lambda x: np.delete(x, self.trninds, axis=0)
+        M = model.create_transit_mask(self.transit_signal)
 
         self.fpix, self.flux, self.ferr, self.target = calculate_pixel_values(ncadences=self.ncadences, apsize=self.apsize,
                                                                               psf_args=self.psf_args, ccd_args=self.ccd_args,
-                                                                              xpos=self.xpos, ypos=self.ypos, signal=self.trn)
-
-        """# Add transit to light curve
-        self.fpix_trn = np.zeros((self.ncadences, self.apsize, self.apsize))
-        for i,c in enumerate(fpix):
-            self.fpix_trn[i] = c * self.trn[i]
-
-        # Create flux light curve
-        self.flux_trn = np.sum(self.fpix_trn.reshape((self.ncadences), -1), axis=1)"""
-
+                                                                              xpos=self.xpos, ypos=self.ypos, signal=self.transit_signal)
 
         return self
 
@@ -660,8 +613,8 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
     ccd_args = ccd_args
 
     fpix, flux, ferr, target = calculate_pixel_values(ncadences=ncadences, apsize=apsize,
-                                              psf_args=psf_args, ccd_args=ccd_args,
-                                              xpos=xpos, ypos=ypos, signal=signal)
+                                                      psf_args=psf_args, ccd_args=ccd_args,
+                                                      xpos=xpos, ypos=ypos, signal=signal)
 
     return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll,
                   neighbor_magdiff=neighbor_magdiff, ncadences=ncadences,
