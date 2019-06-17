@@ -30,8 +30,8 @@ from scipy.ndimage import zoom
 import starry
 import warnings
 
-from .scopemath import PSF, PLD
-from .utils import *
+from .scopemath import PSF, PLD, _calculate_PSF_amplitude
+from .utils import ScopeError, ScopeWarning, _interpolate_nans
 from .transit import TransitModel
 
 __all__ = ['Target', 'generate_target']
@@ -139,6 +139,7 @@ class Target(object):
             Initial transit time in days.
         """
 
+        # Create a starry transit model
         model = TransitModel(self.t)
         self.transit_signal = model.create_starry_model(rprs=.01, period=15., t0=5.,
                                                         i=90, ecc=0., m_star=1.)
@@ -231,8 +232,8 @@ class Target(object):
         # calculate comparison factor for neighbor, based on provided difference in magnitude
         self.r = 10 ** (magdiff / 2.5)
 
-        neighbor_args = np.concatenate([[self.A / self.r], np.array([nx0]),
-                                       np.array([ny0]), sx, sy, rho])
+        neighbor_args = dict({'A':[self.A / self.r], 'x0':np.array([nx0]),
+                              'y0':np.array([ny0]), 'sx':sx, 'sy':sy, 'rho':rho})
 
         # create neighbor pixel-level light curve
         for c in tqdm(range(self.ncadences)):
@@ -315,15 +316,6 @@ class Target(object):
 
         return finalap
 
-    def calculate_duration(self, rprs, period, i):
-        """ """
-
-        a = .001
-        b = ((1 + rprs)**2 - ((1/a)*np.cos(i*u.deg))**2) / (1 - np.cos(i*u.deg)**2)
-
-        dur = (period / np.pi) * np.arcsin(a * b**1/2).value
-        return dur
-
     def display_aperture(self):
         """Displays aperture overlaid over the first cadence target pixel file."""
 
@@ -339,24 +331,24 @@ class Target(object):
         cx, cy, apsize, background_level, inter, photnoise_conversion = self.ccd_args
 
         # Define detector dimensions
-        xdim = np.linspace(0, self.apsize, 100)
-        ydim = np.linspace(0, self.apsize, 100)
+        xdim = np.linspace(0, ccd_args['apsize'], 100)
+        ydim = np.linspace(0, ccd_args['apsize'], 100)
 
         # Pixel resolution
-        res = int(1000 / self.apsize)
+        res = int(1000 / ccd_args['apsize'])
 
-        pixel_sens = np.zeros((res,res))
+        pixel_sens = np.zeros((res, res))
 
         # Calculate sensitivity function with detector parameters for individual pixel
         for i in range(res):
             for j in range(res):
-                pixel_sens[i][j] = np.sum([c * (i-res/2) ** m for m, c in enumerate(cx)], axis = 0) + \
-                np.sum([c * (j-res/2) ** m for m, c in enumerate(cy)], axis = 0)
+                pixel_sens[i][j] = np.sum([c * (i-res/2) ** m for m, c in enumerate(ccd_args['cx'])], axis = 0) + \
+                                   np.sum([c * (j-res/2) ** m for m, c in enumerate(ccd_args['cy'])], axis = 0)
 
         # Tile to create detector
-        intra = np.tile(pixel_sens, (self.apsize, self.apsize))
+        intra = np.tile(pixel_sens, (ccd_args['apsize'], ccd_args['apsize']))
         intra_norm = 1-(intra + np.max(intra))/np.min(intra)
-        self.detector = np.zeros((res*self.apsize,res*self.apsize))
+        self.detector = np.zeros((res*ccd_args['apsize'], res*ccd_args['apsize']))
 
         # Multiply by inter-pixel sensitivity variables
         for i in range(self.apsize):
@@ -394,7 +386,7 @@ class Target(object):
 
         return cdpp
 
-    def to_lightkurve_lc(self):
+    def to_lightkurve_lc(self, aperture_mask='all'):
         """
         Integration with the lightkurve package.
 
@@ -411,7 +403,7 @@ class Target(object):
             raise ImportError('Could not import lightkurve.')
 
         # define `KeplerLightCurve` object
-        self.lc = self.to_lightkurve_tpf().to_lightcurve()
+        self.lc = self.to_lightkurve_tpf().to_lightcurve(aperture_mask=aperture_mask)
         return self.lc
 
     def to_lightkurve_tpf(self, target_id="Simulated Target"):
@@ -507,7 +499,7 @@ class Target(object):
 def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1.,
                     photnoise_conversion=.000625, ncadences=1000, apsize=7, ID=205998445,
                     custom_ccd=False, transit=False, variable=False, neighbor=False, tpf_path=None,
-                    no_variation=False, signal=None):
+                    no_variation=False, signal=None, **kwargs):
     """
 
     Parameters
@@ -544,8 +536,6 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
 
     aperture = np.ones((ncadences, apsize, apsize))
 
-    # TODO: need to define signal if variability or transit are True
-
     # calculate PSF amplitude for given Kp Mag
     A = _calculate_PSF_amplitude(mag)
 
@@ -563,6 +553,11 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
     xpos = tpf.pos_corr1
     ypos = tpf.pos_corr2
     t = tpf.time
+
+    # If a transit is included, create the model
+    if transit:
+        model = TransitModel(t)
+        signal = model.create_starry_model(**kwargs)
 
     # throw out outliers
     for i in range(len(xpos)):
@@ -601,20 +596,23 @@ def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor
         sx = [0.5 + 0.05 * np.random.randn()]
         sy = [0.5 + 0.05 * np.random.randn()]
         rho = [0.05 + 0.02 * np.random.randn()]
-        # TODO: This should be a dictionary
-        psf_args = np.concatenate([[A], np.array([x0]), np.array([y0]), sx, sy, rho])
+
+        psf_args = dict({'A':A, 'x0':np.array([x0]), 'y0':np.array([y0]),
+                         'sx':sx, 'sy':sy, 'rho':rho})
 
     if no_variation:
         cx = [1., 0., 0.]
         cy = [1., 0., 0.]
         inter = np.ones((apsize, apsize))
 
-    ccd_args = [cx, cy, apsize, background_level, inter, photnoise_conversion]
-    ccd_args = ccd_args
+    ccd_args = dict({'cx':cx, 'cy':cy, 'apsize':apsize, 'background_level':background_level,
+                     'inter':inter, 'photnoise_conversion':photnoise_conversion})
 
     fpix, flux, ferr, target = calculate_pixel_values(ncadences=ncadences, apsize=apsize,
                                                       psf_args=psf_args, ccd_args=ccd_args,
                                                       xpos=xpos, ypos=ypos, signal=signal)
+
+    t = t[:ncadences]
 
     return Target(fpix, flux, ferr, target, t, mag=mag, roll=roll,
                   neighbor_magdiff=neighbor_magdiff, ncadences=ncadences,
@@ -643,60 +641,9 @@ def calculate_pixel_values(ncadences, apsize, psf_args, ccd_args, xpos, ypos, si
 
     for c in tqdm(range(ncadences)):
 
-        psf_args[0] *= signal_amplitude[c]
+        psf_args['A'] *= signal_amplitude[c]
         fpix[c], target[c], ferr[c] = PSF(psf_args, ccd_args, xpos[c], ypos[c])
 
     flux = np.sum(fpix.reshape((ncadences), -1), axis=1)
 
     return fpix, flux, ferr, target
-
-
-def _calculate_PSF_amplitude(mag):
-    """
-    Returns the amplitude of the PSF for a star of a given magnitude.
-
-    Parameters
-    ----------
-    `mag`: float
-        Input magnitude.
-
-    Returns
-    -------
-    amp : float
-        Corresponding PSF applitude.
-    """
-
-    # mag/flux relation constants
-    a,b,c = 1.65e+07, 0.93, -7.35
-    amp = a * np.exp(-b * (mag+c))
-    return amp
-
-
-def _interpolate_nans(y):
-    """Helper to handle indices and logical indices of NaNs.
-
-    Parameters
-    ----------
-    `y` :
-        1d numpy array with possible NaNs
-
-    Returns
-    -------
-    `nans` :
-        logical indices of NaNs
-    `index` :
-        a function, with signature indices= index(logical_indices),
-        to convert logical indices of NaNs to 'equivalent' indices
-
-    Example
-    -------
-    >>> # linear interpolation of NaNs
-    >>> nans, x= nan_helper(y)
-    >>> y[nans]= np.interp(x(nans), x(~nans), y[~nans])
-    """
-
-    nans = np.isnan(y)
-    x = lambda z: z.nonzero()[0]
-
-    y[nans]= np.interp(x(nans), x(~nans), y[~nans])
-    return y
