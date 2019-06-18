@@ -184,13 +184,9 @@ class Target(object):
             V = 1 + var_amp * np.sin(freq*self.t)
 
         # Add variability to light curve
-        V_fpix = [f * V[i] for i,f in enumerate(fpix)]
-
-        # Create flux light curve
-        V_flux = np.sum(np.array(V_fpix).reshape((self.ncadences), -1), axis=1)
-
-        self.fpix = V_fpix
-        self.flux = V_flux
+        self.fpix, self.flux, self.ferr, self.target = calculate_pixel_values(ncadences=self.ncadences, apsize=self.apsize,
+                                                                              psf_args=self.psf_args, ccd_args=self.ccd_args,
+                                                                              xpos=self.xpos, ypos=self.ypos, signal=V)
 
         return self
 
@@ -633,15 +629,13 @@ def calculate_pixel_values(ncadences, apsize, psf_args, ccd_args, xpos, ypos, si
     target = np.zeros((ncadences, apsize, apsize))
     ferr = np.zeros((ncadences, apsize, apsize))
 
-    '''
-    Here is where the light curves are created
-    PSF function calculates flux in each pixel
-    Iterate through cadences (c), and x and y dimensions on the detector (i,j)
-    '''
+    base_amplitude = psf_args['A']
 
+    # The PSF function calculates flux in each pixel
+    # Iterate through cadences (c), and x and y dimensions on the detector (i,j)
     for c in tqdm(range(ncadences)):
 
-        psf_args['A'] *= signal_amplitude[c]
+        psf_args['A'] = signal_amplitude[c] * base_amplitude
         fpix[c], target[c], ferr[c] = PSF(psf_args, ccd_args, xpos[c], ypos[c])
 
     flux = np.sum(fpix.reshape((ncadences), -1), axis=1)
