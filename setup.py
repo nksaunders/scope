@@ -39,6 +39,7 @@ setup(name = 'tele-scope',
                           'everest-pipeline',
                           'astroML',
                           'starry',
+                          'lightkurve'
                          ],
       include_package_data = True,
       zip_safe = False,
