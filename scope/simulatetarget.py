@@ -494,7 +494,7 @@ class Target(object):
 
 def generate_target(mag=12., roll=1., background_level=0., ccd_args=[], neighbor_magdiff=1.,
                     photnoise_conversion=.000625, ncadences=1000, apsize=7, ID=205998445,
-                    custom_ccd=False, transit=False, variable=False, neighbor=False, tpf_path=None,
+                    transit=False, variable=False, neighbor=False, tpf_path=None,
                     no_variation=False, signal=None, **kwargs):
     """
 
