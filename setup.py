@@ -9,7 +9,9 @@ if sys.version_info[0] < 3:
 else:
   import builtins
 builtins.__SKOPE_SETUP__ = True
-import scope
+
+# Load the __version__ variable without importing the package already
+exec(open('scope/version.py').read())
 
 long_description = \
 """
@@ -21,7 +23,7 @@ and models synthetic stellar PSFs traversing the CCD.
 
 # Setup!
 setup(name = 'tele-scope',
-      version = scope.__version__,
+      version = __version__,
       description = 'Simulated CCD Observations for Photometric Experimentation',
       long_description = long_description,
       classifiers = [
