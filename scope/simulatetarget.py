@@ -19,11 +19,6 @@ from astropy import units as u
 from astropy.constants import G
 from astropy.io import fits
 
-import everest
-from everest.mathutils import SavGol
-from everest.config import KEPPRF_DIR
-from everest.missions.k2 import CDPP
-
 import lightkurve as lk
 
 from scipy.ndimage import zoom
@@ -366,8 +361,8 @@ class Target(object):
         # check if flux light curve was passed in
         if len(flux) == 0:
             flux = self.flux
-
-        cdpp = CDPP(flux)
+        lc = self.to_lightkurve_lc()
+        cdpp = lc.estimate_cdpp()
 
         return cdpp
 

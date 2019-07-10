@@ -36,7 +36,6 @@ setup(name = 'tele-scope',
       license = 'MIT',
       packages = ['scope'],
       install_requires = [
-                          'everest-pipeline',
                           'astroML',
                           'starry',
                           'lightkurve'

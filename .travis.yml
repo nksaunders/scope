@@ -23,7 +23,6 @@ install:
   - pip install sklearn
   - pip install tqdm
   - pip install datetime
-  - pip install everest-pipeline
   - pip install codecov
   - pip install coverage
   - pip install pytest

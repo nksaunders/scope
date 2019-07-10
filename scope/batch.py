@@ -12,9 +12,6 @@ import scope
 from scope.scopemath import PLD
 from tqdm import tqdm
 import itertools
-from everest.pool import Pool
-from everest.missions.k2 import CDPP
-from everest.config import EVEREST_SRC
 import os
 from os.path import abspath, join
 import warnings
