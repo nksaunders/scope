@@ -39,8 +39,9 @@ setup(name = 'tele-scope',
       packages = ['scope'],
       install_requires = [
                           'astroML',
-                          'starry',
-                          'lightkurve'
+                          'george',
+                          'lightkurve',
+                          'starry'
                          ],
       include_package_data = True,
       zip_safe = False,

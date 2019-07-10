@@ -19,6 +19,7 @@ install:
   - conda install --yes numpy scipy matplotlib nose pip
   - conda config --add channels conda-forge
   - conda install --yes starry
+  - pip install george
   - pip install astroml
   - pip install sklearn
   - pip install tqdm
