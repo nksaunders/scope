@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Scope Math &mdash; scope 1.0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Batch" href="batch.html" />
+    <link rel="prev" title="Simulate Target" href="simulatetarget.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> scope
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="simulatetarget.html">Simulate Target</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Scope Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="batch.html">Batch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nksaunders/scope">Source Code on Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nksaunders.github.io/files/Example.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">scope</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Scope Math</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/scopemath.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-scope.scopemath"></span><div class="section" id="scope-math">
+<h1>Scope Math<a class="headerlink" href="#scope-math" title="Permalink to this headline">¶</a></h1>
+<p>Mathematical functions for simulating light curves.</p>
+<dl class="function">
+<dt id="scope.scopemath.Gauss2D">
+<code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">Gauss2D</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">amp</em>, <em class="sig-param">x0</em>, <em class="sig-param">y0</em>, <em class="sig-param">sx</em>, <em class="sig-param">sy</em>, <em class="sig-param">rho</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.Gauss2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>A two-dimensional gaussian with arbitrary covariance.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="scope.scopemath.GaussInt">
+<em class="property">class </em><code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">GaussInt</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">c</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.GaussInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the definite integral of x^n * exp(-ax^2 + bx + c) from 0 to 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scope.scopemath.PLD">
+<code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">PLD</code><span class="sig-paren">(</span><em class="sig-param">fpix</em>, <em class="sig-param">ferr</em>, <em class="sig-param">trninds</em>, <em class="sig-param">t</em>, <em class="sig-param">aperture</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.PLD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform first order PLD on a light curve</p>
+<dl class="simple">
+<dt>flux :</dt><dd><p>detrended light curve</p>
+</dd>
+<dt>rawflux :</dt><dd><p>raw light curve</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="scope.scopemath.PSF">
+<code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">PSF</code><span class="sig-paren">(</span><em class="sig-param">A</em>, <em class="sig-param">psf_args</em>, <em class="sig-param">ccd_args</em>, <em class="sig-param">xpos</em>, <em class="sig-param">ypos</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.PSF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a stellar Point Spread Function (PSF) from given parameters.</p>
+<dl class="simple">
+<dt>psf_args<span class="classifier">dict</span></dt><dd><p>dictionary of PSF parameters</p>
+</dd>
+<dt>ccd_args<span class="classifier">dict</span></dt><dd><p>dictionary of CCD parameters</p>
+</dd>
+<dt>xpos<span class="classifier">arraylike</span></dt><dd><p>array of PSF motion in x around detector relative to <cite>(x_0, y_0)</cite></p>
+</dd>
+<dt>ypos<span class="classifier">arraylike</span></dt><dd><p>array of PSF motion in y around detector relative to <cite>(x_0, y_0)</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="scope.scopemath.PixelFlux">
+<code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">PixelFlux</code><span class="sig-paren">(</span><em class="sig-param">cx</em>, <em class="sig-param">cy</em>, <em class="sig-param">amp</em>, <em class="sig-param">x0</em>, <em class="sig-param">y0</em>, <em class="sig-param">sx</em>, <em class="sig-param">sy</em>, <em class="sig-param">rho</em>, <em class="sig-param">fast=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.PixelFlux" title="Permalink to this definition">¶</a></dt>
+<dd><p>The flux in a given pixel of the detector, calculated from the integral
+of the convolution of a 2D gaussian with a polynomial.</p>
+<dl class="simple">
+<dt><cite>cx</cite>:</dt><dd><p>The intra-pixel variability polynomial coefficients along the <cite>x</cite> axis, expressed as a list from 0th to 3rd order.</p>
+</dd>
+<dt><cite>cy</cite>:</dt><dd><p>The intra-pixel variability polynomial coefficients along the <cite>y</cite> axis, expressed as a list from 0th to 3rd order.</p>
+</dd>
+<dt><cite>amp</cite>:</dt><dd><p>The amplitude of the normalized gaussian (the integral of the gaussian over the entire xy plane is equal to this value).</p>
+</dd>
+<dt><cite>x0</cite>:</dt><dd><p>The <cite>x</cite> position of the center of the gaussian relative to the left pixel edge.</p>
+</dd>
+<dt><cite>y0</cite>:</dt><dd><p>The <cite>y</cite> position of the center of the gaussian relative to the bottom pixel edge.</p>
+</dd>
+<dt><cite>sx</cite>:</dt><dd><p>The standard deviation of the gaussian in the <cite>x</cite> direction (before rotation).</p>
+</dd>
+<dt><cite>sy</cite>:</dt><dd><p>The standard deviation of the gaussian in the <cite>y</cite> direction (before rotation).</p>
+</dd>
+<dt><cite>rho</cite>:</dt><dd><p>The correlation coefficient between <cite>x</cite> and <cite>y</cite>, a value between -1 and 1. See en.wikipedia.org/wiki/Pearson_correlation_coefficient. If this is 0, <cite>x</cite> and <cite>y</cite> are uncorrelated (zero rotation).</p>
+</dd>
+<dt><cite>fast</cite>:</dt><dd><p>If <cite>True</cite>, analytically integrates the function along the <cite>x</cite> axis and numerically integrates it along the <cite>y</cite> axis. This can greatly speed things up, with no loss of accuracy. If <cite>False</cite>, numerically integrates in both dimensions (not recommended).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="scope.scopemath.PolyGaussIntegrand1D">
+<code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">PolyGaussIntegrand1D</code><span class="sig-paren">(</span><em class="sig-param">y</em>, <em class="sig-param">cx</em>, <em class="sig-param">cy</em>, <em class="sig-param">amp</em>, <em class="sig-param">x0</em>, <em class="sig-param">y0</em>, <em class="sig-param">sx</em>, <em class="sig-param">sy</em>, <em class="sig-param">rho</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.PolyGaussIntegrand1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the product of the 2D Gaussian PSF, a polynomial in y,
+and a polynomial in x, <em>analytically integrated along x</em>. The integral
+along y is not analytic and must be done numerically. However, the
+analytical integration along the first dimension speeds up the entire
+calculation by a factor of ~20.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scope.scopemath.PolyGaussIntegrand2D">
+<code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">PolyGaussIntegrand2D</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">cx</em>, <em class="sig-param">cy</em>, <em class="sig-param">amp</em>, <em class="sig-param">x0</em>, <em class="sig-param">y0</em>, <em class="sig-param">sx</em>, <em class="sig-param">sy</em>, <em class="sig-param">rho</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.PolyGaussIntegrand2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is straight up the product of the 2D Gaussian PSF, a polynomial in y,
+and a polynomial in x, at a given location on the pixel. Integrating this
+in 2D across the entire pixel yields the total flux in that pixel.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scope.scopemath.Polynomial">
+<code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">Polynomial</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">coeffs</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.Polynomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a polynomial with coefficients <cite>coeffs</cite> evaluated at <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scope.scopemath.TestIntegration">
+<code class="sig-prename descclassname">scope.scopemath.</code><code class="sig-name descname">TestIntegration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scope.scopemath.TestIntegration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares the fast and slow ways of computing the flux. Reports the
+time each method took and the difference in the flux between the
+two methods.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="batch.html" class="btn btn-neutral float-right" title="Batch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="simulatetarget.html" class="btn btn-neutral float-left" title="Simulate Target" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Nicholas Saunders
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Simulate Target &mdash; scope 1.0.5 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Scope Math" href="scopemath.html" />
+    <link rel="prev" title="Welcome to scope!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> scope
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulate Target</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scopemath.html">Scope Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="batch.html">Batch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nksaunders/scope">Source Code on Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nksaunders.github.io/files/Example.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">scope</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Simulate Target</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/simulatetarget.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-scope.simulatetarget"></span><div class="section" id="simulate-target">
+<h1>Simulate Target<a class="headerlink" href="#simulate-target" title="Permalink to this headline">¶</a></h1>
+<p>Generate a forward model of a telescope detector with sensitivity variation,
+and simulate stellar targets with motion relative to the CCD.</p>
+<dl class="class">
+<dt id="scope.simulatetarget.Target">
+<em class="property">class </em><code class="sig-prename descclassname">scope.simulatetarget.</code><code class="sig-name descname">Target</code><span class="sig-paren">(</span><em class="sig-param">fpix</em>, <em class="sig-param">flux</em>, <em class="sig-param">ferr</em>, <em class="sig-param">target</em>, <em class="sig-param">t</em>, <em class="sig-param">mag=12.0</em>, <em class="sig-param">roll=1.0</em>, <em class="sig-param">neighbor_magdiff=1.0</em>, <em class="sig-param">ncadences=1000</em>, <em class="sig-param">apsize=7</em>, <em class="sig-param">transit=False</em>, <em class="sig-param">variable=False</em>, <em class="sig-param">neighbor=False</em>, <em class="sig-param">ccd_args=[]</em>, <em class="sig-param">psf_args=[]</em>, <em class="sig-param">xpos=None</em>, <em class="sig-param">ypos=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simulated stellar object with a forward model of a telescope detector’s sensitivity variation</p>
+<dl class="method">
+<dt id="scope.simulatetarget.Target.add_neighbor">
+<code class="sig-name descname">add_neighbor</code><span class="sig-paren">(</span><em class="sig-param">fpix=[]</em>, <em class="sig-param">magdiff=1.0</em>, <em class="sig-param">dist=1.7</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.add_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a neighbor star with given difference in magnitude and distance at a
+randomized location.</p>
+<dl class="simple">
+<dt><cite>fpix</cite> :</dt><dd><p>Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically
+set to fpix generated in GenerateLightCurve() unless a different light curve is passed.</p>
+</dd>
+<dt><cite>magdiff</cite> :</dt><dd><p>Difference in stellar magnitude between target and neighbor. Positive magdiff
+corresponds to higher values for the neighbor star’s magnitude.</p>
+</dd>
+<dt><cite>dist</cite> :</dt><dd><p>Distance (in pixels) between cetroid position of target and neighbor. The (x, y)
+coordinates of the neighbor are chosen arbitrarily to result in the given distance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.add_transit">
+<code class="sig-name descname">add_transit</code><span class="sig-paren">(</span><em class="sig-param">fpix=[]</em>, <em class="sig-param">rprs=0.01</em>, <em class="sig-param">period=15.0</em>, <em class="sig-param">t0=5.0</em>, <em class="sig-param">i=90</em>, <em class="sig-param">ecc=0</em>, <em class="sig-param">m_star=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.add_transit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Injects a transit into light curve.</p>
+<dl class="simple">
+<dt><cite>fpix</cite> :</dt><dd><p>Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to
+fpix generated in GenerateLightCurve() unless a different light curve is passed.</p>
+</dd>
+<dt><cite>rprs</cite> :</dt><dd><p>R_planet / R_star. Ratio of the planet’s radius to the star’s radius.</p>
+</dd>
+<dt><cite>period</cite> :</dt><dd><p>Period of transit in days.</p>
+</dd>
+<dt><cite>t0</cite> :</dt><dd><p>Initial transit time in days.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.add_variability">
+<code class="sig-name descname">add_variability</code><span class="sig-paren">(</span><em class="sig-param">fpix=[]</em>, <em class="sig-param">var_amp=0.0005</em>, <em class="sig-param">freq=0.25</em>, <em class="sig-param">custom_variability=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.add_variability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a sinusoidal variability model to the given light curve.</p>
+<dl class="simple">
+<dt><cite>fpix</cite> :</dt><dd><p>Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically
+set to fpix generated in GenerateLightCurve() unless a different light curve is passed.</p>
+</dd>
+<dt><cite>var_amp</cite> :</dt><dd><p>Amplitude of sin wave, which is multiplied by the light curve.</p>
+</dd>
+<dt><cite>freq</cite> :</dt><dd><p>Frequency of sin wave in days.</p>
+</dd>
+<dt><cite>custom_variability</cite> :</dt><dd><p>A custom 1-dimensional array of length ncadences can be passed into the AddVariability()
+function, which will be multiplied by the light curve.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.create_aperture">
+<code class="sig-name descname">create_aperture</code><span class="sig-paren">(</span><em class="sig-param">fpix=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.create_aperture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an aperture including all pixels containing target flux.</p>
+<dl class="simple">
+<dt><cite>fpix</cite> :</dt><dd><p>Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to
+fpix generated in GenerateLightCurve() unless a different light curve is passed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.detrend">
+<code class="sig-name descname">detrend</code><span class="sig-paren">(</span><em class="sig-param">fpix=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.detrend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs 2nd order PLD with a Gaussian Proccess on a given light curve.</p>
+<dl class="simple">
+<dt><cite>fpix</cite> :</dt><dd><p>Pixel-level light curve of dimemsions (apsize, apsize, ncadences). Automatically set to fpix
+generated in GenerateLightCurve() unless a different light curve is passed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.display_aperture">
+<code class="sig-name descname">display_aperture</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.display_aperture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays aperture overlaid over the first cadence target pixel file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.display_detector">
+<code class="sig-name descname">display_detector</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.display_detector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns matrix of dimensions (apsize, apsize) for CCD pixel sensitivity.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.estimate_CDPP">
+<code class="sig-name descname">estimate_CDPP</code><span class="sig-paren">(</span><em class="sig-param">flux=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.estimate_CDPP" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Quick function to calculate and return Combined Differential Photometric Precision (CDPP) of a given light curve.</dt><dd><p>If no light curve is passed, this funtion returns the CDPP of the light curve generated in GenerateLightCurve().</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt><cite>flux</cite> :</dt><dd><p>1-dimensional flux light curve for which CDPP is calculated. If nothing is passed into FindCDPP(), it returns
+the CDPP of the light curve generated in GenerateLightCurve()</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt><cite>cdpp</cite><span class="classifier">float</span></dt><dd><p>Combined Differential Photometric Precision (CDPP) of given <cite>flux</cite> light curve</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple plotting function to view first cadence tpf, and both raw and de-trended flux light curves.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.to_lightkurve_lc">
+<code class="sig-name descname">to_lightkurve_lc</code><span class="sig-paren">(</span><em class="sig-param">aperture_mask='all'</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.to_lightkurve_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integration with the lightkurve package.</p>
+<dl class="simple">
+<dt>lc<span class="classifier">lightkurve.KeplerLightCurve object</span></dt><dd><p>A <cite>KeplerLightCurve</cite> object from the lightkurve package</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scope.simulatetarget.Target.to_lightkurve_tpf">
+<code class="sig-name descname">to_lightkurve_tpf</code><span class="sig-paren">(</span><em class="sig-param">target_id='Simulated Target'</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.Target.to_lightkurve_tpf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integration with the lightkurve package.</p>
+<dl class="simple">
+<dt>target_id<span class="classifier">str</span></dt><dd><p>Name of the simulated target. Defaults to “Simulated Target”</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>tpf<span class="classifier">lightkurve.KeplerTargetPixelFile object</span></dt><dd><p>A <cite>KeplerTargetPixelFile</cite> object from the lightkurve package</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="scope.simulatetarget.generate_target">
+<code class="sig-prename descclassname">scope.simulatetarget.</code><code class="sig-name descname">generate_target</code><span class="sig-paren">(</span><em class="sig-param">mag=12.0</em>, <em class="sig-param">roll=1.0</em>, <em class="sig-param">coords=None</em>, <em class="sig-param">background_level=0.0</em>, <em class="sig-param">neighbor_magdiff=1.0</em>, <em class="sig-param">ncadences=1000</em>, <em class="sig-param">apsize=7</em>, <em class="sig-param">ID=205998445</em>, <em class="sig-param">transit=False</em>, <em class="sig-param">variable=False</em>, <em class="sig-param">neighbor=False</em>, <em class="sig-param">tpf_path=None</em>, <em class="sig-param">no_sensitivity_variation=False</em>, <em class="sig-param">signal=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scope.simulatetarget.generate_target" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><dl class="simple">
+<dt><cite>mag</cite> :</dt><dd><p>Magnitude of primary target PSF.</p>
+</dd>
+<dt><cite>roll</cite> :</dt><dd><p>Coefficient on K2 motion vectors of target. roll=1 corresponds to current K2 motion.</p>
+</dd>
+<dt><cite>coords</cite><span class="classifier">tuple</span></dt><dd><p>Coordinates of the PSF centroid.</p>
+</dd>
+<dt><cite>background_level</cite> :</dt><dd><p>Constant background signal in each pixel. Defaults to 0.</p>
+</dd>
+<dt><cite>neighbor_magdiff</cite> :</dt><dd><p>Difference between magnitude of target and neighbor. Only accessed if neighbor initialized as
+<cite>True</cite> or if AddNeighbor() function is called.</p>
+</dd>
+<dt><cite>photnoise_conversion</cite> :</dt><dd><p>Conversion factor for photon noise, defaults to 0.000625 for consistency with benchmark.</p>
+</dd>
+<dt><cite>ncadences</cite> :</dt><dd><p>Number of cadences in simulated light curve.</p>
+</dd>
+<dt><cite>apsize</cite> :</dt><dd><p>Dimension of aperture on each side.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt><cite>Target</cite>: <a class="reference internal" href="#scope.simulatetarget.Target" title="scope.simulatetarget.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a> object</dt><dd><p>A simulated CCD observation</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="scopemath.html" class="btn btn-neutral float-right" title="Scope Math" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to scope!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Nicholas Saunders
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
