@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://nksaunders.github.io/images/scope_logo.png" width="200">
+  <img src="https://nksaunders.space/images/scope_logo.png" width="200">
 </p>
 
 <p align="center">
@@ -16,10 +16,10 @@
 This package includes methods to change magnitude of motion and sensitivity properties of the CCD, inject synthetic transiting exoplanet targets and stellar variability, and test PLD de-trending.
 
 <p align="center">
-  <img src="https://nksaunders.github.io/images/sample_output.png">
+  <img src="https://nksaunders.space/images/sample_output.png">
 </p>
 
-For examples of usage, see [the sample notebook](https://nksaunders.github.io/files/Example.html).
+For examples of usage, see [the sample notebook](https://nksaunders.space/files/Example.html).
 
 To install **scope**, run
 <pre><code>pip install tele-scope</code></pre>
