@@ -34,7 +34,6 @@ class GaussInt(object):
         self.c = c
         p = np.sqrt(self.a)
         q = self.b / (2 * p)
-        # self.GI0 = np.exp(q ** 2 + self.c) * np.sqrt(np.pi) * (erf(q) + erf(p - q)) / (2 * p)
         self.GI0 = (np.sqrt(np.pi) / 2 * np.sqrt(a)) * np.exp(b**2 / (4 * a) + c) * (erf((2 * a - b) / (2 * np.sqrt(a))) + erf(b / (2 * np.sqrt(a))))
 
     def __call__(self, n):
@@ -44,11 +43,9 @@ class GaussInt(object):
         if n == 0:
             return self.GI0
         elif n == 1:
-            # return (1 / (2 * self.a)) * (np.exp(self.c) * (1 - np.exp(self.b - self.a)) + self.b * self.GI0)
             return (np.exp(c - a) / (4 * a**(3 / 2))) * (np.sqrt(np.pi) * b * np.exp(b**2 / (4 * a) + a) * \
                    (erf((2 * a - b) / (2 * np.sqrt(a))) + erf(b / (2 * np.sqrt(a)))))
         elif n == 2:
-            # return (1 / (4 * self.a ** 2)) * (np.exp(self.c) * (self.b - (2 * self.a + self.b) * np.exp(self.b - self.a)) + (2 * self.a + self.b ** 2) * self.GI0)
             return (np.exp(c - a) / (8 * a**(5/2))) * (np.sqrt(np.pi) * (2 * a + b) * np.exp(b**2 / (4 * a) + a) * \
                    (erf((2 * a - b) / (2 * np.sqrt(a))) + erf(b / (2 * np.sqrt(a)))) - 2 * np.sqrt(a) * (np.exp(b) * \
                    (2 * a + b) - np.exp(a) * b))
